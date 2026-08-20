@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- SEO Meta Tags -->
+    <title>Regulamin (TOS) - RoyalCasino Bot | Wojtoteka</title>
+    <meta name="description" content="Regulamin korzystania z bota Discord RoyalCasino. Zasady użytkowania, wirtualna waluta, zabronione działania i odpowiedzialność.">
+    <meta name="keywords" content="regulamin, warunki korzystania, TOS, RoyalCasino, bot Discord, Wojtoteka">
+    <meta name="author" content="Wojtoteka">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://wojtoteka.ovh/RoyalCasinoBot/regulamin.html">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://wojtoteka.ovh/RoyalCasinoBot/regulamin.html">
+    <meta property="og:title" content="Regulamin (TOS) - RoyalCasino Bot">
+    <meta property="og:description" content="Regulamin korzystania z bota Discord RoyalCasino. Zasady, ograniczenia i warunki użytkowania.">
+    <meta property="og:image" content="https://wojtoteka.ovh/img/logo.png">
+    <meta property="og:locale" content="pl_PL">
+    <meta property="og:site_name" content="Wojtoteka">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Regulamin (TOS) - RoyalCasino Bot">
+    <meta name="twitter:description" content="Regulamin bota Discord RoyalCasino od Wojtoteka.">
+    <meta name="twitter:image" content="https://wojtoteka.ovh/img/logo.png">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#ff9800">
+    <link rel="icon" href="/img/logo.png" type="image/png">
+
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: #050505;
+        }
+
+        #background-video {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+            object-fit: cover;
+            filter: brightness(25%) saturate(1.2);
+        }
+
+        .gradient-overlay {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            background:
+                radial-gradient(ellipse at 20% 0%, rgba(255, 152, 0, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 100%, rgba(255, 109, 0, 0.04) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .back-link {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.45);
+            font-size: 0.8em;
+            padding: 8px 16px;
+            border-radius: 99px;
+            background: rgba(10,10,10,0.5);
+            border: 1px solid rgba(255,255,255,0.06);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #fff;
+            background: rgba(255,152,0,0.1);
+            border-color: rgba(255,152,0,0.25);
+            transform: translateX(-2px);
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 80px 24px 50px;
+        }
+
+        .card {
+            background: rgba(10, 10, 10, 0.5);
+            backdrop-filter: blur(20px) saturate(1.3);
+            -webkit-backdrop-filter: blur(20px) saturate(1.3);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 44px 36px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            animation: cardIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .policy-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .policy-header h1 {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: -0.5px;
+            margin-bottom: 4px;
+        }
+
+        .policy-header h2 {
+            font-size: 1.3em;
+            font-weight: 600;
+            background: linear-gradient(135deg, #ff9800, #ff6d00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .bot-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 14px;
+            border-radius: 99px;
+            background: rgba(88,101,242,0.12);
+            border: 1px solid rgba(88,101,242,0.25);
+            font-size: 0.78em;
+            color: rgba(142,154,255,0.85);
+            margin-bottom: 12px;
+        }
+
+        .update-date {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 16px;
+            border-radius: 99px;
+            background: rgba(255,152,0,0.08);
+            border: 1px solid rgba(255,152,0,0.15);
+            font-size: 0.78em;
+            color: rgba(255,183,77,0.75);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,152,0,0.2), transparent);
+            margin: 28px 0;
+        }
+
+        h3 {
+            font-size: 1.15em;
+            font-weight: 700;
+            color: #fff;
+            margin: 28px 0 12px;
+            padding-left: 14px;
+            border-left: 3px solid #ff9800;
+            line-height: 1.4;
+        }
+
+        p {
+            font-size: 0.92em;
+            margin-bottom: 12px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        ul {
+            list-style: none;
+            margin: 0 0 14px 8px;
+        }
+
+        li {
+            position: relative;
+            padding-left: 22px;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: rgba(255,255,255,0.65);
+        }
+
+        li::before {
+            content: "\25B8";
+            position: absolute;
+            left: 4px;
+            color: #ff9800;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        strong {
+            color: rgba(255,255,255,0.9);
+        }
+
+        a {
+            color: #ffb74d;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: #fff;
+        }
+
+        .info-box {
+            background: rgba(255,152,0,0.06);
+            border-left: 3px solid rgba(255,152,0,0.4);
+            padding: 14px 18px;
+            margin: 16px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.88em;
+        }
+
+        .info-box p {
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .info-box ul {
+            margin-bottom: 0;
+        }
+
+        .warning-box {
+            background: rgba(244,67,54,0.06);
+            border-left: 3px solid rgba(244,67,54,0.4);
+            padding: 14px 18px;
+            margin: 16px 0;
+            border-radius: 0 10px 10px 0;
+            font-size: 0.88em;
+        }
+
+        .warning-box p {
+            margin-bottom: 6px;
+            color: rgba(255,255,255,0.75);
+        }
+
+        .warning-box ul {
+            margin-bottom: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .nav-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 22px;
+            border-radius: 12px;
+            background: rgba(255,152,0,0.08);
+            border: 1px solid rgba(255,152,0,0.15);
+            color: rgba(255,183,77,0.85);
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255,152,0,0.15);
+            border-color: rgba(255,152,0,0.35);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .policy-footer {
+            text-align: center;
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .policy-footer p {
+            font-size: 0.78em;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 4px;
+        }
+
+        .policy-footer a {
+            color: rgba(255,152,0,0.45);
+        }
+
+        .policy-footer a:hover {
+            color: rgba(255,152,0,0.75);
+        }
+
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.68em;
+            color: rgba(255,255,255,0.2);
+            padding: 30px 0 20px;
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer a {
+            color: rgba(255, 152, 0, 0.45);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: rgba(255, 152, 0, 0.75);
+        }
+
+        .footer-sep {
+            color: rgba(255,255,255,0.15);
+        }
+
+        .skillhost-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            text-decoration: none;
+            color: rgba(255,255,255,0.2);
+            font-size: 1em;
+            transition: color 0.25s;
+        }
+
+        .skillhost-badge:hover {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .skillhost-logo {
+            height: 16px;
+            width: auto;
+            display: block;
+            opacity: 0.5;
+            transition: opacity 0.25s;
+        }
+
+        .skillhost-badge:hover .skillhost-logo {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 768px) {
+            .card { padding: 32px 24px; }
+            .policy-header h1 { font-size: 1.8em; }
+            .policy-header h2 { font-size: 1.1em; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 70px 14px 30px; }
+            .card { padding: 24px 18px; border-radius: 16px; }
+            .policy-header h1 { font-size: 1.5em; }
+            h3 { font-size: 1.05em; }
+            p, li { font-size: 0.85em; }
+            .back-link { top: 14px; left: 14px; }
+            .nav-links { flex-direction: column; align-items: center; }
+        }
+
+        ::-webkit-scrollbar { width: 6px; background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,152,0,0.3); border-radius: 6px; }
+        html { scrollbar-width: thin; scrollbar-color: rgba(255,152,0,0.3) transparent; }
+    </style>
+</head>
+<body>
+
+    <video autoplay muted loop playsinline id="background-video">
+        <source src="https://wojtoteka.ovh/img/tlow.mp4" type="video/mp4">
+    </video>
+    <div class="gradient-overlay"></div>
+
+    <a href="/RoyalCasinoBot" class="back-link">&#8592; RoyalCasino Bot</a>
+
+    <div class="container">
+        <div class="card">
+            <div class="policy-header">
+                <h1>Regulamin (TOS)</h1>
+                <h2>RoyalCasino Bot</h2>
+                <div class="update-date">&#128197; Ostatnia aktualizacja: 20 lipca 2026</div>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3>&#9989; 1. Akceptacja regulaminu</h3>
+            <p>Korzystając z bota <strong>RoyalCasino</strong>, akceptujesz niniejszy Regulamin. Jeśli nie zgadzasz się z jego postanowieniami, natychmiast zaprzestań korzystania z bota.</p>
+
+            <h3>&#127918; 2. Opis usługi</h3>
+            <p>RoyalCasino to bot Discord oferujący wirtualne gry kasynowe (Blackjack, Poker, Ruletka, Slots, Crash, Coinflip, Dice, War, HiLo, Miny, Zdrapka, Koło Fortuny, Keno, Plinko, Limbo, Pojedynek) z fikcyjną walutą. Bot zawiera system questów, głosowania, ekonomii i osiągnięć. Cała waluta i przedmioty są <strong>wirtualne i nie mają żadnej wartości pieniężnej w świecie rzeczywistym</strong>.</p>
+
+            <div class="info-box">
+                <p><strong>&#128161; Ważne:</strong> RoyalCasino jest usługą rozrywkową. Wirtualna waluta nie może być wymieniana na prawdziwe pieniądze, towary ani usługi.</p>
+            </div>
+
+            <h3>&#128100; 3. Obowiązki użytkownika</h3>
+            <ul>
+                <li>Musisz mieć ukończone <strong>13 lat</strong> (wymóg Regulaminu Discorda)</li>
+                <li><strong>NIE</strong> próbuj wykorzystywać, hakować ani nadużywać funkcjonalności bota</li>
+                <li><strong>NIE</strong> używaj automatycznych narzędzi, botów ani skryptów do interakcji z RoyalCasino</li>
+                <li><strong>NIE</strong> nękaj innych użytkowników ani właściciela bota</li>
+            </ul>
+
+            <h3>&#128176; 4. Wirtualna waluta</h3>
+            <ul>
+                <li>Cała waluta jest <strong>fikcyjna</strong> i nie może być wymieniona na prawdziwe pieniądze</li>
+                <li>Zastrzegamy sobie prawo do korekty sald w celu naprawy błędów lub exploitów</li>
+                <li>Waluta może zostać zresetowana podczas dużych aktualizacji (z wcześniejszym powiadomieniem)</li>
+            </ul>
+
+            <h3>&#128683; 5. Zabronione działania</h3>
+
+            <div class="warning-box">
+                <p><strong>&#9888;&#65039; Następujące działania są surowo zabronione:</strong></p>
+                <ul style="margin-top: 8px;">
+                    <li>Wykorzystywanie błędów (exploitów) lub nieuczciwa rozgrywka</li>
+                    <li>Udostępnianie konta lub posiadanie wielu kont w celu uzyskania przewagi</li>
+                    <li>Spamowanie komend lub nadużywanie funkcji bota</li>
+                    <li>Łamanie <a href="https://discord.com/terms" target="_blank">Regulaminu Discorda</a> lub Wytycznych Społeczności</li>
+                </ul>
+            </div>
+
+            <h3>&#9888;&#65039; 6. Zastrzeżenia</h3>
+            <ul>
+                <li>RoyalCasino jest dostarczany w stanie <strong>„TAK JAK JEST”</strong> bez żadnych gwarancji</li>
+                <li><strong>NIE</strong> ponosimy odpowiedzialności za utratę wirtualnej waluty z powodu błędów lub przestojów</li>
+                <li>Gry wykorzystują generator liczb losowych — wyniki nie są gwarantowane</li>
+            </ul>
+
+            <h3>&#128296; 7. Wypowiedzenie</h3>
+            <p>Zastrzegamy sobie prawo do:</p>
+            <ul>
+                <li>Zbanowania użytkowników łamiących niniejszy Regulamin</li>
+                <li>Zawieszenia lub wyłączenia bota w dowolnym momencie bez uprzedzenia</li>
+                <li>Modyfikacji funkcji, wartości walut lub mechanik gier</li>
+            </ul>
+
+            <h3>&#128203; 8. Ograniczenie odpowiedzialności</h3>
+            <p>RoyalCasino to darmowa usługa rozrywkowa. Nie ponosimy odpowiedzialności za jakiekolwiek szkody wynikające z korzystania z bota lub jego niedostępności.</p>
+
+            <h3>&#128260; 9. Zmiany w regulaminie</h3>
+            <p>Możemy zaktualizować niniejszy Regulamin w dowolnym momencie. Dalsze korzystanie z bota oznacza akceptację zaktualizowanego Regulaminu.</p>
+
+            <h3>&#9878;&#65039; 10. Prawo właściwe</h3>
+            <p>Niniejszy Regulamin podlega prawu <strong>Rzeczypospolitej Polskiej</strong>.</p>
+
+            <h3>&#128231; 11. Kontakt</h3>
+            <p>W przypadku pytań lub zgłaszania naruszeń skontaktuj się z nami:</p>
+            <ul>
+                <li>&#128231; Email: <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a></li>
+                <li>&#127760; Formularz kontaktowy: <a href="https://wojtoteka.ovh/kontakt.html">wojtoteka.ovh/kontakt.html</a></li>
+            </ul>
+
+            <div class="divider"></div>
+
+            <div class="nav-links">
+                <a href="/RoyalCasinoBot">&#127920; Strona Główna</a>
+                <a href="polityka">&#128737;&#65039; Polityka Prywatności</a>
+            </div>
+
+            <div class="policy-footer">
+                <p>Niniejszy Regulamin dotyczy bota Discord <strong>RoyalCasino</strong></p>
+                <p style="margin-top: 8px;">Wrocław, Polska</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span>&copy; <a href="https://wojtoteka.ovh">Wojtoteka.ovh</a> 2024&ndash;<span id="current-year"></span></span>
+            <span class="footer-sep">&middot;</span>
+            <a href="https://panel.skillhost.pl/ref/wojtoteka" target="_blank" rel="noopener noreferrer" class="skillhost-badge">
+                <span>Utrzymywane na serwerach</span>
+                <img src="skillhost-color.svg" alt="Skillhost" class="skillhost-logo">
+            </a>
+        </div>
+    </div>
+
+    <script>document.getElementById('current-year').textContent = new Date().getFullYear();</script>
+    <script src="/js/announcements.js"></script>
+</body>
+</html>

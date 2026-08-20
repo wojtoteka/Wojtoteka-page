@@ -1,0 +1,30 @@
+# Zaleznosci
+node_modules/
+npm-debug.log*
+
+# Ustawienia z haslami i kluczami. Wzor lezy w .env.example.
+.env
+.env.local
+
+# Pliki wgrywane przez panel - dane uzytkownikow, nie do repozytorium.
+uploads/
+
+# Zrzuty bazy - maja dane wszystkich wiadomosci i kont.
+*.sql
+*.sql.gz
+
+# Ciezkie binaria: instalatory, muzyka, wideo. Serwowane sa z dysku serwera,
+# a nie z repozytorium - GitHub i tak nie przyjmuje plikow >100 MB.
+*.exe
+*.deb
+*.AppImage
+*.mp3
+*.mp4
+public/nonStopPop/
+public/inne/litho/file/
+
+# Skrypty utrzymywane poza repozytorium.
+public/hack/
+
+.vscode/
+.DS_Store

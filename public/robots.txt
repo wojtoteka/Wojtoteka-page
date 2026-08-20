@@ -1,0 +1,35 @@
+User-agent: *
+Allow: /
+
+Disallow: /404.html
+Disallow: /503.html
+Disallow: /soon.html
+Disallow: /budowa.html
+Disallow: /status
+Disallow: /status.html
+Disallow: /hack/
+Disallow: /inne/
+Disallow: /dance/
+Disallow: /nonStopPop/
+Disallow: /admin.html
+Disallow: /api/
+Disallow: /panel.html
+
+User-agent: HTTrack
+User-agent: WebCopier
+User-agent: WebZIP
+User-agent: Teleport
+User-agent: SiteSnagger
+User-agent: BlackWidow
+User-agent: WebCopy
+User-agent: wget
+User-agent: curl
+User-agent: python-requests
+User-agent: Python-urllib
+User-agent: Scrapy
+User-agent: Nikto
+User-agent: libwww-perl
+Disallow: /
+
+Sitemap: https://wojtoteka.ovh/sitemap.xml
+Crawl-delay: 1

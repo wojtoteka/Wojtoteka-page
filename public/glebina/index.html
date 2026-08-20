@@ -1,0 +1,2118 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="description" content="OSTATNI ODDECH. Zanurz się łodzią podwodną w ogromny ocean.">
+<meta name="theme-color" content="#02101e">
+<title>🌊 OSTATNI ODDECH</title>
+<!-- Favicon: batyskaf z promieniem latarki, osadzony jako SVG data URI (bez zewnętrznych plików) -->
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%230b3a5c'/><stop offset='1' stop-color='%23020a16'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><path d='M36 28 62 16v28L36 34z' fill='%23ffe9a0' opacity='.32'/><ellipse cx='25' cy='31' rx='14' ry='9.5' fill='%23ffb347'/><rect x='19' y='19' width='9' height='6' rx='2.5' fill='%23e89a2f'/><circle cx='30' cy='30' r='4' fill='%23bfefff'/><circle cx='12' cy='45' r='2' fill='%239fdcff' opacity='.8'/><circle cx='17' cy='52' r='1.5' fill='%239fdcff' opacity='.6'/></svg>">
+<style>
+/* ====== OSTATNI ODDECH — style interfejsu ====== */
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body{
+  margin:0; padding:0; position:fixed; inset:0; overflow:hidden;
+  background:#02101e; touch-action:none; overscroll-behavior:none;
+  font-family:"Segoe UI",system-ui,-apple-system,sans-serif; color:#dff3ff;
+  -webkit-user-select:none; user-select:none;
+}
+#gra{ position:absolute; inset:0; display:block; touch-action:none; }
+
+/* --- pełnoekranowe nakładki (start / baza / pauza) --- */
+.ekran{
+  position:absolute; inset:0; display:none; align-items:center; justify-content:center;
+  padding:14px; z-index:10; background:rgba(1,8,18,.55);
+}
+.ekran.widoczny{ display:flex; }
+.panel{
+  width:100%; max-width:560px; max-height:94vh; overflow-y:auto;
+  background:rgba(4,18,32,.86); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  border:1px solid rgba(120,220,255,.28); border-radius:20px;
+  box-shadow:0 0 60px rgba(0,180,255,.18), inset 0 0 40px rgba(0,60,110,.25);
+  padding:22px 20px; text-align:center; touch-action:pan-y;
+}
+.panel::-webkit-scrollbar{ width:8px; } .panel::-webkit-scrollbar-thumb{ background:rgba(120,220,255,.25); border-radius:4px; }
+
+#logo{ width:min(62vw,250px); height:auto; margin:2px auto 6px; display:block;
+  filter:drop-shadow(0 0 26px rgba(60,190,255,.35)); }
+.tytul{
+  margin:4px 0 0; font-size:clamp(30px,8vw,50px); font-weight:800; letter-spacing:.08em; line-height:1.15;
+  background:linear-gradient(180deg,#c9f2ff 10%,#4fc3f7 55%,#1565a0 100%);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow:0 0 0 transparent;
+}
+.podtytul{ letter-spacing:.35em; font-size:clamp(11px,3vw,15px); color:#7fd4ff; margin:2px 0 12px; }
+.opis{ font-size:15px; line-height:1.5; color:#b8dcf0; margin:0 0 14px; }
+.instrukcja{
+  background:rgba(10,40,70,.5); border:1px solid rgba(120,220,255,.18); border-radius:12px;
+  padding:10px 12px; font-size:14.5px; line-height:1.7; margin:0 0 14px; color:#cfeaff;
+}
+.stopka{ font-size:12.5px; color:#6fa8c6; margin-top:12px; line-height:1.5; }
+.autor{ font-size:11.5px; color:#4d7f9e; margin-top:14px; letter-spacing:1.5px; text-transform:uppercase; }
+
+.przycisk{
+  display:block; width:100%; min-height:52px; margin:8px 0; padding:12px 18px;
+  font-family:inherit; font-size:17px; font-weight:700; letter-spacing:.06em; color:#02141f;
+  background:linear-gradient(180deg,#8fe3ff,#2fa8dd); border:none; border-radius:14px;
+  cursor:pointer; box-shadow:0 4px 18px rgba(40,170,230,.4);
+  transition:transform .08s, box-shadow .08s;
+}
+.przycisk:active{ transform:scale(.97); box-shadow:0 2px 8px rgba(40,170,230,.3); }
+.przycisk.duzy{ min-height:60px; font-size:19px; }
+.przycisk.drugi{ background:rgba(40,90,130,.55); color:#cfeaff; border:1px solid rgba(120,220,255,.3); box-shadow:none; }
+
+/* --- ekran bazy: statystyki i sklep --- */
+#bazaTytul{ margin:2px 0 4px; font-size:clamp(22px,6vw,30px); letter-spacing:.04em; }
+#bazaInfo{ color:#9fcbe4; font-size:15px; margin:0 0 10px; line-height:1.5; }
+.staty{ display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:0 0 12px; }
+.staty div{ background:rgba(10,40,70,.5); border:1px solid rgba(120,220,255,.15); border-radius:10px;
+  padding:7px 12px; font-size:13.5px; color:#cfeaff; }
+.perlyBaza{ font-size:22px; font-weight:800; color:#ffe9b0; margin:2px 0 12px; text-shadow:0 0 14px rgba(255,220,140,.4); }
+
+.sklep{ display:grid; grid-template-columns:1fr; gap:10px; margin-bottom:8px; text-align:left; }
+.sklepPoz{
+  display:grid; grid-template-columns:44px 1fr auto; gap:10px; align-items:center;
+  background:rgba(8,32,56,.6); border:1px solid rgba(120,220,255,.16); border-radius:14px; padding:10px 12px;
+}
+.sklepPoz .ikona{ font-size:28px; text-align:center; }
+.sklepPoz .nazwa{ font-weight:700; font-size:15.5px; color:#e6f6ff; }
+.sklepPoz .opisU{ font-size:12.5px; color:#8fb9d4; margin-top:1px; }
+.sklepPoz .pips{ font-size:12px; letter-spacing:.2em; color:#59d7ff; margin-top:3px; }
+.sklepPoz button{
+  min-width:86px; min-height:46px; border:none; border-radius:11px; font-family:inherit;
+  font-weight:700; font-size:14px; cursor:pointer; color:#02141f;
+  background:linear-gradient(180deg,#ffe2a0,#e0a83c); box-shadow:0 3px 10px rgba(230,180,80,.3);
+}
+.sklepPoz button:disabled{ background:rgba(80,110,135,.35); color:#7d9db5; box-shadow:none; cursor:default; }
+.sklepPoz button:active:not(:disabled){ transform:scale(.96); }
+
+/* --- przycisk pauzy (tylko urządzenia dotykowe) --- */
+#btnPauza{
+  position:fixed; top:calc(10px + env(safe-area-inset-top)); right:calc(10px + env(safe-area-inset-right));
+  width:56px; height:56px; z-index:12; border-radius:16px; border:1px solid rgba(140,225,255,.35);
+  background:rgba(6,26,46,.55); color:#bfeaff; font-size:24px; line-height:1; cursor:pointer;
+  backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+}
+#btnPauza:active{ transform:scale(.94); }
+
+/* --- ranking (leaderboard TOP 5) --- */
+.rankingBlok{ margin-top:10px; padding-top:14px; border-top:1px solid rgba(120,220,255,.18); text-align:left; }
+.rankingBlok h3{ margin:0 0 8px; font-size:15.5px; letter-spacing:.15em; color:#ffe9b0; text-align:center; }
+.ranking{ list-style:none; margin:0 0 10px; padding:0; display:flex; flex-direction:column; gap:6px; }
+.ranking li{ display:flex; justify-content:space-between; align-items:center; gap:8px;
+  background:rgba(8,32,56,.6); border:1px solid rgba(120,220,255,.16); border-radius:10px; padding:8px 12px; font-size:14.5px; }
+.ranking li .miejsce{ font-weight:800; color:#ffe9b0; width:26px; flex:none; }
+.ranking li .nick{ flex:1; min-width:0; color:#e6f6ff; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ranking li .wynik{ color:#7fd4ff; font-weight:700; flex:none; }
+.ranking li.pusta{ justify-content:center; color:#7fa8c4; font-size:13.5px; }
+.rankInfo{ font-size:13.5px; color:#9fcbe4; margin:0 0 8px; line-height:1.4; }
+.nickPole{ width:100%; min-height:46px; margin:0 0 10px; padding:10px 14px; box-sizing:border-box;
+  border-radius:10px; border:1px solid rgba(120,220,255,.3); background:rgba(4,18,32,.6);
+  color:#e6f6ff; font-family:inherit; font-size:15px; }
+.nickPole:focus{ outline:2px solid rgba(120,220,255,.5); }
+
+@media (max-width:520px){
+  .panel{ padding:16px 13px; border-radius:16px; }
+  .opis{ font-size:14px; }
+}
+</style>
+</head>
+<body>
+<canvas id="gra"></canvas>
+
+<!-- ====== EKRAN STARTOWY (okładka gry) ====== -->
+<div id="ekranStart" class="ekran widoczny">
+  <div class="panel">
+    <!-- Logo gry: batyskaf ze stożkiem latarki nad czającą się otchłanią -->
+    <svg id="logo" viewBox="0 0 320 320" aria-label="Logo gry OSTATNI ODDECH">
+      <defs>
+        <radialGradient id="lgTlo" cx="50%" cy="26%" r="90%">
+          <stop offset="0%" stop-color="#0e5c8a"/><stop offset="55%" stop-color="#063250"/><stop offset="100%" stop-color="#010812"/>
+        </radialGradient>
+        <linearGradient id="lgRing" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#9fe8ff"/><stop offset="1" stop-color="#1c6a9c"/>
+        </linearGradient>
+        <linearGradient id="lgSnop" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff3c0" stop-opacity=".85"/><stop offset="1" stop-color="#fff3c0" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="lgKadlub" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffcf6b"/><stop offset="1" stop-color="#d98324"/>
+        </linearGradient>
+      </defs>
+      <circle cx="160" cy="160" r="152" fill="url(#lgTlo)" stroke="url(#lgRing)" stroke-width="5"/>
+      <!-- promienie z powierzchni -->
+      <path d="M120 8 L150 8 L120 130 L96 120 Z" fill="#bfeaff" opacity=".07"/>
+      <path d="M170 6 L196 10 L178 128 L150 124 Z" fill="#bfeaff" opacity=".05"/>
+      <!-- snop latarki -->
+      <path d="M186 128 L300 170 L268 236 L176 152 Z" fill="url(#lgSnop)"/>
+      <!-- batyskaf -->
+      <g transform="translate(140,132) rotate(14)">
+        <ellipse cx="0" cy="0" rx="52" ry="32" fill="url(#lgKadlub)"/>
+        <ellipse cx="0" cy="10" rx="50" ry="20" fill="#a85f14" opacity=".45"/>
+        <rect x="-18" y="-44" width="30" height="18" rx="8" fill="#e89a2f"/>
+        <circle cx="16" cy="-4" r="12" fill="#bfefff"/><circle cx="12" cy="-8" r="4" fill="#ffffff" opacity=".85"/>
+        <circle cx="44" cy="-2" r="6" fill="#fff3c0"/>
+        <path d="M-52 -6 L-72 -22 L-70 8 Z" fill="#c17418"/>
+        <circle cx="-14" cy="-2" r="4" fill="#8a4d10"/><circle cx="2" cy="6" r="4" fill="#8a4d10"/>
+      </g>
+      <!-- bąbelki -->
+      <circle cx="112" cy="92" r="6" fill="none" stroke="#9fdcff" stroke-width="2" opacity=".7"/>
+      <circle cx="100" cy="66" r="4" fill="none" stroke="#9fdcff" stroke-width="2" opacity=".5"/>
+      <circle cx="122" cy="46" r="3" fill="none" stroke="#9fdcff" stroke-width="1.5" opacity=".4"/>
+      <!-- macki otchłani na dnie -->
+      <path d="M28 262 C60 190 78 236 92 292 L20 292 Z" fill="#010710" opacity=".9"/>
+      <path d="M262 274 C240 196 218 240 208 296 L288 296 Z" fill="#010710" opacity=".9"/>
+      <path d="M120 306 C140 250 176 250 196 308 Z" fill="#010710" opacity=".85"/>
+      <!-- para ślepiów w mroku -->
+      <circle cx="238" cy="266" r="3.4" fill="#ffdf8a" opacity=".9"/>
+      <circle cx="252" cy="268" r="3.4" fill="#ffdf8a" opacity=".9"/>
+    </svg>
+    <h1 class="tytul">OSTATNI ODDECH</h1>
+    <div class="podtytul">PRZETRWAJ GŁĘBINY</div>
+    <p class="opis">Zanurz się swoją łodzią podwodną w głęboki ocean. Zbieraj perły i pilnuj tlenu.</p>
+    <div class="instrukcja" id="instrKlaw">
+      ⌨️ <b>Sterowanie:</b> WASD / strzałki<br>
+      ⏸ <b>Pauza:</b> ESC lub P &nbsp;•&nbsp; <b>Start:</b> Enter<br>
+      🫧 Zbieraj bąbelki tlenu &nbsp;•&nbsp; 🦪 Perły = waluta w sklepie
+    </div>
+    <div class="instrukcja" id="instrDotyk">
+      👆 <b>Sterowanie:</b> wirtualny joystick — przeciągnij kciukiem po lewej stronie ekranu<br>
+      ⏸ <b>Pauza:</b> przycisk w prawym górnym rogu<br>
+      🫧 Zbieraj bąbelki tlenu &nbsp;•&nbsp; 🦪 Perły = waluta w sklepie
+    </div>
+    <button id="btnStart" class="przycisk duzy">🌊 ZANURZ SIĘ</button>
+    <button id="btnPokazRanking" class="przycisk drugi">🏆 RANKING TOP 5</button>
+    <div class="stopka">Perły zachowujesz nawet po zniszczeniu łodzi.<br>
+      Między zanurzeniami kupuj ulepszenia. Podobno na dnie coś się świeci…</div>
+    <div class="autor">Stworzone przez Wojtoteka</div>
+  </div>
+</div>
+
+<!-- ====== EKRAN RANKINGU (podgląd z menu głównego) ====== -->
+<div id="ekranRanking" class="ekran">
+  <div class="panel" style="max-width:440px">
+    <h2 style="letter-spacing:.2em; margin:6px 0 10px">🏆 TOP 5 GŁĘBIN</h2>
+    <ul id="rankingListaStart" class="ranking"></ul>
+    <button id="btnRankingZamknij" class="przycisk drugi">◀ WRÓĆ</button>
+  </div>
+</div>
+
+<!-- ====== EKRAN BAZY (po śmierci / wynurzeniu): statystyki + sklep ====== -->
+<div id="ekranBaza" class="ekran">
+  <div class="panel">
+    <h2 id="bazaTytul">…</h2>
+    <p id="bazaInfo">…</p>
+    <div id="bazaStaty" class="staty"></div>
+    <div class="perlyBaza">🦪 <span id="bazaPerly">0</span> pereł</div>
+    <div id="sklep" class="sklep"></div>
+    <button id="btnPonow" class="przycisk duzy">🌊 ZANURZ SIĘ PONOWNIE</button>
+
+    <div class="rankingBlok">
+      <h3>🏆 TOP 5 GŁĘBIN</h3>
+      <ul id="rankingLista" class="ranking"></ul>
+      <div id="rankingForma" style="display:none">
+        <p id="rankingInfo" class="rankInfo"></p>
+        <input id="rankingNick" class="nickPole" type="text" maxlength="16" placeholder="Twój nick (2-16 znaków)" autocomplete="off">
+        <button id="btnRankingWyslij" class="przycisk">📝 ZAPISZ WYNIK W RANKINGU</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== EKRAN PAUZY ====== -->
+<div id="ekranPauza" class="ekran">
+  <div class="panel" style="max-width:380px">
+    <h2 style="letter-spacing:.3em; margin:6px 0 16px">⏸ PAUZA</h2>
+    <button id="btnWznow" class="przycisk duzy">▶ WZNÓW</button>
+    <button id="btnSklepPauza" class="przycisk">🛒 SKLEP</button>
+  </div>
+</div>
+
+<!-- ====== EKRAN SKLEPU W TRAKCIE ZANURZENIA (z pauzy, bez wypływania) ====== -->
+<div id="ekranSklep" class="ekran">
+  <div class="panel">
+    <h2 style="letter-spacing:.2em; margin:6px 0 10px">🛒 SKLEP</h2>
+    <div class="perlyBaza">🦪 <span id="sklepPerly">0</span> pereł</div>
+    <div id="sklepPauza" class="sklep"></div>
+    <button id="btnSklepWroc" class="przycisk drugi">◀ WRÓĆ</button>
+  </div>
+</div>
+
+<button id="btnPauza" hidden aria-label="Pauza">⏸</button>
+
+<script>
+'use strict';
+/* =========================================================================
+   OSTATNI ODDECH
+   Kompletna gra 2D w jednym pliku. Canvas + Web Audio API, zero zależności.
+   Postęp trzymany wyłącznie w zmiennych sesji (bez localStorage).
+   ========================================================================= */
+
+/* ====== NARZĘDZIA ====== */
+const TAU = Math.PI * 2;
+const ogr  = (v, a, b) => v < a ? a : v > b ? b : v;        // ograniczenie do przedziału
+const lerp = (a, b, t) => a + (b - a) * t;                  // interpolacja liniowa
+const los  = (a, b) => a + Math.random() * (b - a);         // losowa liczba (tylko efekty)
+
+// Deterministyczny generator liczb pseudolosowych (do proceduralnej generacji)
+function mulberry32(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0;
+  let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+  return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// Szybki deterministyczny hash 2D -> [0,1) (paralaksa, ściany, śnieg morski)
+function hash2(x, y){ const s = Math.sin(x * 127.1 + y * 311.7) * 43758.5453; return s - Math.floor(s); }
+
+// Zaokrąglony prostokąt (pomocniczo dla HUD)
+function rr(c, x, y, w2, h2, r){ c.beginPath();
+  c.moveTo(x + r, y); c.arcTo(x + w2, y, x + w2, y + h2, r); c.arcTo(x + w2, y + h2, x, y + h2, r);
+  c.arcTo(x, y + h2, x, y, r); c.arcTo(x, y, x + w2, y, r); c.closePath(); }
+
+/* ====== KONFIGURACJA ŚWIATA ====== */
+const M          = 10;    // pikseli na metr głębokości
+const SWIAT_SZER = 2200;  // szerokość świata w px
+const SCIANA     = 90;    // bazowa grubość skalnych ścian
+const CHUNK_H    = 560;   // wysokość porcji generowanego świata
+const OKO_Y      = 24500; // głębokość Oka Otchłani (2450 m)
+
+// Strefy głębokości — nazwy i opisy pokazywane przy zejściu
+const STREFY = [
+  { od: 0,    nazwa: 'Słoneczna Toń',            opis: 'Światło jeszcze tu sięga' },
+  { od: 150,  nazwa: 'Strefa Zmierzchu',         opis: 'Kolory bledną…' },
+  { od: 400,  nazwa: 'Strefa Północy',           opis: 'Wieczna noc oceanu' },
+  { od: 800,  nazwa: 'Otchłań',                  opis: 'Coś tu na ciebie patrzy' },
+  { od: 1150, nazwa: 'Zatopione Miasto Thalass', opis: 'Ruiny sprzed tysięcy lat' },
+  { od: 1500, nazwa: 'Rów Lewiatana',            opis: 'Zawróć, póki możesz' },
+  { od: 2400, nazwa: 'Oko Otchłani',             opis: '…ono też patrzy w ciebie' },
+];
+
+// Kolor wody zależny od głębokości (metry) — przejście turkus -> granat -> czerń
+const KOLORY_WODY = [
+  { g: 0,    k: [52, 170, 190] },
+  { g: 150,  k: [16, 95, 135] },
+  { g: 400,  k: [7, 45, 82] },
+  { g: 800,  k: [3, 20, 42] },
+  { g: 1400, k: [2, 9, 22] },
+  { g: 2400, k: [1, 3, 9] },
+];
+function kolorWody(g){
+  for (let i = 0; i < KOLORY_WODY.length - 1; i++){
+    const a = KOLORY_WODY[i], b = KOLORY_WODY[i + 1];
+    if (g <= b.g){ const t = ogr((g - a.g) / (b.g - a.g), 0, 1);
+      return [lerp(a.k[0], b.k[0], t), lerp(a.k[1], b.k[1], t), lerp(a.k[2], b.k[2], t)]; }
+  }
+  return KOLORY_WODY[KOLORY_WODY.length - 1].k;
+}
+
+// Krzywa nieprzezroczystości ciemności (im głębiej, tym mocniejszy mrok)
+const KRZYWA_MROKU = [[0,0],[35,0],[120,.42],[300,.7],[600,.86],[1000,.93],[1600,.96],[3200,.975]];
+function krzywaCiemnosci(g){
+  let a = 0;
+  for (let i = 0; i < KRZYWA_MROKU.length - 1; i++){
+    const p = KRZYWA_MROKU[i], q = KRZYWA_MROKU[i + 1];
+    if (g <= q[0]){ a = lerp(p[1], q[1], ogr((g - p[0]) / (q[0] - p[0]), 0, 1)); break; }
+    a = q[1];
+  }
+  if (g > 1150 && g < 1450) a -= 0.07; // Zatopione Miasto lekko się jarzy
+  return ogr(a, 0, 0.978);
+}
+
+// Ulepszenia w sklepie (koszty rosnące; poziomy trzymane w `postep`)
+const ULEPSZENIA = {
+  latarka: { ikona: '🔦', nazwa: 'Latarka głębinowa', opis: '+45 zasięgu światła',   koszty: [15, 35, 70, 130, 220] },
+  tlen:    { ikona: '🫧', nazwa: 'Zbiornik tlenu',    opis: '+30 s zapasu tlenu',     koszty: [15, 35, 70, 130, 220] },
+  naped:   { ikona: '🌀', nazwa: 'Silnik',            opis: '+12% prędkości',         koszty: [20, 45, 90, 160, 260] },
+  pancerz: { ikona: '🛡️', nazwa: 'Pancerz',           opis: '+1 do wytrzymałości',    koszty: [25, 55, 110, 190, 300] },
+  sonar:   { ikona: '📡', nazwa: 'Sonar',             opis: 'Wykrywa drapieżniki',    koszty: [30, 80, 160] },
+};
+
+// Wiadomości z butelek — mały sekret świata
+const WIADOMOSCI = [
+  '„Dzień 47: ryby wciąż udają, że mnie nie znają.” — dziennik nurka',
+  '„Jeśli to czytasz — NIE świeć latarką w Rowie. Ono lubi światło.”',
+  '„Sprzedam kotwicę, mało używana. Pytać na powierzchni.”',
+  '„Widziałem miasto pod 1200 metrem. Okna wciąż się świecą…”',
+  '„Wielorybowi zawdzięczam życie. Oddaj mu ukłon, gdy przepływa.”',
+  '„Tu byłem. — Tonący Janusz”',
+  '„Trzy skarby Thalass czekają na odważnego. Złoto pamięta.”',
+];
+
+/* ====== POSTĘP SESJI (przetrwa wiele zanurzeń; znika z zamknięciem karty) ====== */
+const postep = {
+  perly: 0,                 // waluta
+  poziomy: { latarka: 0, tlen: 0, naped: 0, pancerz: 0, sonar: 0 },
+  rekord: 0,                // rekord głębokości [m]
+  zanurzenia: 0,            // liczba ukończonych zejść
+  relikty: 0,               // zebrane Relikty Thalass (3 = złoty kadłub)
+  sekretZloty: false,
+  odkryteOko: false,
+};
+const pokazane = {};        // jednorazowe podpowiedzi (toasty)
+
+/* ====== STAN GRY ====== */
+let stan = 'menu';          // menu | gra | pauza | baza
+let czasGry = 0;            // globalny zegar (animacje)
+let wstrzas = 0;            // siła trzęsienia ekranu
+let blyskObrazen = 0;       // czerwony rozbłysk po trafieniu
+
+const gracz = { x: SWIAT_SZER / 2, y: 60, vx: 0, vy: 0, r: 18, kier: 1,
+  hp: 3, maxHp: 3, tlen: 75, maxTlen: 75, nietyk: 0,
+  swiatlo: 170, szyb: 265, przysp: 900, smiga: 0, babelT: 0 };
+
+const cam = { x: 0, y: 0 };
+
+let run = { ziarno: 1, maxG: 0, perlyZebrane: 0, czas: 0 };
+
+// Kontenery bytów świata (czyszczone przy każdym zanurzeniu)
+let chunki = new Set();
+let skaly = [], glony = [], wraki = [], znajdzki = [], meduzy = [], lawice = [],
+    drapiezniki = [], kominy = [], budowle = [], czasteczki = [];
+
+const lewiatan = { stan: 'spokoj', t: 25, x: 0, y: 0, vx: 0, strona: 1 };
+const wieloryb = { aktywny: false, t: 55, x: 0, y: 0, vx: 0, dal: false };
+const oko      = { otwarcie: 0 };
+
+let ogloszenie = null;      // { tytul, sub, t } — wielki napis strefy
+let toasty = [];            // krótkie komunikaty na dole ekranu
+let maxStrefa = -1;         // najgłębsza ogłoszona strefa w tym zejściu
+let sonarT = 0, alarmT = 0, ambientT = 0;
+
+const glebokosc = () => Math.max(0, gracz.y / M); // głębokość gracza w metrach
+
+/* ====== DŹWIĘK (Web Audio API, generowany kodem) ====== */
+let ac = null, master = null, dronGain = null;
+
+// Pojedynczy ton z obwiednią i poślizgiem częstotliwości
+function ton(f0, f1, czas, typ, glosnosc, kiedy){
+  if (!ac) return;
+  const t0 = ac.currentTime + (kiedy || 0);
+  const o = ac.createOscillator(), g = ac.createGain();
+  o.type = typ; o.frequency.setValueAtTime(Math.max(1, f0), t0);
+  o.frequency.exponentialRampToValueAtTime(Math.max(1, f1), t0 + czas);
+  g.gain.setValueAtTime(glosnosc, t0);
+  g.gain.exponentialRampToValueAtTime(0.0001, t0 + czas);
+  o.connect(g); g.connect(master); o.start(t0); o.stop(t0 + czas + 0.05);
+}
+
+// Krótki wybuch szumu (obrażenia, ryk)
+function szum(czas, glosnosc, filtrHz){
+  if (!ac) return;
+  const n = Math.floor(ac.sampleRate * czas);
+  const buf = ac.createBuffer(1, n, ac.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+  const src = ac.createBufferSource(); src.buffer = buf;
+  const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = filtrHz;
+  const g = ac.createGain(); g.gain.value = glosnosc;
+  src.connect(f); f.connect(g); g.connect(master); src.start();
+}
+
+// Inicjalizacja audio — wywoływana po pierwszym dotknięciu/klawiszu (wymóg przeglądarek)
+function initAudio(){
+  if (ac){ if (ac.state === 'suspended') ac.resume(); return; }
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+  ac = new AC();
+  // startowa głośność zależna od stanu (w menu cicho, w grze pełna)
+  master = ac.createGain(); master.gain.value = stan === 'gra' ? 0.55 : 0.06; master.connect(ac.destination);
+
+  // Stały, cichy podwodny szum tła
+  const n = ac.sampleRate * 2, buf = ac.createBuffer(1, n, ac.sampleRate);
+  const d = buf.getChannelData(0); let ost = 0;
+  for (let i = 0; i < n; i++){ ost = ost * 0.97 + (Math.random() * 2 - 1) * 0.03; d[i] = ost * 6; }
+  const src = ac.createBufferSource(); src.buffer = buf; src.loop = true;
+  const f = ac.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 300;
+  const g = ac.createGain(); g.gain.value = 0.05;
+  src.connect(f); f.connect(g); g.connect(master); src.start();
+
+  // Złowieszczy dron Lewiatana — dwa niskie oscylatory, głośność sterowana w pętli
+  dronGain = ac.createGain(); dronGain.gain.value = 0; dronGain.connect(master);
+  const o1 = ac.createOscillator(); o1.type = 'sine'; o1.frequency.value = 36;
+  const o2 = ac.createOscillator(); o2.type = 'sawtooth'; o2.frequency.value = 54.5;
+  const f2 = ac.createBiquadFilter(); f2.type = 'lowpass'; f2.frequency.value = 130;
+  o1.connect(dronGain); o2.connect(f2); f2.connect(dronGain); o1.start(); o2.start();
+}
+
+// Efekty dźwiękowe gry
+const sfxPerla    = () => { ton(760, 1500, 0.22, 'sine', 0.14); };
+const sfxKrysztal = () => { ton(620, 1240, 0.3, 'sine', 0.13); ton(930, 1860, 0.3, 'sine', 0.09, 0.06); };
+const sfxTlen     = () => { ton(300, 620, 0.12, 'sine', 0.1); ton(380, 760, 0.12, 'sine', 0.09, 0.1); ton(460, 900, 0.14, 'sine', 0.08, 0.2); };
+const sfxObraz    = () => { szum(0.25, 0.35, 900); ton(160, 55, 0.3, 'square', 0.16); };
+const sfxSonar    = () => { ton(1250, 640, 0.35, 'sine', 0.07); ton(1250, 640, 0.35, 'sine', 0.025, 0.28); };
+const sfxRyk      = () => { szum(1.1, 0.5, 220); ton(80, 26, 1.3, 'sawtooth', 0.4); ton(52, 20, 1.5, 'sine', 0.45, 0.1); };
+const sfxKup      = () => { ton(880, 1320, 0.1, 'triangle', 0.14); ton(1320, 1760, 0.14, 'triangle', 0.12, 0.09); };
+const sfxBabelek  = () => { ton(los(260, 700), los(700, 1300), 0.09, 'sine', 0.028); };
+const sfxWieloryb = () => { ton(180, 330, 1.5, 'sine', 0.1); ton(330, 140, 1.9, 'sine', 0.09, 1.3); };
+const sfxSmierc   = () => { ton(440, 55, 1.4, 'sawtooth', 0.22); szum(0.9, 0.4, 500); ton(220, 40, 1.8, 'sine', 0.2, 0.2); };
+const sfxAlarm    = () => { ton(880, 880, 0.09, 'square', 0.09); ton(880, 880, 0.09, 'square', 0.09, 0.16); };
+const sfxRelikt   = () => { ton(520, 1040, 0.5, 'triangle', 0.14); ton(780, 1560, 0.6, 'triangle', 0.1, 0.15); };
+const sfxBoom     = () => { ton(64, 22, 2.2, 'sine', 0.5); szum(1.5, 0.3, 120); };
+
+/* ====== PŁÓTNO I SKALOWANIE ====== */
+const canvas = document.getElementById('gra');
+const ctx = canvas.getContext('2d');
+const ciemne = document.createElement('canvas');   // warstwa ciemności (połowa rozdzielczości = miękkie światło)
+const dctx = ciemne.getContext('2d');
+const vinieta = document.createElement('canvas');  // przyciemnione rogi ekranu (cache)
+let w = 0, h = 0, dpr = 1;
+
+function rozmiar(){
+  w = window.innerWidth; h = window.innerHeight;
+  dpr = Math.min(2, window.devicePixelRatio || 1);
+  canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+  canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ciemne.width = Math.max(2, Math.round(w / 2)); ciemne.height = Math.max(2, Math.round(h / 2));
+  dctx.setTransform(0.5, 0, 0, 0.5, 0, 0); // rysujemy w współrzędnych ekranu
+  // winieta — budowana raz na zmianę rozmiaru
+  vinieta.width = Math.max(2, Math.round(w / 2)); vinieta.height = Math.max(2, Math.round(h / 2));
+  const vc = vinieta.getContext('2d');
+  const vg = vc.createRadialGradient(w / 4, h / 4, Math.min(w, h) / 4.6, w / 4, h / 4, Math.max(w, h) / 1.9);
+  vg.addColorStop(0, 'rgba(0,10,22,0)'); vg.addColorStop(1, 'rgba(0,8,18,.55)');
+  vc.fillStyle = vg; vc.fillRect(0, 0, vinieta.width, vinieta.height);
+}
+window.addEventListener('resize', rozmiar);
+window.addEventListener('orientationchange', () => setTimeout(rozmiar, 120));
+
+/* ====== WEJŚCIE: KLAWIATURA ====== */
+const klaw = {};
+window.addEventListener('keydown', e => {
+  // pole nicku w rankingu: nie przechwytuj sterowania grą podczas pisania
+  if (e.target && e.target.tagName === 'INPUT') return;
+  initAudio();
+  const k = e.key.toLowerCase();
+  // gdy fokus jest na przycisku (np. w sklepie), Enter/spacja obsługują ten przycisk
+  const naPrzycisku = e.target && e.target.tagName === 'BUTTON';
+  if (!naPrzycisku && ['arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(k)) e.preventDefault();
+  klaw[k] = true;
+  if (k === 'escape' || k === 'p') przelaczPauze();
+  if (k === 'enter' && !naPrzycisku){
+    if (stan === 'menu' || stan === 'baza') startZanurzenie();
+    else if (stan === 'pauza') przelaczPauze();
+  }
+});
+window.addEventListener('keyup', e => { klaw[e.key.toLowerCase()] = false; });
+
+/* ====== WEJŚCIE: DOTYK + WIRTUALNY JOYSTICK ====== */
+const czyDotyk = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+// Joystick: baza spoczywa w lewym dolnym rogu; po dotknięciu lewej części ekranu
+// zakotwicza się pod palcem (wygodniejsze, a wygląda tak samo)
+const joy = { id: null, bx: 0, by: 0, dx: 0, dy: 0, nx: 0, ny: 0, PROM: 62 };
+
+canvas.addEventListener('touchstart', e => {
+  e.preventDefault(); initAudio();
+  if (stan !== 'gra') return;
+  for (const t of e.changedTouches){
+    if (joy.id === null){
+      joy.id = t.identifier;
+      joy.bx = ogr(t.clientX, joy.PROM + 14, w - joy.PROM - 14);
+      joy.by = ogr(t.clientY, joy.PROM + 14, h - joy.PROM - 14);
+      joy.dx = joy.dy = joy.nx = joy.ny = 0;
+    }
+  }
+}, { passive: false });
+
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  for (const t of e.changedTouches){
+    if (t.identifier === joy.id){
+      let dx = t.clientX - joy.bx, dy = t.clientY - joy.by;
+      const dl = Math.hypot(dx, dy);
+      if (dl > joy.PROM){ dx = dx / dl * joy.PROM; dy = dy / dl * joy.PROM; }
+      joy.dx = dx; joy.dy = dy;
+      const n = Math.hypot(dx, dy) / joy.PROM; // martwa strefa 15%
+      joy.nx = n > 0.15 ? dx / joy.PROM : 0;
+      joy.ny = n > 0.15 ? dy / joy.PROM : 0;
+    }
+  }
+}, { passive: false });
+
+function joyKoniec(e){
+  for (const t of e.changedTouches){
+    if (t.identifier === joy.id){ joy.id = null; joy.dx = joy.dy = joy.nx = joy.ny = 0; }
+  }
+}
+canvas.addEventListener('touchend', joyKoniec);
+canvas.addEventListener('touchcancel', joyKoniec);
+canvas.addEventListener('contextmenu', e => e.preventDefault());
+window.addEventListener('pointerdown', initAudio, { once: false });
+
+// Automatyczna pauza, gdy karta traci widoczność
+document.addEventListener('visibilitychange', () => { if (document.hidden && stan === 'gra') przelaczPauze(); });
+
+/* ====== ŚCIANY WĄWOZU (gładki szum deterministyczny) ====== */
+function falaSciany(y, s){
+  const i = Math.floor(y / 120), f = y / 120 - i;
+  const a = hash2(i, s), b = hash2(i + 1, s);
+  const t = f * f * (3 - 2 * f);
+  return a + (b - a) * t;
+}
+const brzegLewy  = y => SCIANA + falaSciany(y, 3) * 70;
+const brzegPrawy = y => SWIAT_SZER - SCIANA - falaSciany(y, 7) * 70;
+
+/* ====== PROCEDURALNA GENERACJA ŚWIATA (porcjami po CHUNK_H px) ====== */
+function zapewnijChunki(){
+  const i0 = Math.max(0, Math.floor((cam.y - 900) / CHUNK_H));
+  const i1 = Math.floor((cam.y + h + 1400) / CHUNK_H);
+  for (let i = i0; i <= i1; i++){
+    if (!chunki.has(i)){ chunki.add(i); generujChunk(i); }
+  }
+}
+
+function generujChunk(i){
+  const rnd = mulberry32((run.ziarno ^ (i * 2654435761)) >>> 0);
+  const y0 = i * CHUNK_H;
+  const gM = y0 / M;                                  // głębokość górnej krawędzi chunka [m]
+  const px = () => brzegLewy(0) + 140 + rnd() * (SWIAT_SZER - 2 * (SCIANA + 140)); // losowe x z dala od ścian
+  const py = () => y0 + rnd() * CHUNK_H;
+  const wMiescie = gM > 1130 && gM < 1460;            // pas Zatopionego Miasta
+
+  // --- skały (z glonami, czasem kominem hydrotermalnym) ---
+  const nSkal = 2 + Math.floor(rnd() * 3);
+  for (let k = 0; k < nSkal; k++){
+    const r = 26 + rnd() * 48;
+    const s = { x: px(), y: py(), r, pkt: [] };
+    const nP = 8 + Math.floor(rnd() * 4);
+    for (let p = 0; p < nP; p++) s.pkt.push({ a: p / nP * TAU, r: r * (0.72 + rnd() * 0.4) });
+    skaly.push(s);
+    if (gM < 380 && rnd() < 0.65)
+      glony.push({ x: s.x + (rnd() - 0.5) * r, y: s.y - r * 0.55, wys: 60 + rnd() * 95, faza: rnd() * TAU });
+    if (gM > 480 && rnd() < 0.2)
+      kominy.push({ x: s.x, y: s.y - r * 0.8, t: rnd() });
+  }
+
+  // --- znajdźki: perły / kryształy ---
+  const nPerel = 2 + (rnd() < 0.5 ? 1 : 0);
+  for (let k = 0; k < nPerel; k++){
+    const kr = gM > 350 && rnd() < ogr((gM - 350) / 900, 0.25, 0.75);
+    znajdzki.push({ typ: kr ? 'krysztal' : 'perla', x: px(), y: py(), faza: rnd() * TAU, wziete: false });
+  }
+
+  // --- bąbelki tlenu (głębiej odrobinę rzadsze — rośnie napięcie) ---
+  const nTlen = 1 + (rnd() < (gM < 600 ? 0.7 : 0.45) ? 1 : 0);
+  for (let k = 0; k < nTlen; k++)
+    znajdzki.push({ typ: 'tlen', x: px(), y: py(), faza: rnd() * TAU, wziete: false });
+
+  // --- butelka z wiadomością (sekrety) ---
+  if (rnd() < 0.12)
+    znajdzki.push({ typ: 'butelka', x: px(), y: py(), faza: rnd() * TAU, wziete: false, tekst: Math.floor(rnd() * WIADOMOSCI.length) });
+
+  // --- meduzy ---
+  if (gM > 50){
+    const nMed = Math.floor(rnd() * (gM > 250 ? 3 : 2));
+    for (let k = 0; k < nMed; k++)
+      meduzy.push({ hx: px(), hy: py(), r: 16 + rnd() * 10, faza: rnd() * TAU });
+  }
+
+  // --- ławice rybek (nieszkodliwe, klimat) ---
+  if (gM < 750 && rnd() < 0.5){
+    const cx = px(), cy = py(), n = 7 + Math.floor(rnd() * 5), rybki = [];
+    for (let k = 0; k < n; k++)
+      rybki.push({ ox: (rnd() - 0.5) * 90, oy: (rnd() - 0.5) * 60, px: cx, py: cy, vx: 0, vy: 0 });
+    lawice.push({ hx: cx, hy: cy, faza: rnd() * TAU, rybki });
+  }
+
+  // --- drapieżniki (im głębiej, tym groźniejsze) ---
+  if (gM > 40 && gM < 480){
+    const n = 1 + (rnd() < 0.5 ? 1 : 0);
+    for (let k = 0; k < n; k++) drapiezniki.push(nowyDrapieznik('kasacz', px(), py(), rnd));
+  }
+  if (gM > 240){
+    drapiezniki.push(nowyDrapieznik('zarlacz', px(), py(), rnd));
+    if (rnd() < 0.35) drapiezniki.push(nowyDrapieznik('zarlacz', px(), py(), rnd));
+  }
+  if (gM > 650){
+    drapiezniki.push(nowyDrapieznik('widmo', px(), py(), rnd));
+    if (rnd() < 0.45) drapiezniki.push(nowyDrapieznik('widmo', px(), py(), rnd));
+  }
+
+  // --- wraki statków ---
+  if (gM > 80 && rnd() < 0.1){
+    const wx = px(), wy = py();
+    wraki.push({ x: wx, y: wy, rot: (rnd() - 0.5) * 0.5, skala: 0.8 + rnd() * 0.5 });
+    for (let k = 0; k < 3; k++)
+      znajdzki.push({ typ: 'perla', x: wx + (rnd() - 0.5) * 150, y: wy + 40 + rnd() * 60, faza: rnd() * TAU, wziete: false });
+  }
+
+  // --- Zatopione Miasto Thalass: budowle + relikty ---
+  if (wMiescie){
+    const nBud = 2 + Math.floor(rnd() * 2);
+    for (let k = 0; k < nBud; k++){
+      const typB = ['kolumna', 'dom', 'kopula', 'obelisk'][Math.floor(rnd() * 4)];
+      budowle.push({ typ: typB, x: px(), y: py(), wys: 120 + rnd() * 160, szer: 40 + rnd() * 70, faza: rnd() * TAU });
+    }
+    // relikty na stałych głębokościach: 1180 m, 1265 m, 1350 m
+    for (const gr of [1180, 1265, 1350]){
+      const yr = gr * M;
+      if (yr >= y0 && yr < y0 + CHUNK_H)
+        znajdzki.push({ typ: 'relikt', x: px(), y: yr, faza: rnd() * TAU, wziete: false });
+    }
+  }
+}
+
+// Typy drapieżników: promień, prędkość, zasięg agresji, obrażenia
+const TYPY_DRAP = {
+  kasacz:  { r: 13, szyb: 115, aggro: 250, dmg: 1 },  // mała czerwona bestia płycizn
+  zarlacz: { r: 24, szyb: 170, aggro: 380, dmg: 1 },  // rekin strefy zmierzchu
+  widmo:   { r: 19, szyb: 205, aggro: 470, dmg: 2 },  // żabnica z wabikiem — świeci w mroku
+};
+function nowyDrapieznik(typ, x, y, rnd){
+  const c = TYPY_DRAP[typ];
+  return { typ, x, y, hx: x, hy: y, vx: 0, vy: 0, r: c.r, kier: 1,
+    faza: rnd() * TAU, atakT: 0 };
+}
+
+/* ====== CZĄSTECZKI ====== */
+function czastka(x, y, vx, vy, zycie, r, kolor, typ){
+  if (czasteczki.length > 420) czasteczki.shift();
+  czasteczki.push({ x, y, vx, vy, z: zycie, maxZ: zycie, r, kolor, typ });
+}
+const babel = (x, y, r) => czastka(x, y, los(-8, 8), los(-70, -30), los(1.5, 3.5), r || los(1.5, 4), 'rgba(190,235,255,', 'babel');
+
+function aktualizujCzastki(dt){
+  for (let i = czasteczki.length - 1; i >= 0; i--){
+    const p = czasteczki[i];
+    p.z -= dt;
+    if (p.z <= 0){ czasteczki.splice(i, 1); continue; }
+    if (p.typ === 'babel'){ p.vy -= 26 * dt; p.x += Math.sin(czasGry * 6 + p.y * 0.05) * 12 * dt; }
+    else { p.vx *= 0.98; p.vy *= 0.98; }
+    p.x += p.vx * dt; p.y += p.vy * dt;
+  }
+}
+
+/* ====== KOMUNIKATY ====== */
+function toast(txt){ toasty.push({ txt, t: 5 }); if (toasty.length > 3) toasty.shift(); }
+function oglosStrefe(){
+  const g = glebokosc();
+  let idx = 0;
+  for (let i = 0; i < STREFY.length; i++) if (g >= STREFY[i].od) idx = i;
+  if (idx > maxStrefa){
+    maxStrefa = idx;
+    if (idx > 0){ // startowej strefy nie ogłaszamy wielkim napisem
+      ogloszenie = { tytul: STREFY[idx].nazwa, sub: STREFY[idx].opis, t: 4.2 };
+      sfxSonar();
+    }
+  }
+}
+
+/* ====== OBRAŻENIA I ŚMIERĆ ====== */
+function obraz(dmg, kx, ky){
+  if (gracz.nietyk > 0) return;
+  gracz.hp -= dmg;
+  gracz.nietyk = 1.3;
+  gracz.vx += kx * 260; gracz.vy += ky * 260;
+  blyskObrazen = 0.5; wstrzas = Math.max(wstrzas, 9);
+  sfxObraz();
+  for (let i = 0; i < 10; i++) czastka(gracz.x, gracz.y, los(-140, 140), los(-140, 140), los(0.4, 0.9), los(1.5, 3.5), 'rgba(255,150,90,', 'iskra');
+  if (gracz.hp <= 0) smierc('hp');
+}
+function smierc(powod){
+  sfxSmierc();
+  postep.zanurzenia++;
+  for (let i = 0; i < 26; i++) babel(gracz.x + los(-20, 20), gracz.y + los(-20, 20), los(2, 6));
+  pokazBaze(powod);
+}
+function wynurzenie(){
+  postep.zanurzenia++;
+  pokazBaze('wynurzenie');
+}
+
+/* ====== ZBIERANIE ZNAJDZIEK ====== */
+function zbierz(z){
+  z.wziete = true;
+  if (z.typ === 'perla'){ postep.perly += 1; run.perlyZebrane += 1; sfxPerla(); }
+  else if (z.typ === 'krysztal'){ postep.perly += 5; run.perlyZebrane += 5; sfxKrysztal(); }
+  else if (z.typ === 'tlen'){ gracz.tlen = Math.min(gracz.maxTlen, gracz.tlen + 24); sfxTlen(); }
+  else if (z.typ === 'butelka'){
+    postep.perly += 2; run.perlyZebrane += 2;
+    toast('📜 ' + WIADOMOSCI[z.tekst]); sfxPerla();
+  }
+  else if (z.typ === 'relikt'){
+    postep.perly += 25; run.perlyZebrane += 25; postep.relikty++;
+    sfxRelikt();
+    if (postep.relikty >= 3 && !postep.sekretZloty){
+      postep.sekretZloty = true;
+      toast('✨ Trzy Skarby Thalass! Twój kadłub cały pokrył się złotem…');
+    } else toast('🏺 Skarb Thalass! (+25 pereł) — masz ' + Math.min(postep.relikty, 3) + '/3');
+  }
+  else if (z.typ === 'perlaOtchlani'){
+    postep.perly += 100; run.perlyZebrane += 100;
+    sfxRelikt(); toast('🖤 Perła Otchłani! +100 pereł. Ono pozwoliło ci ją wziąć.');
+  }
+  for (let i = 0; i < 8; i++) czastka(z.x, z.y, los(-60, 60), los(-60, 60), los(0.3, 0.7), los(1, 2.5), 'rgba(255,240,190,', 'iskra');
+}
+
+/* ====== GŁÓWNA AKTUALIZACJA ŚWIATA ====== */
+function aktualizuj(dt){
+  czasGry += dt; run.czas += dt;
+  const g = glebokosc();
+
+  // --- sterowanie: klawiatura lub joystick ---
+  let ix = (klaw['arrowright'] || klaw['d'] ? 1 : 0) - (klaw['arrowleft'] || klaw['a'] ? 1 : 0);
+  let iy = (klaw['arrowdown'] || klaw['s'] ? 1 : 0) - (klaw['arrowup'] || klaw['w'] ? 1 : 0);
+  if (joy.id !== null && (joy.nx || joy.ny)){ ix = joy.nx; iy = joy.ny; }
+  const dl = Math.hypot(ix, iy);
+  if (dl > 1){ ix /= dl; iy /= dl; }
+
+  // --- fizyka wody: przyspieszenie, opór, lekkie tonięcie ---
+  gracz.vx += ix * gracz.przysp * dt;
+  gracz.vy += iy * gracz.przysp * dt + 22 * dt;      // batyskaf powoli tonie, gdy nic nie robisz
+  const tarcie = Math.exp(-1.9 * dt);
+  gracz.vx *= tarcie; gracz.vy *= tarcie;
+  const sp = Math.hypot(gracz.vx, gracz.vy);
+  if (sp > gracz.szyb){ gracz.vx *= gracz.szyb / sp; gracz.vy *= gracz.szyb / sp; }
+  gracz.x += gracz.vx * dt; gracz.y += gracz.vy * dt;
+  if (Math.abs(gracz.vx) > 14) gracz.kier = gracz.vx > 0 ? 1 : -1;
+  gracz.smiga += (2 + sp * 0.05) * dt * TAU;
+  if (gracz.nietyk > 0) gracz.nietyk -= dt;
+
+  // bąbelki z napędu
+  gracz.babelT -= dt;
+  if (gracz.babelT <= 0 && (ix || iy)){
+    gracz.babelT = 0.07;
+    babel(gracz.x - gracz.kier * 24, gracz.y + los(-4, 4));
+  }
+
+  // --- granice świata: ściany wąwozu i powierzchnia ---
+  const bl = brzegLewy(gracz.y) + gracz.r + 6, bp = brzegPrawy(gracz.y) - gracz.r - 6;
+  if (gracz.x < bl){ gracz.x = bl; gracz.vx = Math.abs(gracz.vx) * 0.4; }
+  if (gracz.x > bp){ gracz.x = bp; gracz.vx = -Math.abs(gracz.vx) * 0.4; }
+  if (gracz.y < 14){ gracz.y = 14; gracz.vy = Math.max(0, gracz.vy); }
+  if (gracz.y < 28 && run.maxG > 40){ wynurzenie(); return; }
+
+  // --- tlen (zużycie 1.35x — bez ulepszeń wystarcza na ok. 55 s) ---
+  if (g < 4) gracz.tlen = Math.min(gracz.maxTlen, gracz.tlen + 30 * dt); // tuż pod taflą świeże powietrze
+  gracz.tlen -= dt * 1.35;
+  if (gracz.tlen <= 0){
+    gracz.tlen = 0;
+    gracz.hp -= dt * 0.5;                            // duszenie się: ~2 s na punkt kadłuba
+    blyskObrazen = Math.max(blyskObrazen, 0.25);
+    if (gracz.hp <= 0){ smierc('tlen'); return; }
+  }
+  if (gracz.tlen < gracz.maxTlen * 0.25 && gracz.tlen > 0){
+    alarmT -= dt;
+    if (alarmT <= 0){ alarmT = 1.5; sfxAlarm(); if (!pokazane.tlen){ pokazane.tlen = true; toast('⚠️ Niski poziom tlenu! Szukaj bąbelków.'); } }
+  }
+
+  // --- kolizje ze skałami i wrakami ---
+  for (const s of skaly){
+    if (Math.abs(s.y - gracz.y) > 200) continue;
+    const rr2 = s.r * 0.82 + gracz.r;
+    const dx = gracz.x - s.x, dy = gracz.y - s.y, d = Math.hypot(dx, dy);
+    if (d < rr2 && d > 0.01){
+      const nx = dx / d, ny = dy / d;
+      const szybkoscUderzenia = -(gracz.vx * nx + gracz.vy * ny);
+      gracz.x = s.x + nx * rr2; gracz.y = s.y + ny * rr2;
+      const dot = gracz.vx * nx + gracz.vy * ny;
+      if (dot < 0){ gracz.vx -= nx * dot * 1.4; gracz.vy -= ny * dot * 1.4; }
+      if (szybkoscUderzenia > 240) obraz(1, nx * 0.5, ny * 0.5); // tylko mocne, niemal czołowe uderzenie
+    }
+  }
+  for (const wr of wraki){
+    if (Math.abs(wr.y - gracz.y) > 220) continue;
+    const rr2 = 60 * wr.skala + gracz.r;
+    const dx = gracz.x - wr.x, dy = gracz.y - wr.y, d = Math.hypot(dx, dy);
+    if (d < rr2 && d > 0.01){
+      const nx = dx / d, ny = dy / d;
+      gracz.x = wr.x + nx * rr2; gracz.y = wr.y + ny * rr2;
+      const dot = gracz.vx * nx + gracz.vy * ny;
+      if (dot < 0){ gracz.vx -= nx * dot * 1.3; gracz.vy -= ny * dot * 1.3; }
+    }
+  }
+
+  // --- kominy hydrotermalne: strumień bąbelków uzupełnia tlen ---
+  for (const km of kominy){
+    if (Math.abs(km.y - gracz.y) > 400) continue;
+    km.t -= dt;
+    if (km.t <= 0){ km.t = 0.12; babel(km.x + los(-7, 7), km.y - 12, los(2, 5)); }
+    if (Math.abs(gracz.x - km.x) < 30 && gracz.y < km.y && gracz.y > km.y - 280){
+      gracz.tlen = Math.min(gracz.maxTlen, gracz.tlen + 9 * dt);
+      if (!pokazane.komin){ pokazane.komin = true; toast('♨️ Gorące źródło dodaje tlenu!'); }
+    }
+  }
+
+  // --- znajdźki: unoszenie i zbieranie ---
+  for (const z of znajdzki){
+    if (z.wziete || Math.abs(z.y - gracz.y) > 300) continue;
+    if (Math.hypot(gracz.x - z.x, gracz.y - z.y + Math.sin(czasGry * 1.6 + z.faza) * 4) < gracz.r + 26) zbierz(z);
+  }
+
+  // --- meduzy (ruch po sinusoidzie wokół domu; parzą przy dotyku) ---
+  for (const m of meduzy){
+    if (Math.abs(m.hy - gracz.y) > 900) continue;
+    m.x = m.hx + Math.sin(czasGry * 0.5 + m.faza) * 46;
+    m.y = m.hy + Math.sin(czasGry * 0.22 + m.faza * 2) * 240;
+    if (Math.hypot(gracz.x - m.x, gracz.y - m.y) < gracz.r + m.r)
+      obraz(1, (gracz.x - m.x) / 60, -0.7);
+  }
+
+  // --- ławice rybek (pierzchają przed graczem) ---
+  for (const l of lawice){
+    if (Math.abs(l.hy - gracz.y) > 900) continue;
+    const lx = l.hx + Math.sin(czasGry * 0.4 + l.faza) * 170;
+    const ly = l.hy + Math.cos(czasGry * 0.28 + l.faza) * 90;
+    for (const rb of l.rybki){
+      const tx = lx + rb.ox, ty = ly + rb.oy;
+      const dg = Math.hypot(gracz.x - rb.px, gracz.y - rb.py) || 0.001;
+      if (dg < 130){ rb.vx += (rb.px - gracz.x) / dg * 620 * dt; rb.vy += (rb.py - gracz.y) / dg * 620 * dt; }
+      rb.vx += (tx - rb.px) * 2.4 * dt; rb.vy += (ty - rb.py) * 2.4 * dt;
+      rb.vx *= Math.exp(-1.6 * dt); rb.vy *= Math.exp(-1.6 * dt);
+      rb.px += rb.vx * dt; rb.py += rb.vy * dt;
+    }
+  }
+
+  // --- drapieżniki: patrol wokół domu, pościg gdy blisko ---
+  for (const d of drapiezniki){
+    if (Math.abs(d.y - gracz.y) > 1100) continue;
+    const c = TYPY_DRAP[d.typ];
+    const dx = gracz.x - d.x, dy = gracz.y - d.y, dist = Math.hypot(dx, dy) || 0.001;
+    let cx, cy;
+    if (dist < c.aggro && stan === 'gra'){
+      cx = dx / dist * c.szyb; cy = dy / dist * c.szyb;   // pościg
+      d.sciga = true;
+    } else {
+      const px2 = d.hx + Math.sin(czasGry * 0.5 + d.faza) * 130;
+      const py2 = d.hy + Math.cos(czasGry * 0.34 + d.faza) * 70;
+      cx = (px2 - d.x) * 0.9; cy = (py2 - d.y) * 0.9;     // patrol
+      d.sciga = false;
+    }
+    d.vx += (cx - d.vx) * ogr(2.4 * dt, 0, 1);
+    d.vy += (cy - d.vy) * ogr(2.4 * dt, 0, 1);
+    d.x += d.vx * dt; d.y += d.vy * dt;
+    if (Math.abs(d.vx) > 6) d.kier = d.vx > 0 ? 1 : -1;
+    d.atakT -= dt;
+    if (dist < d.r + gracz.r + 4 && d.atakT <= 0){
+      d.atakT = 1.1;
+      obraz(c.dmg, dx > 0 ? -0.7 : 0.7, -0.3);
+      d.vx = -dx / dist * 200; d.vy = -dy / dist * 200;   // odskok po ugryzieniu
+    }
+  }
+
+  aktualizujLewiatana(dt, g);
+  aktualizujWieloryba(dt, g);
+  aktualizujOko(dt);
+  aktualizujCzastki(dt);
+
+  // ambientne bąbelki i dźwięki otoczenia
+  ambientT -= dt;
+  if (ambientT <= 0){
+    ambientT = los(0.3, 1.1);
+    babel(cam.x + los(0, w), cam.y + h + 20, los(1, 3));
+    if (Math.random() < 0.5) sfxBabelek();
+  }
+
+  // sonar (ulepszenie): cykliczny ping, gdy drapieżnik w pobliżu
+  if (postep.poziomy.sonar > 0){
+    sonarT -= dt;
+    if (sonarT <= 0){
+      sonarT = 2.6;
+      let blisko = false;
+      for (const d of drapiezniki)
+        if (Math.hypot(d.x - gracz.x, d.y - gracz.y) < 1000){ blisko = true; break; }
+      if (blisko || lewiatan.stan !== 'spokoj') sfxSonar();
+    }
+  }
+
+  // dron Lewiatana — płynna regulacja głośności
+  if (dronGain){
+    const cel = lewiatan.stan === 'czai' ? 0.5 : lewiatan.stan === 'atak' ? 0.32 : 0;
+    dronGain.gain.setTargetAtTime(cel, ac.currentTime, 0.4);
+  }
+
+  // rekordy, strefy, kamera
+  run.maxG = Math.max(run.maxG, g);
+  postep.rekord = Math.max(postep.rekord, Math.floor(g));
+  oglosStrefe();
+  if (ogloszenie){ ogloszenie.t -= dt; if (ogloszenie.t <= 0) ogloszenie = null; }
+  for (const t of toasty) t.t -= dt;
+  toasty = toasty.filter(t => t.t > 0);
+  if (blyskObrazen > 0) blyskObrazen -= dt;
+  if (wstrzas > 0) wstrzas = Math.max(0, wstrzas - 26 * dt);
+
+  aktualizujKamere(dt);
+  zapewnijChunki();
+}
+
+function aktualizujKamere(dt){
+  const celX = w >= SWIAT_SZER ? (SWIAT_SZER - w) / 2 : ogr(gracz.x - w / 2, -60, SWIAT_SZER - w + 60);
+  const celY = gracz.y - h * 0.42;
+  const f = 1 - Math.exp(-6 * dt);
+  cam.x += (celX - cam.x) * f;
+  cam.y += (celY - cam.y) * f;
+  cam.y = Math.max(cam.y, -h * 0.55); // nie uciekamy zbyt wysoko w niebo
+}
+
+/* ====== LEWIATAN — ogromny cień polujący w głębinach ====== */
+function aktualizujLewiatana(dt, g){
+  const L = lewiatan;
+  if (L.stan === 'spokoj'){
+    if (g > 550){
+      L.t -= dt;
+      if (L.t <= 0){
+        L.stan = 'czai';
+        L.t = 4.5 + (postep.poziomy.sonar >= 3 ? 2 : 0);  // sonar III daje więcej czasu
+        L.strona = Math.random() < 0.5 ? -1 : 1;
+        if (!pokazane.lewiatan){ pokazane.lewiatan = true; toast('❗ Coś OGROMNEGO cię zauważyło… RUSZAJ SIĘ!'); }
+      }
+    }
+  } else if (L.stan === 'czai'){
+    L.t -= dt;
+    wstrzas = Math.max(wstrzas, 1.6);
+    if (L.t <= 0){
+      L.stan = 'atak';
+      L.y = gracz.y + los(-60, 60);
+      L.x = L.strona < 0 ? cam.x - 700 : cam.x + w + 700;
+      L.vx = (L.strona < 0 ? 1 : -1) * (620 + Math.min(320, (g - 550) * 0.3));
+      sfxRyk(); wstrzas = 14;
+    }
+  } else { // atak: przelot przez ekran ze słabym naprowadzaniem w pionie
+    L.x += L.vx * dt;
+    L.y += ogr((gracz.y - L.y) * 1.4, -95, 95) * dt;
+    const cx = ogr(gracz.x, L.x - 280, L.x + 280);
+    if (Math.hypot(gracz.x - cx, gracz.y - L.y) < 68 + gracz.r)
+      obraz(2, L.vx > 0 ? 0.9 : -0.9, -0.5);
+    if ((L.vx > 0 && L.x - 520 > cam.x + w + 300) || (L.vx < 0 && L.x + 520 < cam.x - 300)){
+      L.stan = 'spokoj';
+      L.t = Math.max(12, 30 - (g - 550) * 0.008) + los(0, 8);
+    }
+  }
+}
+
+/* ====== STRAŻNIK GŁĘBIN — przyjazny wieloryb (sekret) ====== */
+function aktualizujWieloryba(dt, g){
+  const W = wieloryb;
+  if (!W.aktywny){
+    W.t -= dt;
+    if (W.t <= 0 && g > 140 && g < 1100){
+      W.aktywny = true; W.dal = false;
+      const kier = Math.random() < 0.5 ? 1 : -1;
+      W.x = kier > 0 ? cam.x - 420 : cam.x + w + 420;
+      W.y = gracz.y + los(-260, 260);
+      W.vx = kier * 55;
+      sfxWieloryb();
+    }
+  } else {
+    W.x += W.vx * dt;
+    W.y += Math.sin(czasGry * 0.5) * 9 * dt;
+    if (Math.random() < dt * 1.2) babel(W.x + W.vx * 0.4, W.y - 46, los(2, 5));
+    if (!W.dal && Math.hypot(gracz.x - W.x, gracz.y - W.y) < 150){
+      W.dal = true;
+      gracz.tlen = gracz.maxTlen;
+      gracz.hp = Math.min(gracz.maxHp, gracz.hp + 1);
+      toast('🐋 Strażnik Głębin dzieli się oddechem! Tlen pełny.');
+      sfxTlen();
+    }
+    if (W.x < -700 || W.x > SWIAT_SZER + 700){ W.aktywny = false; W.t = 60 + los(0, 90); }
+  }
+}
+
+/* ====== OKO OTCHŁANI — finałowy sekret na 2450 m ====== */
+function aktualizujOko(dt){
+  const blisko = Math.hypot(gracz.x - SWIAT_SZER / 2, gracz.y - OKO_Y) < 720;
+  oko.otwarcie = ogr(oko.otwarcie + (blisko ? 1 : -1) * dt * 0.7, 0, 1);
+  if (oko.otwarcie > 0.95 && !postep.odkryteOko){
+    postep.odkryteOko = true;
+    toast('👁 Otchłań też na ciebie patrzy…');
+    znajdzki.push({ typ: 'perlaOtchlani', x: SWIAT_SZER / 2, y: OKO_Y - 260, faza: 0, wziete: false });
+    sfxBoom(); wstrzas = 18;
+  }
+}
+
+/* =========================================================================
+   RYSOWANIE
+   ========================================================================= */
+
+// Czy punkt świata jest w pobliżu ekranu (żeby nie rysować niepotrzebnie)
+const naEkranie = (x, y, m) => x > cam.x - m && x < cam.x + w + m && y > cam.y - m && y < cam.y + h + m;
+
+/* --- tło: gradient wody, niebo z łódką-bazą, promienie słońca --- */
+function rysujTlo(){
+  const gTop = Math.max(0, cam.y / M), gBot = Math.max(0, (cam.y + h) / M);
+  const k1 = kolorWody(gTop), k2 = kolorWody(gBot + 30);
+  const gr = ctx.createLinearGradient(0, 0, 0, h);
+  gr.addColorStop(0, `rgb(${k1[0] | 0},${k1[1] | 0},${k1[2] | 0})`);
+  gr.addColorStop(1, `rgb(${k2[0] | 0},${k2[1] | 0},${k2[2] | 0})`);
+  ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
+
+  // powierzchnia i niebo (widoczne tylko przy tafli)
+  const linia = -cam.y; // ekranowe y poziomu wody (świat y=0)
+  if (linia > -40){
+    if (linia > 0){
+      const ng = ctx.createLinearGradient(0, 0, 0, linia);
+      ng.addColorStop(0, '#8fd3ef'); ng.addColorStop(1, '#d9f2fc');
+      ctx.fillStyle = ng; ctx.fillRect(0, 0, w, Math.min(h, linia));
+      // słońce
+      ctx.fillStyle = 'rgba(255,240,180,.9)';
+      ctx.beginPath(); ctx.arc(w * 0.72, linia - 88, 26, 0, TAU); ctx.fill();
+      // łódka-baza na środku świata
+      const bx = SWIAT_SZER / 2 - cam.x, by = linia + Math.sin(czasGry * 1.3) * 3;
+      ctx.fillStyle = '#5d4030';
+      ctx.beginPath(); ctx.moveTo(bx - 52, by - 8); ctx.lineTo(bx + 52, by - 8);
+      ctx.lineTo(bx + 34, by + 14); ctx.lineTo(bx - 34, by + 14); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#7a5a42'; ctx.fillRect(bx - 16, by - 26, 32, 18);
+      ctx.strokeStyle = '#3c2a1e'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(bx, by - 26); ctx.lineTo(bx, by - 54); ctx.stroke();
+      ctx.fillStyle = '#59d7ff';
+      ctx.beginPath(); ctx.moveTo(bx, by - 54); ctx.lineTo(bx + 22, by - 47); ctx.lineTo(bx, by - 40); ctx.closePath(); ctx.fill();
+    }
+    // falująca tafla
+    ctx.strokeStyle = 'rgba(235,250,255,.75)'; ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 14)
+      ctx.lineTo(x, linia + Math.sin(x * 0.03 + czasGry * 2.2) * 4);
+    ctx.stroke();
+  }
+
+  // ukośne promienie światła przy powierzchni
+  if (gTop < 130){
+    const al = 0.07 * (1 - gTop / 130);
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    // promienie tylko pod taflą, nie na niebie
+    if (linia > 0){ ctx.beginPath(); ctx.rect(0, Math.min(linia, h), w, Math.max(0, h - linia)); ctx.clip(); }
+    for (let i = 0; i < 3; i++){
+      const rx = ((i * 0.37 + 0.15) * w + Math.sin(czasGry * 0.14 + i * 2) * 60) - cam.x * 0.15 % w;
+      ctx.fillStyle = `rgba(200,240,255,${al})`;
+      ctx.beginPath();
+      ctx.moveTo(rx - 20, -20); ctx.lineTo(rx + 60, -20);
+      ctx.lineTo(rx + 240, h + 20); ctx.lineTo(rx + 120, h + 20); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+
+/* --- paralaksa: odległe skały (2 warstwy) + śnieg morski --- */
+function rysujParalakse(){
+  const g = glebokosc();
+  // przycięcie do wody — odległe skały i śnieg morski nie wchodzą na niebo
+  const linia = -cam.y;
+  ctx.save();
+  if (linia > 0){ ctx.beginPath(); ctx.rect(0, Math.min(linia, h), w, Math.max(0, h - linia)); ctx.clip(); }
+  for (const [par, al, roz] of [[0.25, 0.16, 130], [0.5, 0.24, 90]]){
+    ctx.fillStyle = `rgba(0,6,14,${al})`;
+    for (let i = 0; i < 14; i++){
+      const sx = ((hash2(i, par * 100) * 2600 - cam.x * par) % (w + 500) + w + 500) % (w + 500) - 250;
+      const sy = ((hash2(i, par * 100 + 5) * 2600 - cam.y * par) % (h + 500) + h + 500) % (h + 500) - 250;
+      const r = roz * (0.5 + hash2(i, 9) * 0.9);
+      ctx.beginPath(); ctx.ellipse(sx, sy, r, r * 0.62, hash2(i, 3) * 3, 0, TAU); ctx.fill();
+    }
+  }
+  // śnieg morski — drobiny opadające w toni (gęstszy w głębi)
+  const n = Math.min(90, 24 + g * 0.05);
+  ctx.fillStyle = 'rgba(225,240,250,.3)';
+  for (let i = 0; i < n; i++){
+    const sx = ((hash2(i, 41) * 3000 - cam.x * 0.8) % w + w) % w;
+    const sy = ((hash2(i, 43) * 3000 - cam.y * 0.8 + czasGry * (10 + hash2(i, 5) * 14)) % h + h) % h;
+    ctx.fillRect(sx, sy, 1.6 + hash2(i, 7), 1.6 + hash2(i, 7));
+  }
+  ctx.restore();
+}
+
+/* --- ściany wąwozu --- */
+function rysujSciany(){
+  ctx.fillStyle = '#0c1826';
+  for (const strona of [0, 1]){
+    ctx.beginPath();
+    if (strona === 0){
+      ctx.moveTo(cam.x - 60, cam.y - 60);
+      for (let y = cam.y - 60; y <= cam.y + h + 60; y += 44) ctx.lineTo(brzegLewy(y), y);
+      ctx.lineTo(cam.x - 60, cam.y + h + 60);
+    } else {
+      ctx.moveTo(cam.x + w + 60, cam.y - 60);
+      for (let y = cam.y - 60; y <= cam.y + h + 60; y += 44) ctx.lineTo(brzegPrawy(y), y);
+      ctx.lineTo(cam.x + w + 60, cam.y + h + 60);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(90,140,175,.14)'; ctx.lineWidth = 3; ctx.stroke();
+  }
+}
+
+/* --- Zatopione Miasto Thalass --- */
+function rysujBudowle(){
+  for (const b of budowle){
+    if (!naEkranie(b.x, b.y, 400)) continue;
+    ctx.save(); ctx.translate(b.x, b.y);
+    ctx.fillStyle = '#0d2033'; ctx.strokeStyle = 'rgba(140,200,255,.16)'; ctx.lineWidth = 2;
+    if (b.typ === 'kolumna'){
+      ctx.fillRect(-13, -b.wys, 26, b.wys);
+      ctx.fillRect(-22, -b.wys - 12, 44, 14);
+      ctx.fillRect(-20, -8, 40, 10);
+      ctx.strokeRect(-13, -b.wys, 26, b.wys);
+    } else if (b.typ === 'dom'){
+      ctx.fillRect(-b.szer / 2, -b.wys, b.szer, b.wys);
+      ctx.strokeRect(-b.szer / 2, -b.wys, b.szer, b.wys);
+      ctx.beginPath(); ctx.arc(0, -b.wys, b.szer / 2, Math.PI, 0); ctx.fill();
+      // świecące okna (dodatkowo wycinane w ciemności)
+      ctx.fillStyle = `rgba(255,215,140,${0.55 + Math.sin(czasGry * 1.4 + b.faza) * 0.25})`;
+      for (let i = 0; i < 3; i++) ctx.fillRect(-b.szer / 2 + 8 + i * (b.szer - 16) / 3, -b.wys * 0.6, 8, 12);
+    } else if (b.typ === 'kopula'){
+      ctx.fillRect(-b.szer / 2, -40, b.szer, 40);
+      ctx.beginPath(); ctx.arc(0, -40, b.szer / 2, Math.PI, 0); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = `rgba(150,230,255,${0.4 + Math.sin(czasGry + b.faza) * 0.2})`;
+      ctx.beginPath(); ctx.arc(0, -40 - b.szer / 4, 6, 0, TAU); ctx.fill();
+    } else { // obelisk z pulsującymi glifami
+      ctx.beginPath(); ctx.moveTo(-14, 0); ctx.lineTo(-8, -b.wys); ctx.lineTo(8, -b.wys); ctx.lineTo(14, 0); ctx.closePath();
+      ctx.fill(); ctx.stroke();
+      ctx.fillStyle = `rgba(120,240,255,${0.45 + Math.sin(czasGry * 2 + b.faza) * 0.3})`;
+      for (let i = 1; i <= 4; i++) ctx.fillRect(-3, -b.wys * i / 5, 6, 7);
+    }
+    ctx.restore();
+  }
+}
+
+/* --- wraki statków --- */
+function rysujWraki(){
+  for (const wr of wraki){
+    if (!naEkranie(wr.x, wr.y, 300)) continue;
+    ctx.save(); ctx.translate(wr.x, wr.y); ctx.rotate(wr.rot); ctx.scale(wr.skala, wr.skala);
+    ctx.fillStyle = '#2e2620';
+    ctx.beginPath();
+    ctx.moveTo(-110, -10); ctx.quadraticCurveTo(0, 26, 110, -16);
+    ctx.lineTo(96, 34); ctx.quadraticCurveTo(0, 62, -92, 30); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#4a3c30'; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(-110, -10); ctx.quadraticCurveTo(0, 26, 110, -16); ctx.stroke();
+    // złamany maszt i żebra kadłuba
+    ctx.save(); ctx.rotate(-0.5); ctx.fillStyle = '#3a2f26'; ctx.fillRect(-6, -86, 10, 86); ctx.restore();
+    ctx.strokeStyle = 'rgba(74,60,48,.8)'; ctx.lineWidth = 3;
+    for (let i = -2; i <= 2; i++){ ctx.beginPath(); ctx.arc(i * 34, 10, 26, 0.3, Math.PI - 0.3); ctx.stroke(); }
+    // bulaje z resztką poświaty
+    ctx.fillStyle = `rgba(255,215,140,${0.35 + Math.sin(czasGry * 1.1 + wr.x) * 0.15})`;
+    ctx.beginPath(); ctx.arc(-40, 8, 6, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(24, 12, 6, 0, TAU); ctx.fill();
+    ctx.restore();
+  }
+}
+
+/* --- glony (falują), skały, kominy --- */
+function rysujGlony(){
+  ctx.lineCap = 'round';
+  for (const gl of glony){
+    if (!naEkranie(gl.x, gl.y, 260)) continue;
+    for (let s = 0; s < 3; s++){
+      ctx.strokeStyle = s === 1 ? '#1d6b46' : '#155238';
+      ctx.beginPath();
+      let x = gl.x + (s - 1) * 7, y = gl.y;
+      ctx.moveTo(x, y);
+      const seg = gl.wys / 5;
+      for (let i = 1; i <= 5; i++){
+        x += Math.sin(czasGry * 1.25 + gl.faza + i * 0.6 + s) * 4.6 * i * 0.5;
+        y -= seg;
+        ctx.lineWidth = 5.5 - i * 0.9;
+        ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+  }
+  ctx.lineCap = 'butt';
+}
+function rysujSkaly(){
+  for (const s of skaly){
+    if (!naEkranie(s.x, s.y, 260)) continue;
+    ctx.fillStyle = '#22333f';
+    ctx.beginPath();
+    for (let i = 0; i < s.pkt.length; i++){
+      const p = s.pkt[i];
+      const px2 = s.x + Math.cos(p.a) * p.r, py2 = s.y + Math.sin(p.a) * p.r;
+      i === 0 ? ctx.moveTo(px2, py2) : ctx.lineTo(px2, py2);
+    }
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(120,170,200,.12)'; ctx.lineWidth = 2.5; ctx.stroke();
+  }
+}
+function rysujKominy(){
+  for (const km of kominy){
+    if (!naEkranie(km.x, km.y, 300)) continue;
+    ctx.fillStyle = '#1c2228';
+    ctx.beginPath(); ctx.moveTo(km.x - 26, km.y); ctx.lineTo(km.x - 9, km.y - 34); ctx.lineTo(km.x + 9, km.y - 34); ctx.lineTo(km.x + 26, km.y); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = `rgba(255,140,60,${0.5 + Math.sin(czasGry * 5 + km.x) * 0.25})`;
+    ctx.beginPath(); ctx.ellipse(km.x, km.y - 33, 8, 4, 0, 0, TAU); ctx.fill();
+  }
+}
+
+/* --- znajdźki --- */
+function rysujZnajdzki(){
+  for (const z of znajdzki){
+    if (z.wziete || !naEkranie(z.x, z.y, 200)) continue;
+    const y = z.y + Math.sin(czasGry * 1.6 + z.faza) * 4;
+    ctx.save(); ctx.translate(z.x, y);
+    if (z.typ === 'perla'){
+      ctx.fillStyle = '#c9a06a';
+      ctx.beginPath(); ctx.arc(0, 4, 11, Math.PI * 0.05, Math.PI * 0.95); ctx.fill();       // dolna muszla
+      ctx.beginPath(); ctx.ellipse(0, 0, 11, 5, 0, Math.PI, 0); ctx.fill();                  // uchylona górna
+      const pg = ctx.createRadialGradient(-2, 0, 1, 0, 1, 6);
+      pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, '#c8d8e8');
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(0, 1, 5, 0, TAU); ctx.fill();
+    } else if (z.typ === 'krysztal'){
+      const puls = 0.7 + Math.sin(czasGry * 3 + z.faza) * 0.3;
+      ctx.fillStyle = `rgba(130,220,255,${puls})`;
+      ctx.beginPath(); ctx.moveTo(0, -13); ctx.lineTo(8, 0); ctx.lineTo(0, 13); ctx.lineTo(-8, 0); ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = 'rgba(220,250,255,.9)'; ctx.lineWidth = 1.5; ctx.stroke();
+    } else if (z.typ === 'tlen'){
+      ctx.strokeStyle = 'rgba(190,240,255,.95)'; ctx.lineWidth = 2.5;
+      ctx.fillStyle = 'rgba(150,220,255,.22)';
+      ctx.beginPath(); ctx.arc(0, 0, 11, 0, TAU); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.arc(10, -9, 5, 0, TAU); ctx.stroke();
+      ctx.beginPath(); ctx.arc(-9, 9, 4, 0, TAU); ctx.stroke();
+    } else if (z.typ === 'butelka'){
+      ctx.rotate(0.5 + Math.sin(czasGry + z.faza) * 0.15);
+      ctx.fillStyle = 'rgba(120,190,150,.75)';
+      rr(ctx, -6, -12, 12, 24, 5); ctx.fill();
+      ctx.fillRect(-2.5, -18, 5, 7);
+      ctx.fillStyle = '#b4885a'; ctx.fillRect(-2.5, -20, 5, 3.5);
+      ctx.fillStyle = 'rgba(240,230,200,.9)'; ctx.fillRect(-3, -6, 6, 12);
+    } else if (z.typ === 'relikt'){
+      const puls = 0.6 + Math.sin(czasGry * 2.4 + z.faza) * 0.35;
+      ctx.strokeStyle = `rgba(255,216,115,${puls})`; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.arc(0, 0, 12, 0, TAU); ctx.stroke();
+      ctx.fillStyle = `rgba(255,216,115,${puls})`;
+      ctx.beginPath(); ctx.moveTo(0, -7); ctx.lineTo(6, 4); ctx.lineTo(-6, 4); ctx.closePath(); ctx.fill();
+      for (let i = 0; i < 4; i++){
+        const a = czasGry * 1.5 + i * TAU / 4;
+        ctx.fillRect(Math.cos(a) * 17 - 1, Math.sin(a) * 17 - 1, 2.5, 2.5);
+      }
+    } else if (z.typ === 'perlaOtchlani'){
+      const pg = ctx.createRadialGradient(-2, -2, 1, 0, 0, 12);
+      pg.addColorStop(0, '#e8d8ff'); pg.addColorStop(0.6, '#7a4a9e'); pg.addColorStop(1, '#1a0a28');
+      ctx.fillStyle = pg; ctx.beginPath(); ctx.arc(0, 0, 11, 0, TAU); ctx.fill();
+      ctx.strokeStyle = `rgba(210,160,255,${0.5 + Math.sin(czasGry * 4) * 0.3})`; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, 15, 0, TAU); ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+
+/* --- ławice, meduzy, drapieżniki, wieloryb --- */
+function rysujLawice(){
+  ctx.fillStyle = 'rgba(200,222,238,.85)';
+  for (const l of lawice){
+    if (!naEkranie(l.hx, l.hy, 500)) continue;
+    for (const rb of l.rybki){
+      const a = Math.atan2(rb.vy, rb.vx);
+      ctx.save(); ctx.translate(rb.px, rb.py); ctx.rotate(a);
+      ctx.beginPath(); ctx.ellipse(0, 0, 6, 2.4, 0, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-6, 0); ctx.lineTo(-10, -3); ctx.lineTo(-10, 3); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+  }
+}
+function rysujMeduzy(){
+  for (const m of meduzy){
+    if (m.x === undefined || !naEkranie(m.x, m.y, 260)) continue;
+    const puls = 1 + Math.sin(czasGry * 2.4 + m.faza) * 0.09;
+    ctx.save(); ctx.translate(m.x, m.y); ctx.scale(puls, puls);
+    ctx.fillStyle = 'rgba(255,150,215,.42)';
+    ctx.beginPath(); ctx.arc(0, 0, m.r, Math.PI, 0);
+    ctx.quadraticCurveTo(m.r * 0.6, m.r * 0.5, 0, m.r * 0.35);
+    ctx.quadraticCurveTo(-m.r * 0.6, m.r * 0.5, -m.r, 0); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = 'rgba(255,190,235,.6)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(0, 0, m.r, Math.PI, 0); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,170,225,.45)'; ctx.lineWidth = 1.6;
+    for (let i = -2; i <= 2; i++){
+      ctx.beginPath(); ctx.moveTo(i * m.r * 0.32, m.r * 0.3);
+      ctx.quadraticCurveTo(i * m.r * 0.32 + Math.sin(czasGry * 3 + i) * 6, m.r * 1.1, i * m.r * 0.32 + Math.sin(czasGry * 2 + i) * 9, m.r * 1.8);
+      ctx.stroke();
+    }
+    ctx.restore();
+  }
+}
+function rysujDrapiezniki(){
+  for (const d of drapiezniki){
+    if (!naEkranie(d.x, d.y, 300)) continue;
+    ctx.save(); ctx.translate(d.x, d.y); ctx.scale(d.kier, 1);
+    const machanie = Math.sin(czasGry * 9 + d.faza) * 4;
+    if (d.typ === 'kasacz'){
+      ctx.fillStyle = d.sciga ? '#d4544a' : '#b0483e';
+      ctx.beginPath(); ctx.ellipse(0, 0, 14, 8, 0, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-13, 0); ctx.lineTo(-21, -6 + machanie); ctx.lineTo(-21, 6 + machanie); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(0, -7); ctx.lineTo(5, -13); ctx.lineTo(8, -7); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(7, -2, 2.6, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(8, -2, 1.3, 0, TAU); ctx.fill();
+    } else if (d.typ === 'zarlacz'){
+      ctx.fillStyle = '#53687a';
+      ctx.beginPath();
+      ctx.moveTo(28, 0); ctx.quadraticCurveTo(10, -14, -16, -10);
+      ctx.quadraticCurveTo(-26, -6, -30, 0);
+      ctx.quadraticCurveTo(-26, 6, -16, 10); ctx.quadraticCurveTo(10, 13, 28, 0); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-28, 0); ctx.lineTo(-40, -10 + machanie); ctx.lineTo(-38, 0); ctx.lineTo(-40, 10 + machanie); ctx.closePath(); ctx.fill();
+      ctx.beginPath(); ctx.moveTo(-4, -10); ctx.lineTo(4, -21); ctx.lineTo(8, -10); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(210,225,235,.35)';
+      ctx.beginPath(); ctx.ellipse(2, 5, 20, 5, 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = d.sciga ? '#ff6a5e' : '#dfe9f0';
+      ctx.beginPath(); ctx.arc(17, -3, 2.8, 0, TAU); ctx.fill();
+    } else { // widmo — żabnica z wabikiem
+      ctx.fillStyle = '#1d222c';
+      ctx.beginPath(); ctx.arc(0, 0, 18, 0, TAU); ctx.fill();
+      ctx.strokeStyle = 'rgba(150,200,230,.25)'; ctx.lineWidth = 1.5; ctx.stroke();
+      // paszcza z zębami
+      ctx.fillStyle = '#0a0c12';
+      ctx.beginPath(); ctx.arc(6, 4, 11, -0.5, 1.9); ctx.fill();
+      ctx.strokeStyle = '#cfe4ee'; ctx.lineWidth = 1.4;
+      for (let i = 0; i < 4; i++){
+        ctx.beginPath(); ctx.moveTo(4 + i * 3.4, 10); ctx.lineTo(5.5 + i * 3.4, 14.5); ctx.stroke();
+      }
+      // wabik — świeci (wycinany też w ciemności)
+      const wx = 16 + Math.sin(czasGry * 3 + d.faza) * 3, wy = -22;
+      ctx.strokeStyle = '#3a4552'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(2, -16); ctx.quadraticCurveTo(10, -26, wx, wy); ctx.stroke();
+      const wg = ctx.createRadialGradient(wx, wy, 0, wx, wy, 8);
+      wg.addColorStop(0, 'rgba(210,250,255,1)'); wg.addColorStop(1, 'rgba(120,220,255,0)');
+      ctx.fillStyle = wg; ctx.beginPath(); ctx.arc(wx, wy, 8, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#e8fbff'; ctx.beginPath(); ctx.arc(wx, wy, 2.6, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#ffd9a8'; ctx.beginPath(); ctx.arc(9, -6, 2.2, 0, TAU); ctx.fill();
+    }
+    ctx.restore();
+  }
+}
+function rysujWieloryba(){
+  const W = wieloryb;
+  if (!W.aktywny || !naEkranie(W.x, W.y, 500)) return;
+  ctx.save(); ctx.translate(W.x, W.y); ctx.scale(W.vx > 0 ? 1 : -1, 1);
+  ctx.fillStyle = '#24455e';
+  ctx.beginPath();
+  ctx.moveTo(130, 0);
+  ctx.quadraticCurveTo(120, -56, -10, -52);
+  ctx.quadraticCurveTo(-120, -46, -160, -10);
+  ctx.lineTo(-215, -46); ctx.quadraticCurveTo(-185, 0, -215, 44); ctx.lineTo(-160, 6);
+  ctx.quadraticCurveTo(-110, 50, -20, 52);
+  ctx.quadraticCurveTo(110, 48, 130, 0); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(180,220,235,.16)';
+  ctx.beginPath(); ctx.ellipse(-20, 26, 120, 22, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#1a3549';
+  ctx.beginPath(); ctx.moveTo(-14, 12); ctx.lineTo(-52, 52); ctx.lineTo(-64, 20); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#e8f4fa'; ctx.beginPath(); ctx.arc(96, -10, 4, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#0c1c28'; ctx.beginPath(); ctx.arc(97, -10, 2, 0, TAU); ctx.fill();
+  // świecące plamy Strażnika
+  ctx.fillStyle = `rgba(143,227,255,${0.7 + Math.sin(czasGry * 2) * 0.3})`;
+  for (const [sx2, sy2] of [[-44, -30], [8, -38], [58, -24]]){
+    ctx.beginPath(); ctx.arc(sx2, sy2, 4.4, 0, TAU); ctx.fill();
+  }
+  ctx.restore();
+}
+
+/* --- gracz: batyskaf (złoty po zebraniu 3 reliktów) --- */
+function rysujGracza(){
+  ctx.save(); ctx.translate(gracz.x, gracz.y);
+  if (gracz.nietyk > 0 && Math.floor(czasGry * 12) % 2) ctx.globalAlpha = 0.4;
+  ctx.scale(gracz.kier, 1);
+  ctx.rotate(ogr(gracz.vy * 0.0006, -0.2, 0.2) * gracz.kier);
+
+  // śmigło
+  ctx.save(); ctx.translate(-26, 0);
+  ctx.fillStyle = '#8a94a0';
+  const ob = Math.sin(gracz.smiga);
+  ctx.beginPath(); ctx.ellipse(0, 0, 3, 11 * Math.abs(ob) + 1.5, 0, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.ellipse(0, 0, 3, 11 * Math.abs(Math.cos(gracz.smiga)) + 1.5, 0, 0, TAU); ctx.fill();
+  ctx.restore();
+
+  // kadłub (zwykły pomarańczowy lub sekretny złoty)
+  const kg = ctx.createLinearGradient(0, -16, 0, 16);
+  if (postep.sekretZloty){ kg.addColorStop(0, '#ffe9a0'); kg.addColorStop(1, '#c8952a'); }
+  else { kg.addColorStop(0, '#ffcf6b'); kg.addColorStop(1, '#d98324'); }
+  ctx.fillStyle = kg;
+  ctx.beginPath(); ctx.ellipse(0, 0, 24, 15, 0, 0, TAU); ctx.fill();
+  ctx.fillStyle = 'rgba(120,60,10,.35)';
+  ctx.beginPath(); ctx.ellipse(0, 6, 22, 8, 0, 0, TAU); ctx.fill();
+
+  // wieżyczka, okno, lampa, płetwa, nity
+  ctx.fillStyle = postep.sekretZloty ? '#e8c25a' : '#e89a2f';
+  rr(ctx, -10, -22, 16, 10, 4); ctx.fill();
+  ctx.fillStyle = '#bfefff'; ctx.beginPath(); ctx.arc(8, -2, 6, 0, TAU); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.beginPath(); ctx.arc(6, -4, 2, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#fff3c0'; ctx.beginPath(); ctx.arc(23, -3, 3.6, 0, TAU); ctx.fill();
+  ctx.fillStyle = postep.sekretZloty ? '#c8952a' : '#c17418';
+  ctx.beginPath(); ctx.moveTo(-22, -8); ctx.lineTo(-32, -16); ctx.lineTo(-30, -2); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = 'rgba(110,60,10,.5)';
+  ctx.beginPath(); ctx.arc(-8, -4, 1.8, 0, TAU); ctx.fill();
+  ctx.beginPath(); ctx.arc(0, 4, 1.8, 0, TAU); ctx.fill();
+  ctx.restore();
+
+  // widoczny snop światła przed batyskafem (dodatkowo do wycięcia w ciemności)
+  const g = glebokosc();
+  if (g > 60){
+    ctx.save(); ctx.globalCompositeOperation = 'lighter';
+    const R = gracz.swiatlo;
+    const sg = ctx.createRadialGradient(gracz.x + gracz.kier * 20, gracz.y, 6, gracz.x + gracz.kier * 20, gracz.y, R * 1.15);
+    sg.addColorStop(0, 'rgba(255,244,190,.14)'); sg.addColorStop(1, 'rgba(255,244,190,0)');
+    ctx.fillStyle = sg;
+    ctx.beginPath();
+    ctx.moveTo(gracz.x + gracz.kier * 20, gracz.y);
+    ctx.arc(gracz.x + gracz.kier * 20, gracz.y, R * 1.15, gracz.kier > 0 ? -0.5 : Math.PI - 0.5, gracz.kier > 0 ? 0.5 : Math.PI + 0.5);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+}
+
+function rysujCzastki(){
+  for (const p of czasteczki){
+    if (!naEkranie(p.x, p.y, 60)) continue;
+    const a = ogr(p.z / p.maxZ, 0, 1);
+    if (p.typ === 'babel'){
+      ctx.strokeStyle = p.kolor + (0.55 * a) + ')'; ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, TAU); ctx.stroke();
+    } else {
+      ctx.fillStyle = p.kolor + a + ')';
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.r * a + 0.4, 0, TAU); ctx.fill();
+    }
+  }
+}
+
+/* ====== CIEMNOŚĆ I ŚWIATŁO ======
+   Warstwa mroku pokrywa ekran, a źródła światła są z niej "wycinane"
+   trybem destination-out (miękkie promieniste gradienty). */
+function dziura(x, y, r, moc){
+  if (r <= 0 || x < -r || x > w + r || y < -r || y > h + r) return;
+  const gr = dctx.createRadialGradient(x, y, 0, x, y, r);
+  gr.addColorStop(0, `rgba(0,0,0,${moc})`);
+  gr.addColorStop(0.55, `rgba(0,0,0,${moc * 0.5})`);
+  gr.addColorStop(1, 'rgba(0,0,0,0)');
+  dctx.fillStyle = gr;
+  dctx.beginPath(); dctx.arc(x, y, r, 0, TAU); dctx.fill();
+}
+function rysujCiemnosc(){
+  const a = krzywaCiemnosci(glebokosc());
+  if (a <= 0.02) return;
+  dctx.globalCompositeOperation = 'source-over';
+  dctx.clearRect(0, 0, w, h);
+  dctx.fillStyle = `rgba(1,4,12,${a})`;
+  dctx.fillRect(0, 0, w, h);
+  dctx.globalCompositeOperation = 'destination-out';
+
+  // latarka gracza: krąg + wysunięty stożek w kierunku ruchu (lekko migocze)
+  const ex = gracz.x - cam.x, ey = gracz.y - cam.y;
+  const R = gracz.swiatlo * (1 + Math.sin(czasGry * 9) * 0.012);
+  dziura(ex, ey, R, 0.95);
+  dziura(ex + gracz.kier * R * 0.75, ey, R * 0.85, 0.8);
+
+  // pozostałe źródła światła świata
+  for (const z of znajdzki){
+    if (z.wziete) continue;
+    const zx = z.x - cam.x, zy = z.y - cam.y;
+    if (z.typ === 'krysztal') dziura(zx, zy, 46, 0.5);
+    else if (z.typ === 'tlen') dziura(zx, zy, 30, 0.4);
+    else if (z.typ === 'relikt') dziura(zx, zy, 58, 0.6);
+    else if (z.typ === 'perlaOtchlani') dziura(zx, zy, 80, 0.7);
+  }
+  for (const m of meduzy){
+    if (m.x === undefined) continue;
+    dziura(m.x - cam.x, m.y - cam.y, 52 + Math.sin(czasGry * 2.4 + m.faza) * 8, 0.42);
+  }
+  for (const d of drapiezniki)
+    if (d.typ === 'widmo') dziura(d.x - cam.x + d.kier * 16, d.y - cam.y - 22, 62, 0.7);
+  for (const km of kominy) dziura(km.x - cam.x, km.y - cam.y - 30, 66, 0.5);
+  for (const b of budowle) dziura(b.x - cam.x, b.y - cam.y - b.wys * 0.6, 60, 0.45);
+  for (const wr of wraki) dziura(wr.x - cam.x, wr.y - cam.y, 50, 0.35);
+  if (wieloryb.aktywny) dziura(wieloryb.x - cam.x, wieloryb.y - cam.y - 26, 110, 0.5);
+
+  ctx.drawImage(ciemne, 0, 0, w, h);
+}
+
+/* ====== LEWIATAN (rysowany NAD ciemnością — jest czarniejszy od mroku) ====== */
+function rysujLewiatana(){
+  const L = lewiatan;
+  if (L.stan === 'czai'){
+    // majacząca sylwetka przy krawędzi, z której nadejdzie atak
+    const px2 = L.strona < 0 ? 60 : w - 60;
+    const al = 0.12 + Math.sin(czasGry * 6) * 0.06;
+    const gr = ctx.createRadialGradient(px2, h / 2, 20, px2, h / 2, 340);
+    gr.addColorStop(0, `rgba(255,40,40,${al})`); gr.addColorStop(1, 'rgba(255,40,40,0)');
+    ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
+    return;
+  }
+  if (L.stan !== 'atak') return;
+  ctx.save();
+  ctx.translate(L.x - cam.x, L.y - cam.y + Math.sin(czasGry * 2.1) * 10);
+  ctx.scale(L.vx > 0 ? 1 : -1, 1);
+  ctx.fillStyle = 'rgba(2,5,11,.9)';
+  ctx.beginPath();
+  ctx.moveTo(300, 0);
+  ctx.quadraticCurveTo(150, -96, -80, -70);
+  ctx.quadraticCurveTo(-260, -46, -330, -8);
+  ctx.lineTo(-430, -74); ctx.quadraticCurveTo(-360, 0, -430, 76); ctx.lineTo(-330, 8);
+  ctx.quadraticCurveTo(-240, 58, -60, 72);
+  ctx.quadraticCurveTo(160, 84, 300, 0);
+  ctx.closePath(); ctx.fill();
+  // grzbietowe kolce
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++){
+    const bx = 120 - i * 95;
+    ctx.moveTo(bx, -62 + i * 4); ctx.lineTo(bx - 26, -108 + i * 6); ctx.lineTo(bx - 55, -60 + i * 4);
+  }
+  ctx.fill();
+  // rozwarta paszcza
+  ctx.fillStyle = 'rgba(0,0,0,.95)';
+  ctx.beginPath(); ctx.moveTo(300, 0); ctx.lineTo(190, 14); ctx.lineTo(295, 42); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = 'rgba(200,225,240,.4)'; ctx.lineWidth = 2;
+  for (let i = 0; i < 5; i++){
+    ctx.beginPath(); ctx.moveTo(212 + i * 18, 10 + i * 3); ctx.lineTo(218 + i * 18, 20 + i * 4); ctx.stroke();
+  }
+  // jarzące się ślepie
+  const og = ctx.createRadialGradient(212, -26, 0, 212, -26, 26);
+  og.addColorStop(0, 'rgba(200,235,255,.95)'); og.addColorStop(1, 'rgba(120,200,255,0)');
+  ctx.fillStyle = og; ctx.beginPath(); ctx.arc(212, -26, 26, 0, TAU); ctx.fill();
+  ctx.fillStyle = '#eaf8ff'; ctx.beginPath(); ctx.arc(212, -26, 6, 0, TAU); ctx.fill();
+  ctx.restore();
+}
+
+/* ====== OKO OTCHŁANI (nad ciemnością — samo świeci) ====== */
+function rysujOko(){
+  const sy = OKO_Y - cam.y;
+  if (sy < -420 || sy > h + 420 || oko.otwarcie <= 0.02) return;
+  const sx = SWIAT_SZER / 2 - cam.x;
+  ctx.save(); ctx.translate(sx, sy);
+  ctx.scale(1, oko.otwarcie);
+  const og = ctx.createRadialGradient(0, 0, 30, 0, 0, 420);
+  og.addColorStop(0, `rgba(255,120,60,${0.28 * oko.otwarcie})`); og.addColorStop(1, 'rgba(255,120,60,0)');
+  ctx.fillStyle = og; ctx.beginPath(); ctx.arc(0, 0, 420, 0, TAU); ctx.fill();
+  // białko i tęczówka
+  ctx.fillStyle = '#1c0d07';
+  ctx.beginPath(); ctx.ellipse(0, 0, 330, 128, 0, 0, TAU); ctx.fill();
+  const ig = ctx.createRadialGradient(0, 0, 8, 0, 0, 120);
+  ig.addColorStop(0, '#ffb457'); ig.addColorStop(0.7, '#a03d10'); ig.addColorStop(1, '#4a1704');
+  ctx.fillStyle = ig; ctx.beginPath(); ctx.arc(0, 0, 118, 0, TAU); ctx.fill();
+  // pionowa źrenica śledząca gracza
+  const px2 = ogr((gracz.x - SWIAT_SZER / 2) * 0.07, -46, 46);
+  const py2 = ogr((gracz.y - OKO_Y) * 0.05, -26, 26);
+  ctx.fillStyle = '#050202';
+  ctx.beginPath(); ctx.ellipse(px2, py2, 20, 84, 0, 0, TAU); ctx.fill();
+  ctx.strokeStyle = 'rgba(255,170,90,.5)'; ctx.lineWidth = 5;
+  ctx.beginPath(); ctx.ellipse(0, 0, 330, 128, 0, 0, TAU); ctx.stroke();
+  ctx.restore();
+}
+
+/* ====== EFEKTY EKRANOWE, HUD, JOYSTICK, NAPISY ====== */
+function rysujEfekty(){
+  ctx.drawImage(vinieta, 0, 0, w, h); // winieta
+  if (blyskObrazen > 0){
+    ctx.fillStyle = `rgba(255,30,30,${ogr(blyskObrazen, 0, 0.5) * 0.55})`;
+    ctx.fillRect(0, 0, w, h);
+  }
+  // pulsowanie przy niskim tlenie
+  if (stan === 'gra' && gracz.tlen < gracz.maxTlen * 0.25){
+    const p = (Math.sin(czasGry * 5) * 0.5 + 0.5) * 0.16;
+    const gr = ctx.createRadialGradient(w / 2, h / 2, Math.min(w, h) / 3, w / 2, h / 2, Math.max(w, h) / 1.4);
+    gr.addColorStop(0, 'rgba(255,40,40,0)'); gr.addColorStop(1, `rgba(255,40,40,${p})`);
+    ctx.fillStyle = gr; ctx.fillRect(0, 0, w, h);
+  }
+}
+
+function rysujHUD(){
+  const s = ogr(Math.min(w, h) / 640, 0.78, 1.15); // skala HUD dla małych ekranów
+  const mx = 18 * s;
+  const my = 18 * s + (czyDotyk ? 24 * s : 0); // większe przesunięcie od rogu na telefonach
+
+  // głębokość
+  ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+  ctx.fillStyle = 'rgba(2,14,26,.5)';
+  rr(ctx, mx - 6, my - 5, 205 * s, 130 * s, 12); ctx.fill();
+  ctx.fillStyle = '#eaf7ff';
+  ctx.font = `800 ${30 * s}px "Segoe UI",system-ui,sans-serif`;
+  ctx.fillText(Math.floor(glebokosc()) + ' m', mx + 4, my);
+  const g = glebokosc();
+  let strefa = STREFY[0];
+  for (const st of STREFY) if (g >= st.od) strefa = st;
+  ctx.font = `600 ${12.5 * s}px "Segoe UI",system-ui,sans-serif`;
+  ctx.fillStyle = 'rgba(160,215,245,.85)';
+  ctx.fillText(strefa.nazwa.toUpperCase(), mx + 4, my + 37 * s);
+
+  // pasek tlenu
+  const pw = 170 * s, ph = 12 * s, py3 = my + 70 * s;
+  const ut = ogr(gracz.tlen / gracz.maxTlen, 0, 1);
+  ctx.fillStyle = 'rgba(255,255,255,.13)'; rr(ctx, mx + 4, py3, pw, ph, ph / 2); ctx.fill();
+  const og2 = ctx.createLinearGradient(mx, py3, mx + pw, py3);
+  og2.addColorStop(0, '#0aa0d8'); og2.addColorStop(1, '#7fe6ff');
+  ctx.fillStyle = ut < 0.25 ? (Math.sin(czasGry * 8) > 0 ? '#ff5040' : '#c03328') : og2;
+  if (ut > 0){ rr(ctx, mx + 4, py3, Math.max(ph, pw * ut), ph, ph / 2); ctx.fill(); }
+  ctx.fillStyle = 'rgba(190,235,255,.9)';
+  ctx.font = `700 ${10.5 * s}px "Segoe UI",system-ui,sans-serif`;
+  ctx.fillText('TLEN', mx + 5, py3 - 12 * s);
+
+  // kadłub (segmenty)
+  const hy2 = py3 + 32 * s;
+  ctx.fillText('KADŁUB', mx + 5, hy2 - 12 * s);
+  for (let i = 0; i < gracz.maxHp; i++){
+    ctx.fillStyle = i < Math.ceil(gracz.hp) ? '#ff5d6c' : 'rgba(255,255,255,.14)';
+    rr(ctx, mx + 4 + i * 22 * s, hy2, 17 * s, 10 * s, 3); ctx.fill();
+  }
+
+  // perły (prawy górny róg; niżej gdy jest dotykowy przycisk pauzy)
+  // ikona i liczba wyrównane do wspólnej osi pionowej — środka plakietki
+  const pxp = w - 14;
+  const pyp = czyDotyk ? Math.max(16, (btnPauza?.getBoundingClientRect().bottom || 0) + 10) : 16;
+  const wysB = 34 * s, cyB = pyp + wysB / 2;
+  const napis = String(postep.perly);
+  ctx.font = `800 ${22 * s}px "Segoe UI",system-ui,sans-serif`;
+  const szer = ctx.measureText(napis).width + 44 * s;
+  ctx.fillStyle = 'rgba(2,14,26,.5)';
+  rr(ctx, pxp - szer, pyp, szer + 4, wysB, 10); ctx.fill();
+  const cxP = pxp - szer + 16 * s;
+  const pg = ctx.createRadialGradient(cxP - 3 * s, cyB - 3 * s, 1, cxP, cyB, 9 * s);
+  pg.addColorStop(0, '#ffffff'); pg.addColorStop(1, '#c0cfe0');
+  ctx.fillStyle = pg;
+  ctx.beginPath(); ctx.arc(cxP, cyB, 8 * s, 0, TAU); ctx.fill();
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#ffe9b0';
+  ctx.fillText(napis, pxp - 8, cyB + 1 * s);
+  ctx.textBaseline = 'top';
+
+  // sonar: pierścień i wskaźniki zagrożeń
+  if (postep.poziomy.sonar > 0){
+    const ex = gracz.x - cam.x, ey = gracz.y - cam.y;
+    const f = 1 - sonarT / 2.6;
+    ctx.strokeStyle = `rgba(120,255,210,${(1 - f) * 0.3})`; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.arc(ex, ey, 40 + f * 300, 0, TAU); ctx.stroke();
+    const zasieg = 800 + postep.poziomy.sonar * 300;
+    for (const d of drapiezniki){
+      const dx = d.x - gracz.x, dy = d.y - gracz.y, dl2 = Math.hypot(dx, dy);
+      if (dl2 > zasieg || dl2 < 40) continue;
+      const sx2 = d.x - cam.x, sy2 = d.y - cam.y;
+      if (sx2 > 40 && sx2 < w - 40 && sy2 > 40 && sy2 < h - 40) continue; // widoczny — bez wskaźnika
+      const kx = ogr(sx2, 26, w - 26), ky = ogr(sy2, 26, h - 26);
+      ctx.fillStyle = `rgba(255,80,70,${0.5 + Math.sin(czasGry * 6) * 0.3})`;
+      ctx.save(); ctx.translate(kx, ky); ctx.rotate(Math.atan2(dy, dx));
+      ctx.beginPath(); ctx.moveTo(9, 0); ctx.lineTo(-5, -6); ctx.lineTo(-5, 6); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
+  }
+}
+
+function rysujJoystick(){
+  if (!czyDotyk) return;
+  const bx = joy.id !== null ? joy.bx : 96, by = joy.id !== null ? joy.by : h - 96;
+  ctx.fillStyle = 'rgba(160,220,255,.09)';
+  ctx.beginPath(); ctx.arc(bx, by, joy.PROM, 0, TAU); ctx.fill();
+  ctx.strokeStyle = 'rgba(160,220,255,.28)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(bx, by, joy.PROM, 0, TAU); ctx.stroke();
+  const kg = ctx.createRadialGradient(bx + joy.dx, by + joy.dy - 4, 2, bx + joy.dx, by + joy.dy, 30);
+  kg.addColorStop(0, 'rgba(180,235,255,.5)'); kg.addColorStop(1, 'rgba(70,160,220,.35)');
+  ctx.fillStyle = kg;
+  ctx.beginPath(); ctx.arc(bx + joy.dx, by + joy.dy, 30, 0, TAU); ctx.fill();
+  ctx.strokeStyle = 'rgba(200,240,255,.4)';
+  ctx.beginPath(); ctx.arc(bx + joy.dx, by + joy.dy, 30, 0, TAU); ctx.stroke();
+}
+
+function rysujNapisy(){
+  // wielkie ogłoszenie strefy
+  if (ogloszenie){
+    const t = ogloszenie.t;
+    const a = t > 3.4 ? (4.2 - t) / 0.8 : t < 1 ? t : 1;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = `rgba(220,245,255,${a * 0.95})`;
+    ctx.font = `800 ${ogr(w * 0.055, 22, 44)}px "Segoe UI",system-ui,sans-serif`;
+    ctx.shadowColor = 'rgba(80,200,255,.8)'; ctx.shadowBlur = 24;
+    ctx.fillText(ogloszenie.tytul, w / 2, h * 0.24);
+    ctx.shadowBlur = 0;
+    ctx.fillStyle = `rgba(150,205,235,${a * 0.85})`;
+    ctx.font = `600 ${ogr(w * 0.026, 13, 18)}px "Segoe UI",system-ui,sans-serif`;
+    ctx.fillText(ogloszenie.sub, w / 2, h * 0.24 + ogr(w * 0.05, 26, 40));
+  }
+  // toasty na dole
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const bazaY = czyDotyk ? h - 190 : h - 70;
+  for (let i = 0; i < toasty.length; i++){
+    const t = toasty[i];
+    const a = ogr(Math.min(t.t, 5 - t.t) * 2, 0, 1);
+    ctx.font = `600 ${ogr(w * 0.026, 13, 16)}px "Segoe UI",system-ui,sans-serif`;
+    const szer = Math.min(ctx.measureText(t.txt).width + 30, w - 20);
+    ctx.fillStyle = `rgba(3,18,32,${a * 0.85})`;
+    rr(ctx, w / 2 - szer / 2, bazaY - i * 42 - 16, szer, 34, 12); ctx.fill();
+    ctx.fillStyle = `rgba(220,243,255,${a})`;
+    ctx.fillText(t.txt, w / 2, bazaY - i * 42, w - 40);
+  }
+}
+
+/* ====== GŁÓWNA FUNKCJA RYSUJĄCA ====== */
+function rysuj(){
+  ctx.save();
+  if (wstrzas > 0.2) ctx.translate(los(-wstrzas, wstrzas) * 0.5, los(-wstrzas, wstrzas) * 0.5);
+
+  rysujTlo();
+  rysujParalakse();
+
+  // świat we współrzędnych świata
+  ctx.save(); ctx.translate(-cam.x, -cam.y);
+  rysujSciany();
+  rysujBudowle();
+  rysujWraki();
+  rysujGlony();
+  rysujSkaly();
+  rysujKominy();
+  rysujZnajdzki();
+  rysujLawice();
+  rysujMeduzy();
+  rysujDrapiezniki();
+  rysujWieloryba();
+  if (stan !== 'menu') rysujGracza();
+  rysujCzastki();
+  ctx.restore();
+
+  rysujCiemnosc();
+  rysujLewiatana();
+  rysujOko();
+  rysujEfekty();
+
+  if (stan === 'gra' || stan === 'pauza'){
+    rysujHUD();
+    if (stan === 'gra') rysujJoystick();
+    rysujNapisy();
+  }
+  ctx.restore();
+}
+
+/* =========================================================================
+   INTERFEJS DOM: ekrany, sklep, przepływ gry
+   ========================================================================= */
+const el = id => document.getElementById(id);
+const ekrany = { menu: el('ekranStart'), baza: el('ekranBaza'), pauza: el('ekranPauza'), sklep: el('ekranSklep'), ranking: el('ekranRanking') };
+const btnPauza = el('btnPauza');
+
+function ustawStan(s){
+  stan = s;
+  ekrany.menu.classList.toggle('widoczny', s === 'menu');
+  ekrany.baza.classList.toggle('widoczny', s === 'baza');
+  ekrany.pauza.classList.toggle('widoczny', s === 'pauza');
+  ekrany.sklep.classList.toggle('widoczny', s === 'sklep');
+  ekrany.ranking.classList.toggle('widoczny', s === 'ranking');
+  btnPauza.hidden = !(czyDotyk && (s === 'gra' || s === 'pauza'));
+  btnPauza.textContent = s === 'pauza' ? '▶' : '⏸';
+  // wyciszenie audio poza rozgrywką (dron, alarmy itd. nie grają w menu)
+  if (ac && master) master.gain.setTargetAtTime(s === 'gra' ? 0.55 : 0.06, ac.currentTime, 0.5);
+}
+
+function przelaczPauze(){
+  if (stan === 'gra') ustawStan('pauza');
+  else if (stan === 'pauza') ustawStan('gra');
+  else if (stan === 'sklep') ustawStan('pauza');
+}
+
+/* --- zastosowanie wykupionych ulepszeń do statystyk batyskafu --- */
+function zastosujUlepszenia(){
+  const p = postep.poziomy;
+  gracz.maxHp   = 3 + p.pancerz;         gracz.hp   = gracz.maxHp;
+  gracz.maxTlen = 75 + 30 * p.tlen;      gracz.tlen = gracz.maxTlen;
+  gracz.swiatlo = 170 + 45 * p.latarka;
+  gracz.szyb    = 265 * (1 + 0.12 * p.naped);
+  gracz.przysp  = 900 * (1 + 0.12 * p.naped);
+}
+
+/* --- ulepszenia kupione w trakcie zanurzenia (sklep z pauzy):
+   statystyki rosną od razu, ale bez darmowego napełniania zbiorników --- */
+function zastosujUlepszeniaWTrakcie(){
+  const p = postep.poziomy;
+  const stareMaxHp = gracz.maxHp, stareMaxTlen = gracz.maxTlen;
+  gracz.maxHp   = 3 + p.pancerz;
+  gracz.maxTlen = 75 + 30 * p.tlen;
+  gracz.hp   += Math.max(0, gracz.maxHp - stareMaxHp);     // nowy segment pancerza od razu sprawny
+  gracz.tlen += Math.max(0, gracz.maxTlen - stareMaxTlen); // większy zbiornik przychodzi z tlenem
+  gracz.swiatlo = 170 + 45 * p.latarka;
+  gracz.szyb    = 265 * (1 + 0.12 * p.naped);
+  gracz.przysp  = 900 * (1 + 0.12 * p.naped);
+}
+
+/* --- nowe zanurzenie: świeży świat, pełne zbiorniki --- */
+function startZanurzenie(){
+  run = { ziarno: (Math.random() * 0xffffffff) >>> 0, maxG: 0, perlyZebrane: 0, czas: 0, token: null, rankingWyslany: false };
+  pobierzTokenGry(run);
+  chunki = new Set();
+  skaly = []; glony = []; wraki = []; znajdzki = []; meduzy = []; lawice = [];
+  drapiezniki = []; kominy = []; budowle = []; czasteczki = [];
+  gracz.x = SWIAT_SZER / 2; gracz.y = 60; gracz.vx = 0; gracz.vy = 0; gracz.kier = 1; gracz.nietyk = 0;
+  zastosujUlepszenia();
+  lewiatan.stan = 'spokoj'; lewiatan.t = 22 + los(0, 10);
+  wieloryb.aktywny = false; wieloryb.t = 50 + los(0, 60);
+  oko.otwarcie = 0;
+  ogloszenie = null; toasty = []; maxStrefa = -1;
+  sonarT = 0; alarmT = 0; blyskObrazen = 0; wstrzas = 0;
+  cam.x = w >= SWIAT_SZER ? (SWIAT_SZER - w) / 2 : gracz.x - w / 2;
+  cam.y = gracz.y - h * 0.42;
+  zapewnijChunki();
+  initAudio();
+  ustawStan('gra');
+}
+
+/* --- ekran bazy: nagłówek, statystyki, sklep --- */
+function pokazBaze(powod){
+  const naglowki = {
+    hp:          '💥 KADŁUB ZMIAŻDŻONY',
+    tlen:        '🫧 ZABRAKŁO TLENU',
+    wynurzenie:  '☀️ BEZPIECZNY POWRÓT',
+  };
+  el('bazaTytul').textContent = naglowki[powod] || 'BAZA';
+  // na powierzchni załoga bazy zawsze naprawia kadłub i napełnia zbiorniki
+  gracz.hp = gracz.maxHp; gracz.tlen = gracz.maxTlen;
+  el('bazaInfo').textContent =
+    `Głębokość zanurzenia: ${Math.floor(run.maxG)} m • Zebrane perły: +${run.perlyZebrane} • Czas: ${Math.floor(run.czas)} s`;
+  el('bazaStaty').innerHTML =
+    `<div>🏆 Rekord: <b>${postep.rekord} m</b></div>` +
+    `<div>🤿 Zanurzenia: <b>${postep.zanurzenia}</b></div>` +
+    `<div>🏺 Skarby: <b>${Math.min(postep.relikty, 3)}/3</b>${postep.sekretZloty ? ' ✨' : ''}</div>`;
+  odswiezSklepy();
+  ustawStan('baza');
+  wczytajRankingBazy();
+}
+
+/* =========================================================================
+   RANKING (leaderboard TOP 5) — pobieranie tokenu, wczytywanie i wysyłka
+   ========================================================================= */
+
+// Token wydawany przez serwer na start zanurzenia; wiąże czas gry z wynikiem,
+// żeby nie dało się zgłosić wyniku bez faktycznego zanurzenia (patrz server.js).
+function pobierzTokenGry(biezacyRun){
+  fetch('/api/glebina/token')
+    .then(r => r.ok ? r.json() : null)
+    .then(d => { if (d && d.token) biezacyRun.token = d.token; })
+    .catch(() => {});
+}
+
+// Rysuje listę TOP 5 w dowolnym kontenerze <ul>
+function renderujRanking(wpisy, listaEl){
+  listaEl.innerHTML = '';
+  if (!wpisy || wpisy.length === 0){
+    const li = document.createElement('li');
+    li.className = 'pusta';
+    li.textContent = 'Ranking jest pusty — bądź pierwszy!';
+    listaEl.appendChild(li);
+    return;
+  }
+  wpisy.forEach((wp, i) => {
+    const li = document.createElement('li');
+    const m = document.createElement('span'); m.className = 'miejsce'; m.textContent = '#' + (i + 1);
+    const n = document.createElement('span'); n.className = 'nick'; n.textContent = wp.nick;
+    const s = document.createElement('span'); s.className = 'wynik'; s.textContent = Math.floor(wp.score) + ' m';
+    li.append(m, n, s);
+    listaEl.appendChild(li);
+  });
+}
+
+async function pobierzRanking(){
+  try {
+    const r = await fetch('/api/glebina/leaderboard');
+    if (!r.ok) return null;
+    return await r.json();
+  } catch { return null; }
+}
+
+// Ciasteczko zapisane przez serwer po udanym zapisie wiąże tę przeglądarkę
+// z jednym nickiem (patrz GLEBINA_OWNER_COOKIE w server.js) - dzięki temu
+// na współdzielonym IP (rodzina, sieć publiczna) jedna osoba nie zajmie
+// wszystkich miejsc. Odczyt tu służy tylko do podpowiedzi/blokady pola w UI,
+// właściwą weryfikację i tak robi serwer przy zapisie wyniku.
+function zapamietanyNickGlebiny(){
+  const m = document.cookie.match(/(?:^|;\s*)glebina_owner=([^;]+)/);
+  if (!m) return null;
+  try {
+    const raw = decodeURIComponent(m[1]);
+    const kropka = raw.lastIndexOf('.');
+    if (kropka <= 0) return null;
+    let b64 = raw.slice(0, kropka).replace(/-/g, '+').replace(/_/g, '/');
+    b64 += '='.repeat((4 - b64.length % 4) % 4);
+    const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    return new TextDecoder('utf-8').decode(bytes) || null;
+  } catch { return null; }
+}
+
+// Ekran bazy: pokazuje TOP 5 i — jeśli wynik z tego zanurzenia się kwalifikuje — formularz z nickiem
+async function wczytajRankingBazy(){
+  const lista = el('rankingLista'), forma = el('rankingForma'), info = el('rankingInfo');
+  lista.innerHTML = '<li class="pusta">Wczytywanie…</li>';
+  forma.style.display = 'none';
+  const dane = await pobierzRanking();
+  const wpisy = (dane && Array.isArray(dane.leaderboard)) ? dane.leaderboard : [];
+  renderujRanking(wpisy, lista);
+
+  const wynik = Math.floor(run.maxG);
+  const kwalifikuje = wynik > 0 && !run.rankingWyslany &&
+    (wpisy.length < 5 || wynik > dane.fifthPlaceScore);
+  if (!kwalifikuje) return;
+
+  forma.style.display = '';
+  const nickPole = el('rankingNick');
+  const zapamietany = zapamietanyNickGlebiny();
+  if (zapamietany){
+    nickPole.value = zapamietany;
+    nickPole.readOnly = true;
+    info.textContent = `Twój wynik (${wynik} m) kwalifikuje się do TOP 5! Na tym urządzeniu zapisujesz wynik jako "${zapamietany}".`;
+  } else {
+    nickPole.readOnly = false;
+    nickPole.value = '';
+    info.textContent = `Twój wynik (${wynik} m) kwalifikuje się do TOP 5! Wpisz nick i zapisz się w rankingu:`;
+  }
+}
+
+// Ekran startowy: podgląd rankingu bez formularza
+async function wczytajRankingStartu(){
+  const lista = el('rankingListaStart');
+  lista.innerHTML = '<li class="pusta">Wczytywanie…</li>';
+  const dane = await pobierzRanking();
+  renderujRanking(dane && Array.isArray(dane.leaderboard) ? dane.leaderboard : [], lista);
+}
+
+async function wyslijWynikRankingu(){
+  const btn = el('btnRankingWyslij'), info = el('rankingInfo');
+  const nick = el('rankingNick').value.trim();
+
+  if (!/^[\p{L}0-9 _-]{2,16}$/u.test(nick)){
+    info.textContent = 'Nick: 2-16 znaków (litery, cyfry, spacja, _ lub -).';
+    return;
+  }
+  if (!run.token){
+    info.textContent = 'Trwa przygotowywanie sesji, spróbuj za chwilę…';
+    return;
+  }
+
+  btn.disabled = true; btn.textContent = 'WYSYŁANIE…';
+  try {
+    const r = await fetch('/api/glebina/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: run.token, nick, score: Math.floor(run.maxG) })
+    });
+    const d = await r.json().catch(() => ({}));
+    if (d.ok){
+      run.rankingWyslany = true;
+      info.textContent = d.unchanged ? (d.message || 'Twój lepszy wynik jest już w rankingu.') : '✅ Zapisano w rankingu!';
+      if (Array.isArray(d.leaderboard)) renderujRanking(d.leaderboard, el('rankingLista'));
+      el('rankingForma').style.display = 'none';
+      sfxKup();
+    } else {
+      info.textContent = d.message || 'Nie udało się zapisać wyniku.';
+      btn.disabled = false; btn.textContent = '📝 ZAPISZ WYNIK W RANKINGU';
+    }
+  } catch {
+    info.textContent = 'Błąd sieci — spróbuj ponownie.';
+    btn.disabled = false; btn.textContent = '📝 ZAPISZ WYNIK W RANKINGU';
+  }
+}
+
+/* --- sklep ulepszeń (dwa egzemplarze: w bazie i w pauzie) --- */
+const CENA_NAPRAWY = 20; // koszt +1 segmentu kadłuba w sklepie z pauzy
+
+function budujSklepDo(sk, zNaprawa){
+  sk.innerHTML = '';
+  for (const klucz in ULEPSZENIA){
+    const u = ULEPSZENIA[klucz];
+    const poz = document.createElement('div');
+    poz.className = 'sklepPoz';
+    poz.innerHTML =
+      `<div class="ikona">${u.ikona}</div>` +
+      `<div><div class="nazwa">${u.nazwa}</div><div class="opisU">${u.opis}</div><div class="pips" data-pips></div></div>` +
+      `<button data-kup></button>`;
+    const btn = poz.querySelector('[data-kup]');
+    btn.addEventListener('click', () => {
+      const lvl = postep.poziomy[klucz];
+      if (lvl >= u.koszty.length) return;
+      const cena = u.koszty[lvl];
+      if (postep.perly < cena) return;
+      postep.perly -= cena;
+      postep.poziomy[klucz]++;
+      zastosujUlepszeniaWTrakcie();
+      sfxKup();
+      odswiezSklepy();
+    });
+    poz.dataset.klucz = klucz;
+    sk.appendChild(poz);
+  }
+  // naprawa kadłuba — tylko w sklepie dostępnym z pauzy (na powierzchni i tak naprawiają za darmo)
+  if (zNaprawa){
+    const poz = document.createElement('div');
+    poz.className = 'sklepPoz';
+    poz.innerHTML =
+      `<div class="ikona">🔧</div>` +
+      `<div><div class="nazwa">Naprawa kadłuba</div><div class="opisU">+1 segment wytrzymałości</div><div class="pips" data-pips></div></div>` +
+      `<button data-kup></button>`;
+    poz.querySelector('[data-kup]').addEventListener('click', () => {
+      if (postep.perly < CENA_NAPRAWY || gracz.hp >= gracz.maxHp) return;
+      postep.perly -= CENA_NAPRAWY;
+      gracz.hp = Math.min(gracz.maxHp, gracz.hp + 1);
+      sfxKup();
+      odswiezSklepy();
+    });
+    poz.dataset.klucz = 'naprawa';
+    sk.appendChild(poz);
+  }
+}
+
+function odswiezSklepy(){
+  el('bazaPerly').textContent = postep.perly;
+  el('sklepPerly').textContent = postep.perly;
+  for (const sk of [el('sklep'), el('sklepPauza')]){
+    for (const poz of sk.children){
+      const klucz = poz.dataset.klucz;
+      const btn = poz.querySelector('[data-kup]');
+      if (klucz === 'naprawa'){
+        poz.querySelector('[data-pips]').textContent = `${Math.ceil(gracz.hp)} / ${gracz.maxHp}`;
+        if (gracz.hp >= gracz.maxHp){ btn.textContent = 'PEŁNY'; btn.disabled = true; }
+        else { btn.textContent = `${CENA_NAPRAWY} 🦪`; btn.disabled = postep.perly < CENA_NAPRAWY; }
+        continue;
+      }
+      const u = ULEPSZENIA[klucz];
+      const lvl = postep.poziomy[klucz], max = u.koszty.length;
+      poz.querySelector('[data-pips]').textContent = '●'.repeat(lvl) + '○'.repeat(max - lvl);
+      if (lvl >= max){ btn.textContent = 'MAX'; btn.disabled = true; }
+      else {
+        const cena = u.koszty[lvl];
+        btn.textContent = `${cena} 🦪`;
+        btn.disabled = postep.perly < cena;
+      }
+    }
+  }
+}
+
+/* --- pełny ekran na urządzeniach dotykowych (jak F11) ---
+   przeglądarki pozwalają na to tylko w reakcji na gest użytkownika,
+   więc prosimy o pełny ekran przy kliknięciu przycisku startu */
+function pelnyEkran(){
+  if (!czyDotyk || document.fullscreenElement) return;
+  const de = document.documentElement;
+  const f = de.requestFullscreen || de.webkitRequestFullscreen;
+  if (f) { try { const p = f.call(de); if (p && p.catch) p.catch(() => {}); } catch (e) {} }
+}
+
+/* --- przyciski --- */
+el('btnStart').addEventListener('click', () => { initAudio(); pelnyEkran(); startZanurzenie(); });
+el('btnPonow').addEventListener('click', () => { initAudio(); pelnyEkran(); startZanurzenie(); });
+el('btnWznow').addEventListener('click', () => { if (stan === 'pauza') ustawStan('gra'); });
+el('btnSklepPauza').addEventListener('click', () => { if (stan === 'pauza'){ odswiezSklepy(); ustawStan('sklep'); } });
+el('btnSklepWroc').addEventListener('click', () => { if (stan === 'sklep') ustawStan('pauza'); });
+el('btnPokazRanking').addEventListener('click', () => { initAudio(); ustawStan('ranking'); wczytajRankingStartu(); });
+el('btnRankingZamknij').addEventListener('click', () => { if (stan === 'ranking') ustawStan('menu'); });
+el('btnRankingWyslij').addEventListener('click', wyslijWynikRankingu);
+el('rankingNick').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ e.preventDefault(); wyslijWynikRankingu(); }
+});
+
+btnPauza.addEventListener('click', () => { initAudio(); przelaczPauze(); });
+
+/* =========================================================================
+   PĘTLA GŁÓWNA (requestAnimationFrame, ~60 FPS)
+   ========================================================================= */
+let ostatniT = 0;
+function petla(t){
+  requestAnimationFrame(petla);
+  const dt = Math.min(0.05, ostatniT ? (t - ostatniT) / 1000 : 0.016);
+  ostatniT = t;
+  if (stan === 'gra'){
+    aktualizuj(dt);
+  } else {
+    // menu / baza / pauza: świat "oddycha" w tle (bąbelki, fale), ale stoi
+    czasGry += dt;
+    aktualizujCzastki(dt);
+    ambientT -= dt;
+    if (ambientT <= 0){ ambientT = los(0.4, 1.2); babel(cam.x + los(0, w), cam.y + h + 20, los(1, 3)); }
+  }
+  rysuj();
+}
+
+/* ====== START ====== */
+rozmiar();
+// pokaż instrukcję właściwą dla urządzenia
+el(czyDotyk ? 'instrKlaw' : 'instrDotyk').style.display = 'none';
+cam.x = w >= SWIAT_SZER ? (SWIAT_SZER - w) / 2 : gracz.x - w / 2;
+cam.y = gracz.y - h * 0.42;
+run.ziarno = (Math.random() * 0xffffffff) >>> 0;
+zapewnijChunki();
+budujSklepDo(el('sklep'), false);
+budujSklepDo(el('sklepPauza'), true);
+requestAnimationFrame(petla);
+
+</script>
+</body>
+</html>

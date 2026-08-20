@@ -1,0 +1,1043 @@
+<!DOCTYPE html><html><head><title>4 In a Row</title><meta http-equiv="content-type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui=1"><meta charset="UTF-8"><meta name="description" content="4 w rzędzie — klasyczna gra logiczna w nowoczesnej odsłonie. Zagraj z przyjacielem lub zmierz się z botem."><meta name="theme-color" content="#2963d1"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon64.png"><link rel="apple-touch-icon" sizes="180x180" href="icon180.png"><link rel="icon" type="image/png" sizes="32x32" href="icon32.png"><link rel="icon" type="image/png" sizes="16x16" href="icon16.png"><style>html,body {
+  margin: 0;
+  padding: 0;
+  background-color: #20222b;
+  overflow:hidden;
+  font-family: Verdana;
+}
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+#canvaswrapper {
+  text-align: center ;
+}
+</style><style>@font-face { font-family: "BitCell" ; src: url("fonts/BitCell.ttf") format("truetype"); }</style><style>@font-face { font-family: "Squarewave" ; src: url("fonts/Squarewave.ttf") format("truetype"); }</style><script>window.fonts = ["BitCell","Squarewave"]</script></head><body class="noselect custom-cursor" oncontextmenu="return false;"><div id="canvaswrapper"></div><script type="text/javascript">var resources = {"images":[],"assets":[],"maps":{},"sounds":[],"music":[]};
+var graphics = "M1";
+
+</script><script type="text/javascript">var orientation = 'landscape' ;
+var aspect = '16x9' ;
+var ms_libs = [] ;
+window.skip_service_worker = true;
+window.exported_project = true;
+window.ms_use_server = false ;
+</script><script src="compiler.js"></script><script src="parser.js"></script><script src="processor.js"></script><script src="program.js"></script><script src="routine.js"></script><script src="runner.js"></script><script src="token.js"></script><script src="tokenizer.js"></script><script src="transpiler.js"></script><script src="microengine.js"></script></body><script type="text/javascript">
+window.addEventListener("load",function() {
+  window.player = new Player(function(event) {
+    if (event.name == "started") {
+      // gra wystartowała
+    }
+    else if (event.name == "error") {
+      console.error("[microScript]", event.data) ;
+    }
+    else if (event.name == "log") {
+      // console.info(event.data) ;
+    }
+  }) ;
+  // Silnik microStudio wywołuje startReady() tylko z callbacków ładowania
+  // sprite'ów — przy pustej liście obrazków start trzeba wyzwolić ręcznie.
+  if (window.player.runtime && !window.player.runtime.started) {
+    window.player.runtime.checkStartReady() ;
+  }
+  document.body.focus() ;
+}) ;
+
+</script><script id="code" type="text/x-microscript">
+
+// =====================================================================
+//  4 IN A ROW  (Connect Four)
+//  Ekran: landscape 16x9  ->  ~356 x 200 jednostek, środek (0,0), oś Y w górę
+//  Styl: klasyczna gra planszowa — ciemne tło, niebieska plansza,
+//  czerwone ("x") i żółte ("o") pionki, płaskie przyciski z twardym cieniem.
+//  Stany: "menu" (wybór graczy) -> "play" (partia; koniec = nakładka)
+//  Boty: JS (negamax + alfa-beta + tablica transpozycji), patrz blok
+//  system.javascript na dole pliku.
+// =====================================================================
+
+// ---------------------------------------------------------------------
+// Inicjalizacja i stan gry
+// ---------------------------------------------------------------------
+
+init = function()
+
+  ROW_COUNT = 6
+  COL_COUNT = 7
+  CELL = 22                        // rozmiar pola planszy
+  UI_FONT = "Squarewave"
+
+  state = "menu"
+  optionNames = ["Gracz","Bot Łatwy","Bot Trudny"]
+  choiceX = 0                      // wybór strony niebieskiej (indeks optionNames)
+  choiceO = 1                      // wybór strony czerwonej — domyślnie łatwy bot
+  bot_thinktime = 900              // budżet czasu na ruch bota [ms]
+
+  bots = object
+    x = "Gracz"
+    o = "Gracz"
+  end
+  botgame = [false,false]          // [niebieski jest botem?, czerwony jest botem?]
+  thread = 0
+
+  gameInit()
+
+  // start z pominięciem menu (do testów): index.html#autoplay / #botduel
+  if autostart == "duel" then
+    choiceX = 2
+    choiceO = 2
+    startMatch()
+  elsif autostart == "play" then
+    choiceX = 0
+    choiceO = 0
+    startMatch()
+  end
+
+end
+
+// czyści stan pojedynczej partii (wybór graczy i statystyki zostają)
+gameInit = function()
+
+  stopThread()
+  next = "x"                       // "x" = niebieski, "o" = czerwony
+  gb = []
+  for r = 0 to ROW_COUNT-1
+    gb[r] = []
+    for c = 0 to COL_COUNT-1
+      gb[r][c] = " "
+    end
+  end
+  lastGB = 0                       // kopia planszy do cofania (0 = brak)
+  lastNext = "x"
+  winLine = 0                      // zwycięska czwórka [[r,c] x4] albo 0
+  winner = 0                       // "x" / "o" / 0
+  anim = 0                         // animacja spadającego pionka
+  game_still_running = true
+  endTime = 0
+  if botgame[0] then bots.x.newGame() end
+  if botgame[1] then bots.o.newGame() end
+
+end
+
+stopThread = function()
+  if thread != 0 then thread.stop() end
+  thread = 0
+end
+
+levelName = function(choice)
+  if choice == 1 then return "easy" else return "hard" end
+end
+
+// tworzy botom świeże instancje wg wyboru z menu i rozpoczyna partię
+startMatch = function()
+  if choiceX == 0 then
+    bots.x = "Gracz"
+  else
+    bots.x = makeBot(optionNames[choiceX], levelName(choiceX))
+    bots.x.setSide("x")
+  end
+  if choiceO == 0 then
+    bots.o = "Gracz"
+  else
+    bots.o = makeBot(optionNames[choiceO], levelName(choiceO))
+    bots.o.setSide("o")
+  end
+  botgame = [choiceX > 0, choiceO > 0]
+  gameInit()
+  state = "play"
+end
+
+currentIsBot = function()
+  if next == "x" then return botgame[0] else return botgame[1] end
+end
+
+currentBot = function()
+  if next == "x" then return bots.x else return bots.o end
+end
+
+// ---------------------------------------------------------------------
+// Logika partii
+// ---------------------------------------------------------------------
+
+findRow = function(board, column)
+  for row = 0 to ROW_COUNT-1
+    if board[row][column] == " " then return row end
+  end
+  return -1
+end
+
+boardFull = function(board)
+  for c = 0 to COL_COUNT-1
+    if board[ROW_COUNT-1][c] == " " then return 0 end
+  end
+  return 1
+end
+
+copyBoard = function(board)
+  local nb = []
+  for r = 0 to ROW_COUNT-1
+    nb[r] = board[r]+[]
+  end
+  return nb
+end
+
+// szuka zwycięskiej czwórki; zwraca [[r,c] x4] albo 0
+findWin = function(board)
+  local dirs = [[0,1],[1,0],[1,1],[-1,1]]
+  for r = 0 to ROW_COUNT-1
+    for c = 0 to COL_COUNT-1
+      local p = board[r][c]
+      if p != " " then
+        for d in dirs
+          local r3 = r + 3*d[0]
+          local c3 = c + 3*d[1]
+          if r3 >= 0 and r3 < ROW_COUNT and c3 < COL_COUNT then
+            if board[r+d[0]][c+d[1]] == p and board[r+2*d[0]][c+2*d[1]] == p and board[r3][c3] == p then
+              return [[r,c],[r+d[0],c+d[1]],[r+2*d[0],c+2*d[1]],[r3,c3]]
+            end
+          end
+        end
+      end
+    end
+  end
+  return 0
+end
+
+drop = function(column, human)
+  if not game_still_running then return 0 end
+  if anim != 0 then return 0 end
+  local landing = findRow(gb, column)
+  if landing < 0 then return 0 end
+  if human then
+    lastGB = copyBoard(gb)
+    lastNext = next
+  end
+  gb[landing][column] = next
+  anim = object
+    col = column
+    row = landing
+    piece = next
+    y = 74
+    vy = 1.5
+  end
+  local line = findWin(gb)
+  if line != 0 then
+    endGame(next, line)
+  elsif boardFull(gb) then
+    endGame(0, 0)
+  end
+  if next == "x" then next = "o" else next = "x" end
+  return 0
+end
+
+endGame = function(win_piece, line)
+  game_still_running = false
+  winner = win_piece
+  winLine = line
+  endTime = system.time()
+  if win_piece == 0 then
+    if botgame[0] then bots.x.draws += 1 end
+    if botgame[1] then bots.o.draws += 1 end
+  elsif win_piece == "x" then
+    if botgame[0] then bots.x.wins += 1 end
+    if botgame[1] then bots.o.loses += 1 end
+  else
+    if botgame[0] then bots.x.loses += 1 end
+    if botgame[1] then bots.o.wins += 1 end
+  end
+  return 0
+end
+
+// cofa ostatni ruch człowieka (jeden poziom)
+undoMove = function()
+  if lastGB == 0 then return 0 end
+  stopThread()
+  gb = copyBoard(lastGB)
+  next = lastNext
+  lastGB = 0
+  winLine = 0
+  winner = 0
+  anim = 0
+  game_still_running = true
+  return 0
+end
+
+clamp = function(v, low, high)
+  return min(max(v, low), high)
+end
+
+colX = function(c)
+  return c*CELL - 66
+end
+
+rowY = function(r)
+  return r*CELL - 69
+end
+
+// ---------------------------------------------------------------------
+// Pętla główna
+// ---------------------------------------------------------------------
+
+update = function()
+  drawBackground()
+  if state == "menu" then
+    updateMenu()
+  else
+    updatePlay()
+  end
+end
+
+updatePlay = function()
+
+  updateAnim()
+  runBots()
+
+  local humanTurn = 0
+  if game_still_running and anim == 0 and thread == 0 and not currentIsBot() then humanTurn = 1 end
+
+  local hoverCol = -1
+  if humanTurn and abs(mouse.x) < 80 and mouse.y > -82 and mouse.y < 68 then
+    hoverCol = clamp(floor((mouse.x+77)/CELL), 0, 6)
+  end
+
+  drawBoard(hoverCol)
+
+  if hoverCol >= 0 and mouse.press then
+    drop(hoverCol, 1)
+  end
+
+  local showOverlay = 0
+  if not game_still_running and anim == 0 then showOverlay = 1 end
+
+  drawHUD(showOverlay)
+
+  if showOverlay then drawEndOverlay() end
+
+  if keyboard.release.SPACE then
+    gameInit()
+  end
+
+end
+
+// uruchamia wątek namysłu bota, gdy przyszła jego kolej
+runBots = function()
+  if not game_still_running then return 0 end
+  if anim != 0 then return 0 end
+  if thread != 0 then return 0 end
+  if not currentIsBot() then return 0 end
+  thread = do
+    sleep 200
+    local bot = currentBot()
+    local column = bot.think(bot_thinktime, gb)
+    drop(column, 0)
+    thread = 0
+  end
+  return 0
+end
+
+// fizyka spadającego pionka (grawitacja + jedno odbicie)
+updateAnim = function()
+  if anim == 0 then return 0 end
+  anim.vy += 0.55
+  anim.y -= anim.vy
+  local ty = rowY(anim.row)
+  if anim.y <= ty then
+    anim.y = ty
+    if anim.vy > 3 then
+      anim.vy = -anim.vy*0.3
+    else
+      anim = 0
+    end
+  end
+  return 0
+end
+
+// ---------------------------------------------------------------------
+// Rysowanie
+// ---------------------------------------------------------------------
+
+drawBackground = function()
+  screen.fillRect(0, 0, 400, 202, "#20222b")
+  return 0
+end
+
+pieceColor = function(piece)
+  if piece == "x" then return "#f0503c" else return "#f5c33b" end
+end
+
+// pionek + podpis jako jedna, wyśrodkowana grupa
+drawIconLabel = function(cx, y, txt, size, piece, r)
+  local half = txt.length * size * 0.29
+  local tx = cx + r + 3
+  drawDisc(tx - half - r - 6, y, r, piece)
+  screen.drawText(txt, tx, y - size * 0.09, size, pieceColor(piece))
+  return 0
+end
+
+// pionek: płaski, jak plastikowy żeton — obwódka + wewnętrzny ring + błysk
+drawDisc = function(x, y, r, piece, ghost=0)
+  local a = 1
+  if ghost then a = 0.35 end
+  local main = "#e8402f"
+  local rim = "#b5271c"
+  if piece == "o" then
+    main = "#ffc933"
+    rim = "#d99b10"
+  end
+  screen.setAlpha(a)
+  screen.fillRound(x, y, r*2, r*2, main)
+  screen.setLineWidth(2)
+  screen.drawRound(x, y, r*2, r*2, rim)
+  screen.setLineWidth(1.2)
+  screen.setAlpha(a*0.5)
+  screen.drawRound(x, y, r*1.15, r*1.15, rim)
+  screen.setAlpha(a*0.55)
+  screen.fillRound(x - r*0.38, y + r*0.38, r*0.5, r*0.4, "#ffffff")
+  screen.setAlpha(1)
+  return 0
+end
+
+// puste gniazdo planszy — prześwit do tła, jak w prawdziwej grze
+drawHole = function(x, y)
+  screen.fillRound(x, y, 19, 19, "#20222b")
+  screen.setLineWidth(1.5)
+  screen.setAlpha(0.6)
+  screen.drawRound(x, y, 19, 19, "#14336e")
+  screen.setAlpha(1)
+  return 0
+end
+
+drawBoard = function(hoverCol)
+
+  // twardy cień i niebieska plansza
+  screen.setAlpha(0.35)
+  screen.fillRoundRect(4, -19, 176, 150, 12, "#000006")
+  screen.setAlpha(1)
+  screen.fillRoundRect(0, -14, 176, 150, 12, "#2963d1")
+  screen.setLineWidth(2.5)
+  screen.drawRoundRect(0, -14, 176, 150, 12, "#1c4aa6")
+
+  // delikatne podświetlenie kolumny pod kursorem
+  if hoverCol >= 0 and findRow(gb, hoverCol) >= 0 then
+    screen.setAlpha(0.16)
+    screen.fillRoundRect(colX(hoverCol), -14, 20, 144, 9, "#ffffff")
+    screen.setAlpha(1)
+  end
+
+  // pola: gniazda i pionki (pole animowane rysujemy jako puste)
+  for r = 0 to ROW_COUNT-1
+    for c = 0 to COL_COUNT-1
+      local cx = colX(c)
+      local cy = rowY(r)
+      local hidden = 0
+      if anim != 0 then
+        if anim.row == r and anim.col == c then hidden = 1 end
+      end
+      if gb[r][c] == " " or hidden then
+        drawHole(cx, cy)
+      else
+        drawDisc(cx, cy, 9.5, gb[r][c])
+      end
+    end
+  end
+
+  // duch pionka w miejscu lądowania + podgląd nad planszą
+  if hoverCol >= 0 then
+    local landing = findRow(gb, hoverCol)
+    if landing >= 0 then
+      drawDisc(colX(hoverCol), rowY(landing), 9.5, next, 1)
+      drawDisc(colX(hoverCol), 66, 7.5, next)
+    end
+  end
+
+  // spadający pionek
+  if anim != 0 then
+    drawDisc(colX(anim.col), anim.y, 9.5, anim.piece)
+  end
+
+  // pulsujące białe obramowanie zwycięskiej czwórki
+  if winLine != 0 and anim == 0 then
+    local pulse = 0.5 + 0.5*sin(system.time()/150)
+    screen.setLineWidth(2.5 + pulse*1.5)
+    screen.setAlpha(0.65 + 0.35*pulse)
+    for cell in winLine
+      screen.drawRound(colX(cell[1]), rowY(cell[0]), 20.5, 20.5, "#ffffff")
+    end
+    screen.setAlpha(1)
+    screen.setLineWidth(1)
+  end
+
+  return 0
+end
+
+drawHUD = function(hideButtons)
+
+  screen.setFont(UI_FONT)
+  screen.drawText("4 IN A ROW", -140, 90, 8, "rgba(236,229,211,0.35)")
+
+  // status tury
+  if game_still_running then
+    local piece = next
+    local label = ""
+    if currentIsBot() then
+      local b = currentBot()
+      label = b.name
+      if thread != 0 then
+        label = label + " myśli..."
+      end
+    else
+      if botgame[0] or botgame[1] then
+        label = "Twój ruch"
+      else
+        if piece == "x" then label = "Ruch: Czerwony" else label = "Ruch: Żółty" end
+      end
+    end
+    drawIconLabel(0, 84, label, 9, piece, 6)
+  end
+
+  // panele statystyk botów
+  if botgame[0] then drawBotPanel(-136, bots.x, pieceColor("x")) end
+  if botgame[1] then drawBotPanel(136, bots.o, pieceColor("o")) end
+
+  if not hideButtons then
+    if drawButton(136, 72, 74, 15, "Menu", 7, 0) then
+      stopThread()
+      state = "menu"
+    end
+    if lastGB != 0 and anim == 0 and thread == 0 then
+      if drawButton(-136, 72, 74, 15, "Cofnij ruch", 7, 0) then
+        undoMove()
+      end
+    end
+    screen.drawText("SPACJA = nowa gra", 0, -93, 6, "#6a7086")
+  end
+
+  return 0
+end
+
+drawBotPanel = function(x, bot, color)
+  screen.setAlpha(0.35)
+  screen.fillRoundRect(x+2, -11, 76, 104, 10, "#000006")
+  screen.setAlpha(1)
+  screen.fillRoundRect(x, -8, 76, 104, 10, "#2b2e3b")
+  screen.setLineWidth(1.5)
+  screen.drawRoundRect(x, -8, 76, 104, 10, "#4a506a")
+  screen.setFont(UI_FONT)
+  screen.drawText(bot.name, x, 26, 8.5, color)
+  screen.drawText("Wygrane: " + bot.wins, x, 6, 7, "#63c97a")
+  screen.drawText("Przegrane: " + bot.loses, x, -8, 7, "#f2796a")
+  screen.drawText("Remisy: " + bot.draws, x, -22, 7, "#9aa0b8")
+  screen.drawText("Głębokość: " + bot.currentDepth, x, -42, 7, "#9aa0b8")
+  return 0
+end
+
+drawEndOverlay = function()
+
+  screen.setAlpha(0.45)
+  screen.fillRect(0, 0, 400, 202, "#000000")
+  screen.setAlpha(1)
+
+  screen.setAlpha(0.4)
+  screen.fillRoundRect(3, -2, 216, 96, 12, "#000006")
+  screen.setAlpha(1)
+  screen.fillRoundRect(0, 2, 216, 96, 12, "#2b2e3b")
+  screen.setLineWidth(2)
+  screen.drawRoundRect(0, 2, 216, 96, 12, "#4a506a")
+
+  screen.setFont(UI_FONT)
+  local msg = "REMIS!"
+  local color = "#ece5d3"
+  if winner == "x" then
+    msg = "WYGRYWA CZERWONY!"
+    color = "#f0503c"
+  elsif winner == "o" then
+    msg = "WYGRYWA ŻÓŁTY!"
+    color = "#f5c33b"
+  end
+  screen.drawText(msg, 0, 30, 13, color)
+
+  if botgame[0] and botgame[1] then
+    // pojedynek botów: automatyczna kolejna partia
+    local left = 3 - floor((system.time() - endTime)/1000)
+    if left < 0 then left = 0 end
+    screen.drawText("Nowa partia za " + left + "...", 0, -8, 8, "#9aa0b8")
+    if system.time() - endTime > 3200 then
+      gameInit()
+    end
+  else
+    if drawButton(-52, -8, 96, 20, "Jeszcze raz", 8, 1) then
+      gameInit()
+    end
+    if drawButton(52, -8, 96, 20, "Menu", 8, 0) then
+      state = "menu"
+    end
+    if lastGB != 0 then
+      if drawButton(0, -33, 110, 15, "Cofnij ruch", 7, 0) then
+        undoMove()
+      end
+    end
+  end
+
+  return 0
+end
+
+// ---------------------------------------------------------------------
+// Menu
+// ---------------------------------------------------------------------
+
+updateMenu = function()
+
+  local t = system.time()
+
+  screen.setFont(UI_FONT)
+  screen.drawText("4 IN A ROW", 2, 77.5, 26, "#e8402f")
+  screen.drawText("4 IN A ROW", 0, 80, 26, "#ece5d3")
+
+  // dekoracja: cztery lekko falujące pionki
+  for i = 0 to 3
+    local dx = -33 + i*22
+    local dy = 57 + 2*sin(t/300 + i*1.6)
+    local p = "x"
+    if i%2 == 1 then p = "o" end
+    drawDisc(dx, dy, 7, p)
+  end
+
+  choiceX = drawPlayerCard(-85, "CZERWONY", "x", choiceX)
+  choiceO = drawPlayerCard(85, "ŻÓŁTY", "o", choiceO)
+
+  if drawButton(0, -72, 150, 22, "GRAJ", 11, 1) then
+    startMatch()
+  end
+
+  screen.drawText("Wybierz graczy i naciśnij GRAJ", 0, -93, 6, "#6a7086")
+
+  return 0
+end
+
+drawPlayerCard = function(x, label, piece, chosen)
+
+  screen.setAlpha(0.35)
+  screen.fillRoundRect(x+2, -11, 150, 98, 10, "#000006")
+  screen.setAlpha(1)
+  screen.fillRoundRect(x, -8, 150, 98, 10, "#2b2e3b")
+  screen.setLineWidth(1.5)
+  screen.drawRoundRect(x, -8, 150, 98, 10, "#4a506a")
+
+  screen.setFont(UI_FONT)
+  drawIconLabel(x, 27, label, 9, piece, 6)
+
+  for i = 0 to 2
+    local py = 3 - i*23
+    local hov = mouseIn(x, py, 134, 19)
+    local fill = "#2b2e3b"
+    local border = "#4a506a"
+    local tc = "#c9cee0"
+    if hov then
+      fill = "#353a4d"
+      tc = "#ffffff"
+    end
+    if chosen == i then
+      border = "#12141d"
+      tc = "#ffffff"
+      if piece == "x" then
+        fill = "#e8402f"
+      else
+        fill = "#ffc933"
+        tc = "#233363"
+      end
+    end
+    screen.fillRoundRect(x, py, 134, 19, 9.5, fill)
+    screen.setLineWidth(1.5)
+    screen.drawRoundRect(x, py, 134, 19, 9.5, border)
+    screen.drawText(optionNames[i], x, py, 8, tc)
+    if hov and mouse.press then chosen = i end
+  end
+
+  return chosen
+end
+
+// ---------------------------------------------------------------------
+// Wspólne kontrolki
+// ---------------------------------------------------------------------
+
+mouseIn = function(x, y, w, h)
+  if mouse.x > x-w/2 and mouse.x < x+w/2 and mouse.y > y-h/2 and mouse.y < y+h/2 then
+    return 1
+  else
+    return 0
+  end
+end
+
+// rysuje płaski przycisk z twardym cieniem; zwraca 1, jeśli właśnie kliknięty
+drawButton = function(x, y, w, h, label, textsize, accent)
+  local hov = mouseIn(x, y, w, h)
+  screen.setAlpha(0.35)
+  screen.fillRoundRect(x+1.5, y-2.5, w, h, h/2.2, "#000006")
+  screen.setAlpha(1)
+  local fill = "#2b2e3b"
+  local tc = "#ece5d3"
+  local border = "#4a506a"
+  if accent == 1 then
+    fill = "#2963d1"
+    tc = "#ffffff"
+    border = "#12141d"
+    if hov then fill = "#3a74e2" end
+  elsif hov then
+    fill = "#353a4d"
+    tc = "#ffffff"
+  end
+  screen.fillRoundRect(x, y, w, h, h/2.2, fill)
+  screen.setLineWidth(1.5)
+  screen.drawRoundRect(x, y, w, h, h/2.2, border)
+  screen.setFont(UI_FONT)
+  screen.drawText(label, x, y - 0.5, textsize, tc)
+  if hov and mouse.press then return 1 else return 0 end
+end
+
+// ---------------------------------------------------------------------
+// Boty (JavaScript): jedna klasa, dwa poziomy trudności
+// ---------------------------------------------------------------------
+
+system.javascript("""
+
+//javascript
+// NegamaxBot: negamax + alfa-beta + tablica transpozycji + iteracyjne
+// pogłębianie. Poziomy: "easy" (płytkie przeszukiwanie) i "hard"
+// (pełne pogłębianie + heurystyka zugzwangu).
+
+var ROWS = 6, COLS = 7;
+var DIRS = [[0,1],[1,0],[1,1],[-1,1]];
+
+function boardHash(b){
+  var h = "";
+  for (var r = 0; r < ROWS; r++) h += b[r].join("");
+  return h;
+}
+
+function landingRow(b, c){
+  for (var r = 0; r < ROWS; r++) if (b[r][c] === " ") return r;
+  return -1;
+}
+
+// legalne kolumny w kolejności od środka (lepsze cięcia alfa-beta)
+function legalMoves(b){
+  var order = [3,2,4,1,5,0,6];
+  var moves = [];
+  for (var i = 0; i < order.length; i++){
+    if (b[ROWS-1][order[i]] === " ") moves.push(order[i]);
+  }
+  return moves;
+}
+
+function hasWin(b, p){
+  for (var r = 0; r < ROWS; r++){
+    for (var c = 0; c < COLS; c++){
+      if (b[r][c] !== p) continue;
+      for (var i = 0; i < 4; i++){
+        var dr = DIRS[i][0], dc = DIRS[i][1];
+        var r3 = r + 3*dr, c3 = c + 3*dc;
+        if (r3 < 0 || r3 >= ROWS || c3 >= COLS) continue;
+        if (b[r+dr][c+dc] === p && b[r+2*dr][c+2*dc] === p && b[r3][c3] === p) return true;
+      }
+    }
+  }
+  return false;
+}
+
+function countFree(b){
+  var n = 0;
+  for (var r = 0; r < ROWS; r++)
+    for (var c = 0; c < COLS; c++)
+      if (b[r][c] === " ") n++;
+  return n;
+}
+
+// wolne pola we wszystkich kolumnach poza col (heurystyka zugzwangu)
+function freeLeftExceptCol(b, col){
+  var free = 0;
+  for (var c = 0; c < COLS; c++){
+    if (c === col) continue;
+    if (b[ROWS-1][c] !== " ") break;
+    free++;
+    for (var r = ROWS-2; r >= 0; r--){
+      if (b[r][c] !== " ") break;
+      free++;
+    }
+  }
+  return free;
+}
+
+function freeBelow(b, row, col){
+  if (row <= 0) return 0;
+  var n = 0;
+  for (var r = row-1; r >= 0; r--){
+    if (b[r][col] !== " ") break;
+    n++;
+  }
+  return n;
+}
+
+// ocena pozycji: centrowanie pionków + otwarte trójki (+ zugzwang)
+function positionScore(b, centerWeight, useZugzwang){
+  var players = ["x","o"];
+  var evaluation = 0;
+
+  for (var pi = 0; pi < 2; pi++){
+    var player = players[pi];
+    var row, column, s1, s2, s3, before, after, totalFree;
+
+    // pionki bliżej środka są cenniejsze
+    for (row = 0; row < ROWS; row++){
+      for (column = 0; column < COLS; column++){
+        if (b[row][column] === player){
+          evaluation += -Math.abs(column - 3) * centerWeight;
+        }
+      }
+    }
+
+    // otwarte trójki poziome
+    for (row = 0; row < ROWS; row++){
+      for (column = 2; column < COLS; column++){
+        s1 = b[row][column]; s2 = b[row][column-1]; s3 = b[row][column-2];
+        before = column-3 >= 0 ? b[row][column-3] : "#";
+        after  = column+1 <= 6 ? b[row][column+1] : "#";
+        if (s1 === player && s2 === player && s3 === player && (before === " " || after === " ")){
+          if (useZugzwang){
+            if (before === " "){
+              totalFree = freeLeftExceptCol(b, column-3) + freeBelow(b, row, column-3);
+            } else {
+              totalFree = freeLeftExceptCol(b, column+1) + freeBelow(b, row, column+1);
+            }
+            if (totalFree % 2 != 0) evaluation += (6-row);
+          }
+          evaluation += 10;
+          break;
+        }
+      }
+    }
+
+    // otwarte trójki pionowe
+    for (column = 0; column < COLS; column++){
+      for (row = 2; row < ROWS; row++){
+        s1 = b[row][column]; s2 = b[row-1][column]; s3 = b[row-2][column];
+        before = row-3 >= 0 ? b[row-3][column] : "#";
+        after  = row+1 <= 5 ? b[row+1][column] : "#";
+        if (s1 === player && s2 === player && s3 === player && (before === " " || after === " ")){
+          if (useZugzwang){
+            if (before === " "){
+              totalFree = freeLeftExceptCol(b, column) + freeBelow(b, row-3, column);
+              if (totalFree % 2 != 0) evaluation += (6-row-3);
+            } else {
+              totalFree = freeLeftExceptCol(b, column) + freeBelow(b, row+1, column);
+              if (totalFree % 2 != 0) evaluation += (6-row+1);
+            }
+          }
+          evaluation += 10;
+          break;
+        }
+      }
+    }
+
+    // otwarte trójki ukośne (rosnące)
+    for (row = 0; row < 3; row++){
+      for (column = 0; column < 4; column++){
+        s1 = b[row][column]; s2 = b[row+1][column+1]; s3 = b[row+2][column+2];
+        before = (row-1 >= 0 && column-1 >= 0) ? b[row-1][column-1] : "#";
+        after  = (row+3 <= 5 && column+3 <= 6) ? b[row+3][column+3] : "#";
+        if (s1 === player && s2 === player && s3 === player && (before === " " || after === " ")){
+          if (useZugzwang){
+            if (before === " "){
+              totalFree = freeLeftExceptCol(b, column-1) + freeBelow(b, row-1, column-1);
+              if (totalFree % 2 != 0) evaluation += (6-row-1);
+            } else {
+              totalFree = freeLeftExceptCol(b, column+3) + freeBelow(b, row+3, column+3);
+              if (totalFree % 2 != 0) evaluation += (6-row+3);
+            }
+          }
+          evaluation += 10;
+          break;
+        }
+      }
+    }
+
+    // otwarte trójki ukośne (malejące)
+    for (row = 2; row < ROWS; row++){
+      for (column = 0; column < 4; column++){
+        s1 = b[row][column]; s2 = b[row-1][column+1]; s3 = b[row-2][column+2];
+        before = (row+1 <= 5 && column-1 >= 0) ? b[row+1][column-1] : "#";
+        after  = (row-3 >= 0 && column+3 <= 6) ? b[row-3][column+3] : "#";
+        if (s1 === player && s2 === player && s3 === player && (before === " " || after === " ")){
+          if (useZugzwang){
+            if (before === " "){
+              totalFree = freeLeftExceptCol(b, column-1) + freeBelow(b, row+1, column-1);
+              if (totalFree % 2 != 0) evaluation += (6-row+1);
+            } else {
+              totalFree = freeLeftExceptCol(b, column+3) + freeBelow(b, row-3, column+3);
+              if (totalFree % 2 != 0) evaluation += (6-row-3);
+            }
+          }
+          evaluation += 10;
+          break;
+        }
+      }
+    }
+
+    // po stronie "x" wynik dodatni, po stronie "o" ujemny
+    evaluation = -evaluation;
+  }
+
+  return evaluation;
+}
+
+class NegamaxBot {
+  constructor(name, level){
+    this.name = name;
+    this.level = level;
+    if (level === "easy"){
+      this.depthCap = 4;
+      this.centerWeight = 4;
+      this.zugzwang = false;
+    } else {
+      this.depthCap = 42;
+      this.centerWeight = 20;
+      this.zugzwang = true;
+    }
+    this.tt = new Map();
+    this.wins = 0;
+    this.loses = 0;
+    this.draws = 0;
+    this.currentDepth = 0;
+    this.nps = 0;
+    this.symbol = "x";
+    this.enemy = "o";
+    this.current = "x";
+    this.nodes = 0;
+  }
+
+  setSide(s){
+    this.symbol = s;
+    this.enemy = s === "x" ? "o" : "x";
+  }
+
+  newGame(){
+    this.tt.clear();
+    this.currentDepth = 0;
+    this.nps = 0;
+  }
+
+  other(p){ return p === "x" ? "o" : "x"; }
+
+  think(budget, gbSrc){
+    var start = Date.now();
+    this.nodes = 0;
+    this.current = global.next;
+    var board = [];
+    for (var r = 0; r < ROWS; r++) board[r] = gbSrc[r].slice();
+    var maxDepth = Math.min(countFree(board), this.depthCap);
+    var best = -1;
+    for (var depth = 1; depth <= maxDepth; depth++){
+      this.depthBest = -1;
+      this.depthScore = -30000;
+      this.search(board, -30000, 30000, depth, 0);
+      if (this.depthBest >= 0) best = this.depthBest;
+      this.currentDepth = depth;
+      if (Date.now() - start > budget || this.depthScore > 500) break;
+    }
+    var ms = Math.max(1, Date.now() - start);
+    this.nps = Math.round(this.nodes / ms * 1000);
+    if (best < 0){
+      var lm = legalMoves(board);
+      best = lm.length > 0 ? lm[0] : 0;
+    }
+    return best;
+  }
+
+  search(board, alpha, beta, depth, ply){
+    var key = boardHash(board);
+    var hit = this.tt.get(key);
+    if (ply > 0 && hit !== undefined && hit.depth >= depth && (hit.score <= alpha || hit.score >= beta)) return hit.score;
+    if (hasWin(board, this.other(this.current))) return -1000 + ply;
+    if (depth <= 0){
+      this.nodes++;
+      return this.evaluate(board) + ply;
+    }
+    var moves = this.orderedMoves(board);
+    if (moves.length === 0) return 0;
+    for (var i = 0; i < moves.length; i++){
+      var m = moves[i];
+      this.place(board, m);
+      var score = -this.search(board, -beta, -alpha, depth-1, ply+1);
+      this.unplace(board, m);
+      if (ply === 0 && score > this.depthScore){
+        this.depthScore = score;
+        this.depthBest = m;
+      }
+      if (score >= beta){
+        this.tt.set(key, {depth: depth, score: beta});
+        return beta;
+      }
+      if (score > alpha) alpha = score;
+    }
+    this.tt.set(key, {depth: depth, score: alpha});
+    return alpha;
+  }
+
+  evaluate(board){
+    if (hasWin(board, this.current)) return 1000;
+    var score = positionScore(board, this.centerWeight, this.zugzwang);
+    return this.current === "x" ? score : -score;
+  }
+
+  place(board, col){
+    var r = landingRow(board, col);
+    if (r >= 0) board[r][col] = this.current;
+    this.current = this.other(this.current);
+  }
+
+  unplace(board, col){
+    for (var r = ROWS-1; r >= 0; r--){
+      if (board[r][col] !== " "){
+        board[r][col] = " ";
+        break;
+      }
+    }
+    this.current = this.other(this.current);
+  }
+
+  // kolumna dająca natychmiastową wygraną danego gracza albo -1
+  immediateWinCol(board, piece){
+    for (var c = 0; c < COLS; c++){
+      var r = landingRow(board, c);
+      if (r < 0) continue;
+      board[r][c] = piece;
+      var w = hasWin(board, piece);
+      board[r][c] = " ";
+      if (w) return c;
+    }
+    return -1;
+  }
+
+  // najpierw własna wygrana, potem blok przeciwnika, potem środek
+  orderedMoves(board){
+    var win = this.immediateWinCol(board, this.current);
+    if (win >= 0) return [win];
+    var block = this.immediateWinCol(board, this.other(this.current));
+    if (block >= 0) return [block];
+    return legalMoves(board);
+  }
+}
+
+global.makeBot = function(name, level){ return new NegamaxBot(name, level); };
+
+// tryby testowe uruchamiane z adresu: #autoplay (gracze), #botduel (boty)
+global.autostart = "";
+if (typeof location !== "undefined"){
+  if (location.hash === "#autoplay") global.autostart = "play";
+  if (location.hash === "#botduel") global.autostart = "duel";
+}
+
+""")
+
+</script></html>
