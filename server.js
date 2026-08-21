@@ -281,7 +281,7 @@ function sanitizeIp(value) {
 // jak duży wynik jest fizycznie możliwy do osiągnięcia w danym czasie gry.
 const GLEBINA_TOKEN_SECRET = process.env.GLEBINA_TOKEN_SECRET || process.env.SESSION_SECRET || crypto.randomBytes(32).toString('hex');
 const GLEBINA_MIN_SESSION_MS = 3 * 1000;        // poniżej tego wieku token jest odrzucany (zbyt szybko na realny wynik)
-const GLEBINA_MAX_SESSION_MS = 2 * 60 * 60 * 1000; // maksymalna ważność tokenu (2 h — długie zanurzenia nie tracą wyniku; GLEBINA_HARD_CAP i tak ogranicza nadużycia)
+const GLEBINA_MAX_SESSION_MS = 2 * 60 * 60 * 1000; // maksymalna ważność tokenu (2 h - długie zanurzenia nie tracą wyniku; GLEBINA_HARD_CAP i tak ogranicza nadużycia)
 const GLEBINA_MAX_M_PER_S = 60;                 // hojny górny limit tempa opadania (fizyka gry pozwala na maks. ok. 47 m/s)
 const GLEBINA_SCORE_BUFFER = 60;                // margines na start zanurzenia i chwilowe przyspieszenia
 const GLEBINA_HARD_CAP = 20000;                 // absolutny sufit bezpieczeństwa, niezależny od czasu
@@ -573,7 +573,7 @@ app.get('/sitemap.xml', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
 });
 
-// Wymuś jedną kanoniczną trasę — przekierowania .html → czyste URL
+// Wymuś jedną kanoniczną trasę - przekierowania .html → czyste URL
 app.get('/status.html', (req, res) => res.redirect(301, '/status'));
 app.get('/gry.html', (req, res) => res.redirect(301, '/gry'));
 app.get('/kontakt.html', (req, res) => res.redirect(301, '/kontakt'));
@@ -645,7 +645,7 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// Self-contained blocked page (no external assets — banned IPs can't load any site resources)
+// Self-contained blocked page (no external assets - banned IPs can't load any site resources)
 const BLOCKED_PAGE = `<!DOCTYPE html><html lang="pl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Dostęp zablokowany | Wojtoteka</title><meta name="robots" content="noindex, nofollow"><meta name="theme-color" content="#ef5350"><link rel="icon" href="/img/logo.png" type="image/png"><style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
 body,html{height:100%;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;display:flex;justify-content:center;align-items:center;color:#fff;text-align:center;overflow:hidden;background:#0a0a0a}
@@ -674,12 +674,12 @@ h1{font-size:2.1em;font-weight:800;background:linear-gradient(135deg,#ff8a80 0%,
 <div class="lock-wrap"><div class="lock">🔒</div></div>
 <h1>Dostęp zablokowany</h1>
 <p class="sub">Twój adres IP został zablokowany przez administratora i nie masz dostępu do tej strony.</p>
-<p class="hint">Jeśli uważasz, że to pomyłka, napisz do nas na adres <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a>.<br>W wiadomości podaj swój adres IP oraz przybliżoną datę i godzinę — sprawdzimy sprawę i w razie potrzeby zdejmiemy blokadę.</p>
+<p class="hint">Jeśli uważasz, że to pomyłka, napisz do nas na adres <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a>.<br>W wiadomości podaj swój adres IP oraz przybliżoną datę i godzinę - sprawdzimy sprawę i w razie potrzeby zdejmiemy blokadę.</p>
 </div>
-<div class="footer">&copy; Wojtoteka.ovh 2024–${new Date().getFullYear()}</div>
+<div class="footer">&copy; Wojtoteka.ovh 2024-${new Date().getFullYear()}</div>
 </body></html>`;
 
-// Site-wide IP ban middleware — blocks IPs with scope='site' from the entire site
+// Site-wide IP ban middleware - blocks IPs with scope='site' from the entire site
 app.use(async (req, res, next) => {
     // Always allow admin/api/panel + static assets (so the blocked page can show the site background)
     const p = req.path;
@@ -702,7 +702,7 @@ app.use(async (req, res, next) => {
 });
 
 // Page view tracking (before static, fire-and-forget)
-// Only track known pages — bots scanning unknown paths are ignored automatically
+// Only track known pages - bots scanning unknown paths are ignored automatically
 const TRACKED_PATHS = new Set([
     '/',
     '/gry',
@@ -968,7 +968,7 @@ app.get('/panel', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'panel.html'));
 });
 
-// /status — serwowany dynamicznie (URL/ID raportu z .env)
+// /status - serwowany dynamicznie (URL/ID raportu z .env)
 app.get('/status', (req, res) => {
         const rawHetrix = (process.env.HETRIX_REPORT_URL || process.env.HETRIX_KEY || '').trim();
         if (!rawHetrix) {
@@ -1042,7 +1042,7 @@ app.get('/status', (req, res) => {
 </html>`);
 });
 
-// Obsługa adresów bez .html — serwuje odpowiedni plik HTML
+// Obsługa adresów bez .html - serwuje odpowiedni plik HTML
 const HTML_PAGES = ['gry', 'kontakt', 'api', 'polityka-nightdrive', 'polityka-fishingparty', 'polityka-prywatnosci', 'budowa', 'soon'];
 HTML_PAGES.forEach(page => {
     app.get('/' + page, (req, res) => {
@@ -1050,7 +1050,7 @@ HTML_PAGES.forEach(page => {
     });
 });
 
-// RoyalCasinoBot — obsługa bez .html
+// RoyalCasinoBot - obsługa bez .html
 app.get('/RoyalCasinoBot', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'RoyalCasinoBot', 'index.html'));
 });
@@ -2578,7 +2578,7 @@ app.get('/url', publicResourceLimiter, (req, res) => {
     </div>
 
     <div class="footer">
-        <p>&copy; <a href="https://wojtoteka.ovh">Wojtoteka.ovh</a> 2024–<span id="current-year"></span></p>
+        <p>&copy; <a href="https://wojtoteka.ovh">Wojtoteka.ovh</a> 2024-<span id="current-year"></span></p>
     </div>
 
     <script>
@@ -2608,7 +2608,7 @@ app.get('/url', publicResourceLimiter, (req, res) => {
             resultBox.innerHTML = '';
 
             const noteP = document.createElement('p');
-            noteP.textContent = isExisting ? 'Ten URL był już skrócony — zwracam istniejący link:' : 'Skrócony link:';
+            noteP.textContent = isExisting ? 'Ten URL był już skrócony - zwracam istniejący link:' : 'Skrócony link:';
 
             const link = document.createElement('a');
             link.href = shortUrl;
@@ -3736,7 +3736,7 @@ app.get('/api/admin/export/api-messages', isAuthenticated, validateOrigin, async
 });
 
 // Automatyczna obsługa "czystych" URL-i dla WSZYSTKICH plików .html w /public
-// (w tym w podfolderach) — bez potrzeby ręcznego dopisywania każdej podstrony.
+// (w tym w podfolderach) - bez potrzeby ręcznego dopisywania każdej podstrony.
 // 1) /sciezka/plik.html -> 301 redirect na /sciezka/plik
 // 2) /sciezka/plik -> serwuje /public/sciezka/plik.html jeśli istnieje
 const publicDir = path.join(__dirname, 'public');

@@ -991,7 +991,7 @@
         }
         .maint-option input { display: none !important; }
 
-        /* Compact variant — inline pill, roughly the size of action buttons */
+        /* Compact variant - inline pill, roughly the size of action buttons */
         .maint-option.maint-sm {
             flex-direction: row; padding: 8px 15px; min-width: 0;
             font-size: 0.84em; gap: 7px; border-radius: 10px;
@@ -2245,7 +2245,7 @@
                 const container = document.getElementById('apiKeysContainer');
                 
                 if (data.apiKeys.length === 0) {
-                    container.innerHTML = '<div class="no-messages">🔑 Brak kluczy API — utwórz pierwszy powyżej</div>';
+                    container.innerHTML = '<div class="no-messages">🔑 Brak kluczy API - utwórz pierwszy powyżej</div>';
                     return;
                 }
 
@@ -2354,7 +2354,7 @@
                 const container = document.getElementById('subAccountsContainer');
                 
                 if (data.subAccounts.length === 0) {
-                    container.innerHTML = '<div class="no-messages">👥 Brak kont — utwórz pierwsze powyżej</div>';
+                    container.innerHTML = '<div class="no-messages">👥 Brak kont - utwórz pierwsze powyżej</div>';
                     return;
                 }
 
@@ -2504,27 +2504,27 @@
             if (hasName) {
                 formFields += '                <input type="text" name="name" placeholder="Imię/Nick" required>\\n';
                 jsFields += `                    name: form.name.value,\n`;
-                fieldsHtml += '<li><code>name</code> — Imię/Nick (wymagane)</li>';
+                fieldsHtml += '<li><code>name</code> - Imię/Nick (wymagane)</li>';
             }
             if (hasEmail) {
                 formFields += '                <input type="email" name="email" placeholder="Email" required>\\n';
                 jsFields += `                    email: form.email.value,\n`;
-                fieldsHtml += '<li><code>email</code> — Adres email (wymagane)</li>';
+                fieldsHtml += '<li><code>email</code> - Adres email (wymagane)</li>';
             }
             if (hasPhone) {
                 formFields += '                <input type="tel" name="phone" placeholder="Telefon" required>\\n';
                 jsFields += `                    phone: form.phone.value,\n`;
-                fieldsHtml += '<li><code>phone</code> — Numer telefonu (wymagane)</li>';
+                fieldsHtml += '<li><code>phone</code> - Numer telefonu (wymagane)</li>';
             }
             if (hasSubject) {
                 formFields += '                <input type="text" name="subject" placeholder="Temat" required>\\n';
                 jsFields += `                    subject: form.subject.value,\n`;
-                fieldsHtml += '<li><code>subject</code> — Tytuł/Temat (wymagane)</li>';
+                fieldsHtml += '<li><code>subject</code> - Tytuł/Temat (wymagane)</li>';
             }
             if (hasMessage) {
                 formFields += '                <textarea name="message" placeholder="Wiadomość..." required></textarea>\\n';
                 jsFields += `                    message: form.message.value,\n`;
-                fieldsHtml += '<li><code>message</code> — Treść wiadomości (wymagane)</li>';
+                fieldsHtml += '<li><code>message</code> - Treść wiadomości (wymagane)</li>';
             }
 
             const content = `
@@ -2540,7 +2540,7 @@
                 <h3 style="color: #ffb74d; margin-top: 20px;">3. Wymagane pola</h3>
                 <ul style="color: rgba(255,255,255,0.7); padding-left: 20px; line-height: 2;">${fieldsHtml}</ul>
 
-                <h3 style="color: #ffb74d; margin-top: 20px;">4. Przykład — HTML + JavaScript</h3>
+                <h3 style="color: #ffb74d; margin-top: 20px;">4. Przykład - HTML + JavaScript</h3>
                 <p>Wklej ten kod na swoją stronę HTML:</p>
                 <pre>&lt;!-- Formularz kontaktowy API Wojtoteka --&gt;
 &lt;form id="apiContactForm"&gt;
@@ -2589,11 +2589,11 @@ ${jsFields}            })
 
                 <h3 style="color: #ffb74d; margin-top: 20px;">5. Odpowiedzi serwera</h3>
                 <ul style="color: rgba(255,255,255,0.7); padding-left: 20px; line-height: 2;">
-                    <li><code style="color: #81C784;">200</code> — Wiadomość wysłana pomyślnie</li>
-                    <li><code style="color: #FFB74D;">400</code> — Brakujące lub nieprawidłowe pola</li>
-                    <li><code style="color: #E57373;">401</code> — Nieprawidłowy klucz API</li>
-                    <li><code style="color: #E57373;">403</code> — IP zbanowane</li>
-                    <li><code style="color: #E57373;">429</code> — Zbyt wiele żądań (rate limit)</li>
+                    <li><code style="color: #81C784;">200</code> - Wiadomość wysłana pomyślnie</li>
+                    <li><code style="color: #FFB74D;">400</code> - Brakujące lub nieprawidłowe pola</li>
+                    <li><code style="color: #E57373;">401</code> - Nieprawidłowy klucz API</li>
+                    <li><code style="color: #E57373;">403</code> - IP zbanowane</li>
+                    <li><code style="color: #E57373;">429</code> - Zbyt wiele żądań (rate limit)</li>
                 </ul>
 
                 <div style="margin-top: 20px;">
@@ -2645,7 +2645,7 @@ ${jsFields}            })
 
         function formatDate(dateString) {
             const date = new Date(dateString);
-            if (isNaN(date.getTime())) return dateString || '—';
+            if (isNaN(date.getTime())) return dateString || '-';
             const now = new Date();
 
             // Compare calendar dates (not raw ms difference) to avoid edge cases
@@ -2977,7 +2977,7 @@ ${jsFields}            })
 
                 const container = document.getElementById('announcementsContainer');
                 if (!data.announcements || data.announcements.length === 0) {
-                    container.innerHTML = '<div class="no-messages">📢 Brak ogłoszeń — utwórz pierwsze powyżej</div>';
+                    container.innerHTML = '<div class="no-messages">📢 Brak ogłoszeń - utwórz pierwsze powyżej</div>';
                     return;
                 }
 
@@ -3440,14 +3440,14 @@ ${jsFields}            })
             if (!container || !data) return;
 
             if (!data.byPage || data.byPage.length === 0) {
-                container.innerHTML = '<div class="no-messages">📊 Brak danych — odwiedziny pojawią się po pierwszych wizytach</div>';
+                container.innerHTML = '<div class="no-messages">📊 Brak danych - odwiedziny pojawią się po pierwszych wizytach</div>';
                 return;
             }
 
             const last30total = (data.last30 || []).reduce((s, r) => s + Number(r.total), 0);
             const grandTotal = data.byPage.reduce((s, r) => s + Number(r.total), 0) || 1;
 
-            // byPage comes sorted by total DESC — assign a stable color per page
+            // byPage comes sorted by total DESC - assign a stable color per page
             pageStatsColored = data.byPage.map((r, idx) => ({
                 path: r.path,
                 total: Number(r.total),
@@ -3455,12 +3455,12 @@ ${jsFields}            })
                 pct: (Number(r.total) / grandTotal) * 100
             }));
 
-            // Single colorful stacked bar — each page a segment, width ∝ visits
+            // Single colorful stacked bar - each page a segment, width ∝ visits
             const segments = pageStatsColored.map(p =>
                 `<div class="stat-seg" data-path="${escapeHtml(p.path)}" data-total="${p.total}" data-pct="${p.pct.toFixed(1)}" style="width:${p.pct}%;background:${p.color};"></div>`
             ).join('');
 
-            // Legend — color key for every tracked page
+            // Legend - color key for every tracked page
             const legend = pageStatsColored.map(p =>
                 `<span class="stat-legend-item">
                     <span class="stat-legend-dot" style="background:${p.color};"></span>
@@ -3688,7 +3688,7 @@ ${jsFields}            })
 
                 const container = document.getElementById('bioLinksContainer');
                 if (!data.links || data.links.length === 0) {
-                    container.innerHTML = '<div class="no-messages">🔗 Brak linków — dodaj pierwszy powyżej</div>';
+                    container.innerHTML = '<div class="no-messages">🔗 Brak linków - dodaj pierwszy powyżej</div>';
                     return;
                 }
 

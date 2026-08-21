@@ -22,7 +22,7 @@
 <script>
 'use strict';
 /* ============================================================
-   TRYBKA i OGRÓD RDZY — ręcznie nakręcana platformówka 2D
+   TRYBKA i OGRÓD RDZY - ręcznie nakręcana platformówka 2D
    Świat z papieru i cyny. Cała grafika i dźwięk generowane kodem.
    Sterowanie: ←→/AD ruch, SPACJA/W/↑ skok, S/↓+skok zeskok, ESC pauza.
    ============================================================ */
@@ -55,7 +55,7 @@ const lerp  = (a,b,t)=> a+(b-a)*t;
 function hash01(a,b){ let h = (a*374761393 + b*668265263)|0; h = (h^(h>>13))|0; h = Math.imul(h,1274126177); h ^= h>>16; return ((h>>>0)%1000)/1000; }
 const rnd = (a=1,b)=> b===undefined ? Math.random()*a : a+Math.random()*(b-a);
 function approach(v,target,amt){ return v<target ? Math.min(v+amt,target) : Math.max(v-amt,target); }
-// zaokrąglony prostokąt (własny — bez polegania na ctx.roundRect)
+// zaokrąglony prostokąt (własny - bez polegania na ctx.roundRect)
 function rr(g,x,y,w,h,r){ r=Math.min(r,w/2,h/2); g.beginPath(); g.moveTo(x+r,y); g.arcTo(x+w,y,x+w,y+h,r); g.arcTo(x+w,y+h,x,y+h,r); g.arcTo(x,y+h,x,y,r); g.arcTo(x,y,x+w,y,r); g.closePath(); }
 
 // ---------- PŁÓTNO ----------
@@ -71,7 +71,7 @@ function fitCanvas(){
 }
 window.addEventListener('resize', fitCanvas); fitCanvas();
 if(document.addEventListener) document.addEventListener('fullscreenchange', fitCanvas);
-// pełny ekran (jak F11) — przeglądarka pozwala na to tylko w reakcji na gest gracza
+// pełny ekran (jak F11) - przeglądarka pozwala na to tylko w reakcji na gest gracza
 function goFullscreen(){
   try{
     if(document.fullscreenElement) return;
@@ -210,7 +210,7 @@ function drawTouchUI(){
 }
 Touch2.init();
 
-// ---------- AUDIO (Web Audio API — efekty + muzyka chiptune) ----------
+// ---------- AUDIO (Web Audio API - efekty + muzyka chiptune) ----------
 const Audio2 = {
   ctx:null, master:null, musicGain:null, noiseBuf:null, ok:false,
   unlock(){
@@ -230,7 +230,7 @@ const Audio2 = {
       for(let i=0;i<len;i++) d[i]=Math.random()*2-1;
       this.ok = true;
       Music.reset();
-    }catch(e){ /* brak audio — gra działa dalej */ }
+    }catch(e){ /* brak audio - gra działa dalej */ }
   },
   suspend(){ if(this.ok && this.ctx.state==='running') this.ctx.suspend(); },
   resume(){ if(this.ok && this.ctx.state==='suspended') this.ctx.resume(); },
@@ -327,22 +327,22 @@ const Music = {
 
 // ---------- PALETY (rodzina: atrament / krem / rdza / mosiądz / mech) ----------
 const PALS = [
-  { // 1: Zardzewiały Ogród — ciepły dzień na papierze
+  { // 1: Zardzewiały Ogród - ciepły dzień na papierze
     sky:'#e8dcbe', far:'#cfbf98', mid:'#ab9a70', ink:'#2a2118',
     ground:'#8a5a35', groundDark:'#6e4527', top:'#8fa055',
     accent:'#d8a44a', rust:'#bf6039', paper:'#ece1c4'
   },
-  { // 2: Szklarnia Nocy — głęboka zieleń i mosiężne światła
+  { // 2: Szklarnia Nocy - głęboka zieleń i mosiężne światła
     sky:'#141f19', far:'#1d2c23', mid:'#2a3d2e', ink:'#0c120e',
     ground:'#3c3a2e', groundDark:'#2b2a20', top:'#8fae5e',
     accent:'#e8d98a', rust:'#7d8f5f', paper:'#cfd3ac'
   },
-  { // 3: Wieża Zegarmistrza — zmierzch i mosiądz
+  { // 3: Wieża Zegarmistrza - zmierzch i mosiądz
     sky:'#d9b273', far:'#b3854e', mid:'#8a613a', ink:'#2a2118',
     ground:'#5d4630', groundDark:'#493623', top:'#c99043',
     accent:'#e5c25c', rust:'#b05c33', paper:'#ecdcb4'
   },
-  { // 4: Szczyt Wieży (boss) — ciemny zmierzch
+  { // 4: Szczyt Wieży (boss) - ciemny zmierzch
     sky:'#7e6140', far:'#66492e', mid:'#513a24', ink:'#211a12',
     ground:'#4a3826', groundDark:'#392b1d', top:'#a87838',
     accent:'#e5c25c', rust:'#b05c33', paper:'#e5d6ae'
@@ -381,7 +381,7 @@ const LEVELS = [
 },
 {
   name:'2. SZKLARNIA NOCY',
-  hint:'Nowa moc: przytrzymaj kierunek przy ścianie i skacz — odbijesz się!',
+  hint:'Nowa moc: przytrzymaj kierunek przy ścianie i skacz - odbijesz się!',
   pal:1, music:{tempo:96,tr:-3,song:SONG_MAIN},
   map:[
   '################################################################################################################',
@@ -468,7 +468,7 @@ const game = {
   abil:{ wall:false } // skok od ściany od poziomu 2
 };
 function saveBest(){ try{ if(game.score>game.best){ game.best=game.score; localStorage.setItem('trybka_best',game.best); } }catch(e){} }
-// zapis postępu — po odświeżeniu strony można kontynuować od bieżącego poziomu
+// zapis postępu - po odświeżeniu strony można kontynuować od bieżącego poziomu
 function saveProgress(){ try{ localStorage.setItem('trybka_save', JSON.stringify({lvl:game.levelIdx, score:game.scoreAtStart, seeds:game.seedsAtStart})); }catch(e){} }
 function loadProgress(){ try{ const d=JSON.parse(localStorage.getItem('trybka_save')); if(d && d.lvl>0 && d.lvl<LEVELS.length) return d; }catch(e){} return null; }
 function clearProgress(){ try{ localStorage.removeItem('trybka_save'); }catch(e){} }
@@ -621,7 +621,7 @@ function buildTerrain(lv){
     const ch=lv.tiles[r][c], x=c*TS, y=r*TS;
     if(ch==='#'){
       g.fillStyle=P.ground; g.fillRect(x,y,TS,TS);
-      // ręczne plamy — nierówna faktura
+      // ręczne plamy - nierówna faktura
       const h1=hash01(c,r);
       if(h1<0.35){ g.fillStyle=P.groundDark; g.globalAlpha=.5;
         g.fillRect(x+((h1*97)%18), y+((h1*57)%20), 8+h1*10, 5+h1*8); g.globalAlpha=1; }
@@ -631,7 +631,7 @@ function buildTerrain(lv){
       }
       const openUp = !solidHere(c,r-1) && lv.tiles[r-1] && lv.tiles[r-1][c]!=='^';
       if(openUp){
-        // wierzch — mech / mosiężna krawędź, lekko krzywa
+        // wierzch - mech / mosiężna krawędź, lekko krzywa
         g.fillStyle=P.top;
         const j1=(hash01(c,1)*3)|0, j2=(hash01(c,2)*3)|0;
         g.beginPath();
@@ -648,7 +648,7 @@ function buildTerrain(lv){
         g.beginPath(); g.moveTo(x+TS-1,y); g.lineTo(x+TS-1,y+TS); g.stroke(); g.globalAlpha=1; }
     }
     else if(ch==='^'){
-      // kolce — zardzewiałe ostrza o nierównych wysokościach
+      // kolce - zardzewiałe ostrza o nierównych wysokościach
       g.fillStyle=P.rust;
       for(let i=0;i<3;i++){
         const bx=x+i*11+1, hgt=13+hash01(c*3+i,r)*9;
@@ -663,7 +663,7 @@ function buildTerrain(lv){
       g.fillStyle=P.groundDark; g.fillRect(x,y+TS-4,TS,4);
     }
     else if(ch==='='){
-      // półka jednokierunkowa — styl zależny od poziomu
+      // półka jednokierunkowa - styl zależny od poziomu
       const j=(hash01(c,r)*2)|0;
       if(lv.def.pal===0){ // liściasta deska
         g.fillStyle=P.top; rr(g,x-1,y+j,TS+2,9,4); g.fill();
@@ -1339,7 +1339,7 @@ function drawPlayer(g){
   g.beginPath(); g.arc(-6,0,3,0,6.283); g.stroke();
   g.beginPath(); g.arc(6,0,3,0,6.283); g.stroke();
   g.restore();
-  // korpus — blaszany, z rdzawą łatką
+  // korpus - blaszany, z rdzawą łatką
   g.fillStyle=P.paper;
   rr(g,-8,-20+bob,16,14,5); g.fill();
   g.strokeStyle=P.ink; g.lineWidth=2; rr(g,-8,-20+bob,16,14,5); g.stroke();
@@ -1358,7 +1358,7 @@ function drawPlayer(g){
         g.beginPath(); g.arc(7.4,-28+bob,1.7,0,6.283); g.fill(); }
   // rumieniec
   g.fillStyle=P.rust; g.globalAlpha=.35; g.beginPath(); g.arc(5,-24+bob,2,0,6.283); g.fill(); g.globalAlpha=1;
-  // kiełek na głowie — wieje przy ruchu
+  // kiełek na głowie - wieje przy ruchu
   const sway = clamp(-p.vx*0.02,-4,4) + Math.sin(p.idleT*3)*1;
   g.strokeStyle=P.top; g.lineWidth=2.5;
   g.beginPath(); g.moveTo(0,-35+bob); g.quadraticCurveTo(sway,-40+bob, sway*1.4,-42+bob); g.stroke();
@@ -1384,7 +1384,7 @@ function updateBoss(dt){
   const floorTop=14*TS, minX=5*TS+6, maxX=level.W*TS-5*TS-b.w-6;
   b.invuln-=dt; b.legT+=dt; b.smokeT-=dt;
   const speed = b.phase===2 ? 215 : 135;
-  // dym z komina — w fazie 2 gęstszy
+  // dym z komina - w fazie 2 gęstszy
   if(b.smokeT<=0 && b.state!=='dying'){
     b.smokeT = b.phase===2 ? 0.1 : 0.22;
     spawnP(b.x+(b.dir>0?18:b.w-18), b.y-4, 1,
@@ -1471,7 +1471,7 @@ function bossStomped(b){
     return;
   }
   b.invuln=1.6; b.state='stun'; b.t=0.9;
-  if(b.hp===3 && b.phase===1){ // FAZA 2 — wściekłość
+  if(b.hp===3 && b.phase===1){ // FAZA 2 - wściekłość
     b.phase=2; b.invuln=2.2; b.state='walk'; b.atkT=0.8;
     SFX.roar(); shake(0.6,11);
     floatTxt(b.x+b.w/2,b.y-36,'RDZAWÓR WPADA W SZAŁ!','#e86a5a');
@@ -1502,7 +1502,7 @@ function drawBoss(g){
   g.fillRect(-b.w/2+12,-b.h+10,22,16); g.fillRect(b.w/2-30,-b.h+26,18,13); g.globalAlpha=1;
   g.fillStyle=P.accent;
   for(let i=0;i<5;i++){ g.beginPath(); g.arc(-b.w/2+14+i*19,-b.h+6,2.2,0,6.283); g.fill(); }
-  // przednia kratownica — "zęby kosiarki"
+  // przednia kratownica - "zęby kosiarki"
   const fx=b.dir*(b.w/2-6);
   g.fillStyle=P.paper;
   for(let i=0;i<4;i++){
@@ -1511,7 +1511,7 @@ function drawBoss(g){
   }
   // komin (z tyłu)
   g.fillStyle=P.ink; g.fillRect(-b.dir*(b.w/2-22)-5,-b.h-12,10,14);
-  // oczy — śledzą gracza; w fazie 2 czerwone i groźne
+  // oczy - śledzą gracza; w fazie 2 czerwone i groźne
   const ex=b.dir*14, look=clamp(((p.x+p.w/2)-(b.x+b.w/2))*0.02,-3,3);
   for(const off of [-9,9]){
     g.fillStyle=P.paper; g.beginPath(); g.arc(ex+off,-b.h+18,6,0,6.283); g.fill();
@@ -1673,7 +1673,7 @@ function update(dt){
       break;
   }
 }
-// ---------- TEKST (ręczny charakter — litery lekko przekrzywione) ----------
+// ---------- TEKST (ręczny charakter - litery lekko przekrzywione) ----------
 const FONT='"Segoe Print","Comic Sans MS",cursive';
 function txt(g,str,x,y,size,col,align='center'){
   g.font=`700 ${size}px ${FONT}`;
@@ -1736,7 +1736,7 @@ function renderWorld(){
   ctx.globalAlpha=1;
   // teren
   ctx.drawImage(level.terrain,0,0);
-  // kafle fazowe (mosiężne kładki — duch rysowany kreską)
+  // kafle fazowe (mosiężne kładki - duch rysowany kreską)
   for(const t of level.toggleTiles){
     const x=t.c*TS, y=t.r*TS;
     if(x<cam.x-40||x>cam.x+VW+40) continue;
@@ -1817,16 +1817,16 @@ function drawIntro(){
   txt(ctx, level.def.hint, VW/2, VH/2+18, 19, P.accent);
   if(game.abil.wall && game.levelIdx===1)
     txt(ctx,'(dosuń się do ściany w locie i naciśnij skok)',VW/2,VH/2+50,14,P.paper);
-  txt(ctx,'skok / enter — start',VW/2,VH-60,14,P.paper);
+  txt(ctx,'skok / enter - start',VW/2,VH-60,14,P.paper);
   ctx.globalAlpha=1;
 }
 function drawPause(){
   dim(0.66);
   const P=level.pal;
   wobTxt(ctx,'PAUZA',VW/2,VH/2-70,52,P.paper,P.ink);
-  txt(ctx,'ESC — wznów',VW/2,VH/2+4,20,P.paper);
-  txt(ctx,'R — restart poziomu',VW/2,VH/2+38,20,P.paper);
-  txt(ctx,'M — powrót do menu',VW/2,VH/2+72,20,P.paper);
+  txt(ctx,'ESC - wznów',VW/2,VH/2+4,20,P.paper);
+  txt(ctx,'R - restart poziomu',VW/2,VH/2+38,20,P.paper);
+  txt(ctx,'M - powrót do menu',VW/2,VH/2+72,20,P.paper);
 }
 function drawGameOver(){
   dim(Math.min(0.78,game.timer));
@@ -1834,7 +1834,7 @@ function drawGameOver(){
   wobTxt(ctx,'TRYBKA STANĘŁA…',VW/2,VH/2-70,46,'#c9574a',P.ink);
   txt(ctx,'rdza tym razem wygrała',VW/2,VH/2-22,18,P.paper);
   txt(ctx,'WYNIK: '+game.score+'   •   NASIONA: '+game.seeds,VW/2,VH/2+22,19,P.accent);
-  txt(ctx,'ENTER — spróbuj jeszcze raz   •   M — menu',VW/2,VH/2+70,17,P.paper);
+  txt(ctx,'ENTER - spróbuj jeszcze raz   •   M - menu',VW/2,VH/2+70,17,P.paper);
 }
 function drawVictory(){
   dim(Math.min(0.6,game.timer*0.5));
@@ -1843,7 +1843,7 @@ function drawVictory(){
   txt(ctx,'Trybka nakręciła świat na nowo.',VW/2,VH/2-34,20,P.paper);
   txt(ctx,'WYNIK: '+game.score,VW/2,VH/2+14,26,P.paper);
   txt(ctx,'zebrane nasiona: '+game.seeds+'   •   rekord: '+game.best,VW/2,VH/2+52,17,P.accent);
-  txt(ctx,'ENTER — menu',VW/2,VH/2+100,17,P.paper);
+  txt(ctx,'ENTER - menu',VW/2,VH/2+100,17,P.paper);
 }
 
 // ---------- EKRAN TYTUŁOWY ----------
@@ -1874,16 +1874,16 @@ function renderTitle(){
   // napisy
   const sv=game.saveData;
   if(((game.time*1.4)|0)%2===0){
-    if(sv) txt(ctx,(Touch2.enabled?'dotknij ekranu':'ENTER')+' — kontynuuj: '+LEVELS[sv.lvl].name, VW/2,330,20,P.ink);
-    else txt(ctx, Touch2.enabled?'— dotknij ekranu —':'— naciśnij ENTER —', VW/2,330,22,P.ink);
+    if(sv) txt(ctx,(Touch2.enabled?'dotknij ekranu':'ENTER')+' - kontynuuj: '+LEVELS[sv.lvl].name, VW/2,330,20,P.ink);
+    else txt(ctx, Touch2.enabled?'- dotknij ekranu -':'- naciśnij ENTER -', VW/2,330,22,P.ink);
   }
-  if(sv) txt(ctx,(Touch2.enabled?'dotknij tutaj':'N')+' — nowa gra od początku', VW/2,372,15,P.rust);
+  if(sv) txt(ctx,(Touch2.enabled?'dotknij tutaj':'N')+' - nowa gra od początku', VW/2,372,15,P.rust);
   if(Touch2.enabled){
-    txt(ctx,'przyciski: ◀ ▶ — ruch      ▲ — skok      ▐▌ — pauza',VW/2,486,15,P.paper);
+    txt(ctx,'przyciski: ◀ ▶ - ruch      ▲ - skok      ▐▌ - pauza',VW/2,486,15,P.paper);
     if(window.innerHeight>window.innerWidth)
       txt(ctx,'(obróć telefon poziomo!)',VW/2,300,17,P.rust);
   }else
-    txt(ctx,'←→ / AD — ruch      SPACJA / W — skok      ESC — pauza',VW/2,486,15,P.paper);
+    txt(ctx,'←→ / AD - ruch      SPACJA / W - skok      ESC - pauza',VW/2,486,15,P.paper);
   txt(ctx,'zbieraj Nasiona Blasku • tup w rdzożuki • nakręć ogród na nowo',VW/2,514,13,P.paper);
   if(game.best>0) txt(ctx,'rekord: '+game.best,VW-24,26,15,P.ink,'right');
   txt(ctx,'Stworzone przez Wojtoteka',24,26,13,P.ink,'left');

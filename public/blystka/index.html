@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="description" content="Błystka wypływa łódką na atramentowe morze — łowi perły, ucieka meduzom i mierzy się z Sumorem, Strażnikiem Głębin. Baśniowa gra wędkarska.">
-<!-- Open Graph / Twitter Card — zajawka linku na Discordzie, Twitterze, Facebooku itd. -->
-<!-- ZAŁÓŻ: gra będzie stała pod https://wojtoteka.ovh/blystka/ — podmień og:url i canonical, jeśli adres będzie inny -->
+<meta name="description" content="Błystka wypływa łódką na atramentowe morze - łowi perły, ucieka meduzom i mierzy się z Sumorem, Strażnikiem Głębin. Baśniowa gra wędkarska.">
+<!-- Open Graph / Twitter Card - zajawka linku na Discordzie, Twitterze, Facebooku itd. -->
+<!-- ZAŁÓŻ: gra będzie stała pod https://wojtoteka.ovh/blystka/ - podmień og:url i canonical, jeśli adres będzie inny -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Wojtoteka">
 <meta property="og:locale" content="pl_PL">
 <meta property="og:url" content="https://wojtoteka.ovh/blystka/">
 <meta property="og:title" content="🎣 BŁYSTKA i Morze Atramentu">
-<meta property="og:description" content="Błystka wypływa łódką na atramentowe morze — łowi perły, ucieka meduzom i mierzy się z Sumorem, Strażnikiem Głębin. Baśniowa gra wędkarska.">
+<meta property="og:description" content="Błystka wypływa łódką na atramentowe morze - łowi perły, ucieka meduzom i mierzy się z Sumorem, Strażnikiem Głębin. Baśniowa gra wędkarska.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="🎣 BŁYSTKA i Morze Atramentu">
-<meta name="twitter:description" content="Błystka wypływa łódką na atramentowe morze — łowi perły, ucieka meduzom i mierzy się z Sumorem, Strażnikiem Głębin. Baśniowa gra wędkarska.">
+<meta name="twitter:description" content="Błystka wypływa łódką na atramentowe morze - łowi perły, ucieka meduzom i mierzy się z Sumorem, Strażnikiem Głębin. Baśniowa gra wędkarska.">
 <link rel="canonical" href="https://wojtoteka.ovh/blystka/">
 <meta name="theme-color" content="#0e161a">
 <meta name="mobile-web-app-capable" content="yes">
@@ -39,7 +39,7 @@
 <script>
 'use strict';
 /* ============================================================
-   BŁYSTKA i MORZE ATRAMENTU — papierowa gra wędkarska 2D
+   BŁYSTKA i MORZE ATRAMENTU - papierowa gra wędkarska 2D
    Siostrzana opowieść ze świata Trybki. Grafika i dźwięk z kodu.
    Zasada połowu: w dół UNIKASZ ryb (głębiej = cenniej),
    w górę ŁAPIESZ wszystko po drodze.
@@ -50,7 +50,7 @@
 // ---------- STAŁE ----------
 const VH   = 540;         // wysokość logiczna
 // szerokość logiczna dopasowywana NA BIEŻĄCO do proporcji ekranu (patrz fitCanvas)
-// — dzięki temu obraz zawsze wypełnia cały ekran, bez pasków po bokach
+// - dzięki temu obraz zawsze wypełnia cały ekran, bez pasków po bokach
 const VW_MIN = 960, VW_MAX = 1600;
 let VW = 960;
 const DT   = 1/60;        // stały krok fizyki
@@ -67,7 +67,7 @@ const REEL_V    = 350;    // zwijanie żyłki
 const REEL_ACC  = 980;
 const BOAT_V    = 180;    // łódka na powierzchni
 const BOAT_ACC  = 980;
-const DASH_V    = 545;    // zryw (unik) — od 2. łowiska
+const DASH_V    = 545;    // zryw (unik) - od 2. łowiska
 const DASH_T    = 0.15;
 const DASH_CD   = 0.85;
 const HOOK_R    = 11;     // promień chwytu haczyka
@@ -125,7 +125,7 @@ function fitCanvas(){
 window.addEventListener('resize', fitCanvas); fitCanvas();
 window.addEventListener('orientationchange', ()=>setTimeout(fitCanvas,50));
 if(document.addEventListener) document.addEventListener('fullscreenchange', fitCanvas);
-// pełny ekran (jak F11) — przeglądarka pozwala na to tylko w reakcji na gest gracza
+// pełny ekran (jak F11) - przeglądarka pozwala na to tylko w reakcji na gest gracza
 function goFullscreen(){
   try{
     if(document.fullscreenElement) return;
@@ -243,11 +243,11 @@ function touchZones(){
     z.push({kind:'rect', x:VW/2-170, y:VH/2+88, w:340, h:32, key:'h'});
     z.push({kind:'rect', x:VW/2-170, y:VH/2+122, w:340, h:32, key:'v'});
   }else if(game.state==='gameover'){
-    // podział lewo/prawo — dopasowany do napisu "ENTER — ... • M — menu" w jednej linii
+    // podział lewo/prawo - dopasowany do napisu "ENTER - ... • M - menu" w jednej linii
     z.push({kind:'rect', x:0, y:0, w:VW*0.6, h:VH, key:'enter'});
     z.push({kind:'rect', x:VW*0.6, y:0, w:VW*0.4, h:VH, key:'m'});
   }else if(game.state==='intro'){
-    // przycisk "jak grać" w rogu — dostępny od razu na starcie łowiska
+    // przycisk "jak grać" w rogu - dostępny od razu na starcie łowiska
     z.push({kind:'circle', x:40, y:VH-40, r:28, key:'h'});
     z.push({kind:'circle', x:112, y:VH-40, r:28, key:'v'});
     z.push({kind:'rect', x:0, y:0, w:VW, h:VH, key:'jump'});
@@ -280,7 +280,7 @@ function drawTouchUI(){
     ctx.save(); ctx.translate(z.x,z.y);
     if(z.key==='left'){  ctx.beginPath(); ctx.moveTo(-s,0); ctx.lineTo(s*.7,-s); ctx.lineTo(s*.7,s); ctx.closePath(); ctx.fill(); }
     if(z.key==='right'){ ctx.beginPath(); ctx.moveTo(s,0); ctx.lineTo(-s*.7,-s); ctx.lineTo(-s*.7,s); ctx.closePath(); ctx.fill(); }
-    if(z.key==='jump'){  // haczyk — zarzucenie / zryw
+    if(z.key==='jump'){  // haczyk - zarzucenie / zryw
       ctx.lineWidth=5; ctx.lineCap='round';
       ctx.beginPath(); ctx.moveTo(2,-s); ctx.lineTo(2,s*0.25);
       ctx.arc(-s*0.32,s*0.25,s*0.55, 0, 2.6); ctx.stroke();
@@ -307,7 +307,7 @@ function drawTouchUI(){
 }
 Touch2.init();
 
-// ---------- AUDIO (Web Audio API — efekty + muzyka chiptune) ----------
+// ---------- AUDIO (Web Audio API - efekty + muzyka chiptune) ----------
 const Audio2 = {
   ctx:null, master:null, musicGain:null, noiseBuf:null, ok:false,
   muted:(function(){ try{ return localStorage.getItem('blystka_muted')==='1'; }catch(e){ return false; } })(),
@@ -329,7 +329,7 @@ const Audio2 = {
       this.ok = true;
       this.resume();
       Music.reset();
-    }catch(e){ /* brak audio — gra działa dalej */ }
+    }catch(e){ /* brak audio - gra działa dalej */ }
   },
   setMuted(m){
     this.muted = m;
@@ -432,22 +432,22 @@ const Music = {
 // ---------- PALETY (rodzina: atrament / krem / rdza / mosiądz / mech) ----------
 // ground = woda przy tafli, groundDark = woda w głębi
 const PALS = [
-  { // 1: Zatoka Papieru — ciepły dzień, morska zieleń
+  { // 1: Zatoka Papieru - ciepły dzień, morska zieleń
     sky:'#e8dcbe', far:'#cfbf98', mid:'#7f9d93', ink:'#22261f',
     ground:'#a3c0ae', groundDark:'#28504a', top:'#f0ead0',
     accent:'#d8a44a', rust:'#bf6039', paper:'#ece1c4'
   },
-  { // 2: Las Wodorostów — noc, głęboka zieleń i mosiężne światła
+  { // 2: Las Wodorostów - noc, głęboka zieleń i mosiężne światła
     sky:'#141f19', far:'#1d2c23', mid:'#2a3d2e', ink:'#0c120e',
     ground:'#274b41', groundDark:'#0c1f1a', top:'#8fae5e',
     accent:'#e8d98a', rust:'#7d8f5f', paper:'#cfd3ac'
   },
-  { // 3: Wrak Latarniowca — zmierzch i mosiądz
+  { // 3: Wrak Latarniowca - zmierzch i mosiądz
     sky:'#d9b273', far:'#b3854e', mid:'#6d6046', ink:'#2a2118',
     ground:'#5d6b5e', groundDark:'#20302d', top:'#e5c98e',
     accent:'#e5c25c', rust:'#b05c33', paper:'#ecdcb4'
   },
-  { // 4: Głębia Sumora (boss) — atramentowa otchłań
+  { // 4: Głębia Sumora (boss) - atramentowa otchłań
     sky:'#4c4234', far:'#3a3a36', mid:'#39464b', ink:'#12181a',
     ground:'#233036', groundDark:'#080f12', top:'#a87838',
     accent:'#e5c25c', rust:'#b05c33', paper:'#e5d6ae'
@@ -460,7 +460,7 @@ const PALS = [
 const LEVELS = [
 {
   name:'1. ZATOKA PAPIERU',
-  hint:'W dół omijaj ryby — w górę łap wszystko!',
+  hint:'W dół omijaj ryby - w górę łap wszystko!',
   pal:0, depth:1900, target:260, pearls:14,
   music:{tempo:100,tr:0,song:SONG_MAIN},
   fish:[ {k:'plotka',n:8,d0:.04,d1:.45}, {k:'okon',n:5,d0:.30,d1:.92} ],
@@ -469,7 +469,7 @@ const LEVELS = [
 },
 {
   name:'2. LAS WODOROSTÓW',
-  hint:'Nowa umiejętność: SPACJA pod wodą wykonuje zryw — błyskawiczny unik!',
+  hint:'Nowa umiejętność: SPACJA pod wodą wykonuje zryw - błyskawiczny unik!',
   pal:1, depth:2800, target:620, pearls:16,
   music:{tempo:88,tr:-3,song:SONG_MAIN},
   fish:[ {k:'plotka',n:6,d0:.03,d1:.30}, {k:'okon',n:6,d0:.22,d1:.70}, {k:'wegorz',n:5,d0:.45,d1:.96} ],
@@ -517,7 +517,7 @@ const game = {
   abil:{ dash:false } // zryw od 2. łowiska
 };
 function saveBest(){ try{ if(game.score>game.best){ game.best=game.score; localStorage.setItem('blystka_best',game.best); } }catch(e){} }
-// zapis postępu — po odświeżeniu strony można kontynuować od bieżącego łowiska
+// zapis postępu - po odświeżeniu strony można kontynuować od bieżącego łowiska
 function saveProgress(){ try{ localStorage.setItem('blystka_save', JSON.stringify({lvl:game.levelIdx, score:game.scoreAtStart, pearls:game.pearlsAtStart})); }catch(e){} }
 function loadProgress(){ try{ const d=JSON.parse(localStorage.getItem('blystka_save')); if(d && d.lvl>=0 && d.lvl<LEVELS.length) return d; }catch(e){} return null; }
 function clearProgress(){ try{ localStorage.removeItem('blystka_save'); }catch(e){} }
@@ -548,7 +548,7 @@ function initLevel(idx){
     x:rnd(50,VW-50),
     y:SURF+lerp(def.mines.d0,def.mines.d1,Math.random())*def.depth,
     ph:rnd(6.28), gone:false});
-  // perły (rozrzucone deterministycznie — jak nasiona)
+  // perły (rozrzucone deterministycznie - jak nasiona)
   for(let i=0;i<def.pearls;i++) lv.pearlsL.push({
     x:40+hash01(i*3+1,idx*7+2)*(VW-80),
     y:SURF+90+hash01(i*11+3,idx*5+4)*(def.depth-180),
@@ -615,7 +615,7 @@ const LAYER_H=720;
 function buildLayers(lv){
   const P=lv.pal, id=lv.def.pal, layers=[];
   const mk=(f, painter)=>{ const cv=makeCanvas(VW,LAYER_H); painter(cv.getContext('2d')); layers.push({cv,f}); };
-  if(id===0){ // ZATOKA PAPIERU — snopy światła i piaskowe pagórki
+  if(id===0){ // ZATOKA PAPIERU - snopy światła i piaskowe pagórki
     mk(0.10,g=>{
       g.fillStyle=P.paper; g.globalAlpha=.10;
       for(let i=0;i<5;i++){ const bx=i*(VW/5)+hash01(i,1)*90;
@@ -639,7 +639,7 @@ function buildLayers(lv){
         g.fillRect(hash01(i,7)*VW, hash01(i,8)*LAYER_H, 2.5,2.5); }
       g.globalAlpha=1;
     });
-  }else if(id===1){ // LAS WODOROSTÓW — gęste liście i świecące zarodniki
+  }else if(id===1){ // LAS WODOROSTÓW - gęste liście i świecące zarodniki
     mk(0.10,g=>{
       g.fillStyle=P.far;
       for(let i=0;i<7;i++){ const bx=i*(VW/7)+hash01(i,1)*50, by=hash01(i,2)*LAYER_H;
@@ -662,7 +662,7 @@ function buildLayers(lv){
         g.beginPath(); g.arc(hash01(i,5)*VW, hash01(i,6)*LAYER_H, 1.6+hash01(i,7)*1.6, 0,6.283); g.fill(); }
       g.globalAlpha=1;
     });
-  }else if(id===2){ // WRAK — maszty, liny, zatopione trybiki
+  }else if(id===2){ // WRAK - maszty, liny, zatopione trybiki
     mk(0.10,g=>{
       g.fillStyle=P.far; g.globalAlpha=.85;
       g.beginPath(); g.moveTo(VW*.14,LAYER_H); g.quadraticCurveTo(VW*.3,LAYER_H-260, VW*.52,LAYER_H-180);
@@ -687,7 +687,7 @@ function buildLayers(lv){
         g.fillRect(-2,-1,4,2); g.restore(); }
       g.globalAlpha=1;
     });
-  }else{ // GŁĘBIA — kolumny otchłani i wielkie ości
+  }else{ // GŁĘBIA - kolumny otchłani i wielkie ości
     mk(0.10,g=>{
       g.fillStyle=P.far;
       for(let i=0;i<4;i++){ const bx=i*(VW/4)+hash01(i,1)*70, ww=60+hash01(i,2)*70;
@@ -735,7 +735,7 @@ function buildFloor(lv){
   g.beginPath(); g.moveTo(0,14);
   for(let x=0;x<=VW;x+=40) g.quadraticCurveTo(x+20, 8+hash01(x,id)*14, x+40, 14+hash01(x+1,id)*8);
   g.stroke(); g.globalAlpha=1;
-  // dekoracje dna — zatopione trybiki, kotwica, muszle, ości
+  // dekoracje dna - zatopione trybiki, kotwica, muszle, ości
   for(let i=0;i<9;i++){
     const x=30+hash01(i*7,id*3)*(VW-60), h=hash01(i,id+5);
     if(h<0.3) drawBigGear(g,x,52+h*40,10+h*26,P.mid,P.ink,.85);
@@ -1026,7 +1026,7 @@ function updatePlayer(dt){
     }
   }
   else if(p.phase==='drop'){
-    // zryw — błyskawiczny unik (od 2. łowiska)
+    // zryw - błyskawiczny unik (od 2. łowiska)
     if(game.abil.dash && Input.pressed.jump && p.dashCd<=0){
       p.dashT=DASH_T; p.dashCd=DASH_CD; p.dashDir= ax!==0?ax:(h.vx<0?-1:1);
       p.inv=Math.max(p.inv,0.22); SFX.dash(); bubblesAt(h.x,h.y,8);
@@ -1042,7 +1042,7 @@ function updatePlayer(dt){
     h.y+=h.vy*dt;
     if(!p.splashed && h.y>SURF){ p.splashed=true; splashAt(h.x); SFX.splash(); }
     if(Math.random()<0.12) bubblesAt(h.x,h.y-4,1);
-    // dno — koniec żyłki
+    // dno - koniec żyłki
     if(h.y>SURF+level.depth-20){
       h.y=SURF+level.depth-20;
       spawnP(h.x,h.y+8,10,{cols:[level.pal.mid,level.pal.groundDark], sp0:20,sp1:70, l0:.3,l1:.7, s0:2,s1:5, grav:-30, ang:-Math.PI/2, spread:1.6});
@@ -1071,7 +1071,7 @@ function updatePlayer(dt){
     p.tickT+=dt; if(p.tickT>0.11){ p.tickT=0; SFX.tick(); }
     if(Math.random()<0.2) bubblesAt(h.x,h.y+6,1);
     collideHook(false);
-    // powierzchnia — podliczenie połowu
+    // powierzchnia - podliczenie połowu
     if(h.y<SURF-6){ splashAt(h.x); SFX.splash(); tallyCatch(); }
   }
 }
@@ -1306,7 +1306,7 @@ function drawBoss(g){
   g.beginPath(); g.moveTo(130,-10); g.quadraticCurveTo(168,-30,188,-52+Math.sin(b.t*2.6)*8); g.stroke();
   g.lineCap='butt';
   g.restore();
-  // dolny, świecący wąs — słaby punkt (we współrzędnych świata, zgodnie z kolizją)
+  // dolny, świecący wąs - słaby punkt (we współrzędnych świata, zgodnie z kolizją)
   const w=whiskerPos(b), open=bossVuln(b);
   g.save(); g.globalAlpha=ga;
   g.strokeStyle= open?P.accent:P.mid; g.lineWidth=4; g.lineCap='round';
@@ -1380,7 +1380,7 @@ function retryLevel(){
 // ---------- GŁÓWNY UPDATE ----------
 function update(dt){
   game.time+=dt;
-  if(Input.pressed.v) Audio2.setMuted(!Audio2.muted); // V — wycisz/włącz dźwięk (działa wszędzie)
+  if(Input.pressed.v) Audio2.setMuted(!Audio2.muted); // V - wycisz/włącz dźwięk (działa wszędzie)
   game.shakeT=Math.max(0,game.shakeT-dt);
   game.fade=Math.max(0,game.fade-dt*1.8);
   Music.update();
@@ -1476,7 +1476,7 @@ function update(dt){
   }
 }
 
-// ---------- TEKST (ręczny charakter — litery lekko przekrzywione) ----------
+// ---------- TEKST (ręczny charakter - litery lekko przekrzywione) ----------
 const FONT='\'Architects Daughter\',"Segoe Print","Comic Sans MS",cursive';
 function txt(g,str,x,y,size,col,align='center'){
   g.font=`700 ${size}px ${FONT}`;
@@ -1536,7 +1536,7 @@ function renderWorld(){
     shx=rnd(-k,k); shy=rnd(-k,k); }
   const wy = SURF - cam.y + shy; // linia wody na ekranie
   if(wy > -60) drawSky(shx,wy);
-  // toń — gradient głębi + paralaksa
+  // toń - gradient głębi + paralaksa
   if(wy < VH){
     const gy0=Math.max(0,wy), gy1=VH;
     const fr=(sy)=>clamp((sy+cam.y-SURF)/level.depth,0,1);
@@ -1588,7 +1588,7 @@ function renderWorld(){
   if(game.state==='victory') drawVictory();
 }
 
-// niebo nad taflą — słońce/lampa, chmury, sylwetki na horyzoncie
+// niebo nad taflą - słońce/lampa, chmury, sylwetki na horyzoncie
 function drawSky(shx,wy){
   const P=level.pal, id=level.def.pal;
   ctx.save(); ctx.translate(shx,0);
@@ -1627,7 +1627,7 @@ function drawSky(shx,wy){
     ctx.beginPath(); ctx.moveTo(bx,hy); ctx.lineTo(bx,hy-32); ctx.lineTo(bx+22,hy-6); ctx.closePath(); ctx.fill(); }
   ctx.restore();
 }
-// tafla wody — falująca pianka (współrzędne świata)
+// tafla wody - falująca pianka (współrzędne świata)
 function drawWaterline(){
   const P=level.pal;
   ctx.strokeStyle=P.top; ctx.lineWidth=4; ctx.globalAlpha=.9;
@@ -1661,7 +1661,7 @@ function drawBoatAndGirl(g,x,y,face,rodBend,reeling){
   g.fillStyle=P.rust; g.globalAlpha=.8; g.fillRect(-42,-6,84,3); g.globalAlpha=1;
   g.fillStyle=P.paper;
   g.beginPath(); g.moveTo(face*46,-6); g.lineTo(face*26,-6); g.lineTo(face*34,4); g.closePath(); g.fill();
-  // Błystka — cynowa dziewczynka w chustce
+  // Błystka - cynowa dziewczynka w chustce
   g.save(); g.scale(face,1);
   g.fillStyle=P.rust;
   rrPath(g,-8,-24,16,17,5); g.fill();
@@ -1692,7 +1692,7 @@ function drawBlystka(g){
   const p=player, P=level.pal;
   const by=SURF-8+Math.sin(game.time*1.6)*2.4;
   const tip=rodTip();
-  // żyłka — od czubka wędki do haczyka
+  // żyłka - od czubka wędki do haczyka
   if(p.phase!=='boat'){
     const h=p.hook;
     const sag = p.phase==='reel'? 6 : clamp(46-Math.abs(h.vy)*0.06, 8, 46);
@@ -1738,7 +1738,7 @@ function drawBlystka(g){
 function drawHUD(){
   const P=level.pal;
   if(game.state==='victory'||game.state==='gameover') return;
-  // serca / perły / głębokość / magnes — na dotyku odsunięte w dół, żeby nie nachodzić na przycisk wyciszenia w rogu
+  // serca / perły / głębokość / magnes - na dotyku odsunięte w dół, żeby nie nachodzić na przycisk wyciszenia w rogu
   const topL = Touch2.enabled ? 78 : 26;
   for(let i=0;i<3;i++) drawHeartIcon(ctx, 28+i*28, topL, 1.3, i<game.hearts);
   drawPearlIcon(ctx, 30, topL+32, 1, 0);
@@ -1756,7 +1756,7 @@ function drawHUD(){
     ctx.fillStyle=P.accent; ctx.fillRect(46,yy-2,80*(player.pow/12),8);
     ctx.strokeStyle=P.ink; ctx.strokeRect(46.5,yy-1.5,79,7);
   }
-  // połów i wynik — na dotyku odsunięte w dół, żeby nie nachodzić na przycisk pauzy w rogu
+  // połów i wynik - na dotyku odsunięte w dół, żeby nie nachodzić na przycisk pauzy w rogu
   const hudTop = Touch2.enabled ? 78 : 26;
   if(!level.isBoss){
     const cur=game.score-game.scoreAtStart, tgt=level.def.target;
@@ -1786,9 +1786,9 @@ function drawIntro(){
   wobTxt(ctx, level.def.name, VW/2, VH/2-40, 44, P.paper, P.ink);
   txt(ctx, level.def.hint, VW/2, VH/2+18, 19, P.accent);
   if(game.abil.dash && game.levelIdx===1)
-    txt(ctx,'(zryw działa w dół i w górę — i zapewnia chwilową nietykalność)',VW/2,VH/2+50,14,P.paper);
-  txt(ctx, Touch2.enabled ? 'dotknij ekranu, aby rozpocząć' : 'spacja / enter — start', VW/2, VH-60, 14, P.paper);
-  txt(ctx,(Touch2.enabled?'dotknij ikonę ?':'H')+' — jak grać',VW/2,VH-34,14,P.accent);
+    txt(ctx,'(zryw działa w dół i w górę - i zapewnia chwilową nietykalność)',VW/2,VH/2+50,14,P.paper);
+  txt(ctx, Touch2.enabled ? 'dotknij ekranu, aby rozpocząć' : 'spacja / enter - start', VW/2, VH-60, 14, P.paper);
+  txt(ctx,(Touch2.enabled?'dotknij ikonę ?':'H')+' - jak grać',VW/2,VH-34,14,P.accent);
   ctx.globalAlpha=1;
 }
 function drawClear(){
@@ -1801,11 +1801,11 @@ function drawPause(){
   dim(0.66);
   const P=level.pal;
   wobTxt(ctx,'PAUZA',VW/2,VH/2-70,52,P.paper,P.ink);
-  txt(ctx,'ESC — wznów',VW/2,VH/2+4,20,P.paper);
-  txt(ctx,'R — restart łowiska',VW/2,VH/2+38,20,P.paper);
-  txt(ctx,'M — powrót do menu',VW/2,VH/2+72,20,P.paper);
-  txt(ctx,(Touch2.enabled?'H / ?':'H')+' — jak grać',VW/2,VH/2+106,20,P.accent);
-  txt(ctx,(Touch2.enabled?'V / 🔊':'V')+(Audio2.muted?' — włącz dźwięk':' — wycisz dźwięk'),VW/2,VH/2+140,20,P.paper);
+  txt(ctx,'ESC - wznów',VW/2,VH/2+4,20,P.paper);
+  txt(ctx,'R - restart łowiska',VW/2,VH/2+38,20,P.paper);
+  txt(ctx,'M - powrót do menu',VW/2,VH/2+72,20,P.paper);
+  txt(ctx,(Touch2.enabled?'H / ?':'H')+' - jak grać',VW/2,VH/2+106,20,P.accent);
+  txt(ctx,(Touch2.enabled?'V / 🔊':'V')+(Audio2.muted?' - włącz dźwięk':' - wycisz dźwięk'),VW/2,VH/2+140,20,P.paper);
 }
 function drawGameOver(){
   dim(Math.min(0.78,game.timer));
@@ -1813,7 +1813,7 @@ function drawGameOver(){
   wobTxt(ctx,'ŻYŁKA PĘKŁA…',VW/2,VH/2-70,46,'#c9574a',P.ink);
   txt(ctx,'morze tym razem wygrało',VW/2,VH/2-22,18,P.paper);
   txt(ctx,'WYNIK: '+game.score+'   •   PERŁY: '+game.pearls,VW/2,VH/2+22,19,P.accent);
-  txt(ctx,'ENTER — spróbuj jeszcze raz   •   M — menu',VW/2,VH/2+70,17,P.paper);
+  txt(ctx,'ENTER - spróbuj jeszcze raz   •   M - menu',VW/2,VH/2+70,17,P.paper);
 }
 function drawVictory(){
   dim(Math.min(0.6,game.timer*0.5));
@@ -1822,25 +1822,25 @@ function drawVictory(){
   txt(ctx,'Błystka wyłowiła światło z głębin.',VW/2,VH/2-34,20,P.paper);
   txt(ctx,'WYNIK: '+game.score,VW/2,VH/2+14,26,P.paper);
   txt(ctx,'zebrane perły: '+game.pearls+'   •   rekord: '+game.best,VW/2,VH/2+52,17,P.accent);
-  txt(ctx,'ENTER — menu',VW/2,VH/2+100,17,P.paper);
+  txt(ctx,'ENTER - menu',VW/2,VH/2+100,17,P.paper);
 }
 function drawHelp(){
   const P=PALS[0];
   dim(0.74);
   wobTxt(ctx,'JAK GRAĆ',VW/2,56,44,P.paper,P.ink);
-  txt(ctx,'W DÓŁ omijaj ryby — dotknięcie ryby zahacza ją i rozpoczyna zwijanie.',VW/2,100,16,P.accent);
-  txt(ctx,'W GÓRĘ łap wszystko — każda złowiona ryba liczy się do wyniku.',VW/2,130,16,P.accent);
+  txt(ctx,'W DÓŁ omijaj ryby - dotknięcie ryby zahacza ją i rozpoczyna zwijanie.',VW/2,100,16,P.accent);
+  txt(ctx,'W GÓRĘ łap wszystko - każda złowiona ryba liczy się do wyniku.',VW/2,130,16,P.accent);
   txt(ctx,'S / ↓ przyspiesza opadanie haczyka.',VW/2,160,15,P.paper);
-  txt(ctx,'Na powierzchni podliczasz połów — im więcej ryb złowisz naraz, tym większy bonus!',VW/2,190,15,P.paper);
+  txt(ctx,'Na powierzchni podliczasz połów - im więcej ryb złowisz naraz, tym większy bonus!',VW/2,190,15,P.paper);
   txt(ctx,'Meduzy i miny zabierają serce i zrzucają część ryb z haczyka (masz 3 życia).',VW/2,220,15,P.paper);
   txt(ctx,'Zbieraj perły i serca, a magnes przez chwilę przyciąga ryby i perły do haczyka.',VW/2,250,15,P.paper);
   txt(ctx,'Od 2. łowiska: zryw (SPACJA pod wodą) daje błyskawiczny unik i chwilową nietykalność.',VW/2,280,15,P.paper);
-  txt(ctx,'Cel: zdobądź wymagany połów w każdym łowisku — na końcu czeka SUMOR z głębin.',VW/2,310,15,P.paper);
+  txt(ctx,'Cel: zdobądź wymagany połów w każdym łowisku - na końcu czeka SUMOR z głębin.',VW/2,310,15,P.paper);
   if(Touch2.enabled)
-    txt(ctx,'przyciski: ◀ ▶ — ruch      haczyk — zarzuć i zryw      ▐▌ — pauza',VW/2,444,15,P.paper);
+    txt(ctx,'przyciski: ◀ ▶ - ruch      haczyk - zarzuć i zryw      ▐▌ - pauza',VW/2,444,15,P.paper);
   else
-    txt(ctx,'←→ / AD — ruch      SPACJA / W — zarzuć i zryw      ESC — pauza',VW/2,444,15,P.paper);
-  txt(ctx,(Touch2.enabled?'dotknij ekranu':'ENTER / ESC')+' — wróć do menu',VW/2,478,16,P.accent);
+    txt(ctx,'←→ / AD - ruch      SPACJA / W - zarzuć i zryw      ESC - pauza',VW/2,444,15,P.paper);
+  txt(ctx,(Touch2.enabled?'dotknij ekranu':'ENTER / ESC')+' - wróć do menu',VW/2,478,16,P.accent);
 }
 
 // ---------- EKRAN TYTUŁOWY ----------
@@ -1863,7 +1863,7 @@ function renderTitle(){
     for(let k=0;k<4;k++){ ctx.beginPath(); ctx.arc(cx+k*22-30, cy+((k%2)*6), 15+hash01(i,k)*8, 0,6.283); ctx.fill(); }
   }
   ctx.globalAlpha=1;
-  // morze — trzy falujące pasy atramentu
+  // morze - trzy falujące pasy atramentu
   const seaY=396;
   const cols=[P.ground, hexLerp(P.ground,P.groundDark,0.45), hexLerp(P.ground,P.groundDark,0.8)];
   for(let b=0;b<3;b++){
@@ -1903,18 +1903,18 @@ function renderTitle(){
   // napisy
   const sv=game.saveData;
   if(((game.time*1.4)|0)%2===0){
-    if(sv) txt(ctx,(Touch2.enabled?'dotknij ekranu':'ENTER')+' — kontynuuj: '+LEVELS[sv.lvl].name, VW/2,330,20,P.ink);
-    else txt(ctx, Touch2.enabled?'— dotknij ekranu —':'— naciśnij ENTER —', VW/2,330,22,P.ink);
+    if(sv) txt(ctx,(Touch2.enabled?'dotknij ekranu':'ENTER')+' - kontynuuj: '+LEVELS[sv.lvl].name, VW/2,330,20,P.ink);
+    else txt(ctx, Touch2.enabled?'- dotknij ekranu -':'- naciśnij ENTER -', VW/2,330,22,P.ink);
   }
-  if(sv) txt(ctx,(Touch2.enabled?'dotknij tutaj':'N')+' — nowa wyprawa od początku', VW/2,372,15,P.rust);
-  txt(ctx,(Touch2.enabled?'dotknij ikonę ?':'H')+' — jak grać',VW/2,410,15,P.paper);
-  if(!Touch2.enabled) txt(ctx,'V — wycisz / włącz dźwięk',VW/2,440,14,P.paper);
+  if(sv) txt(ctx,(Touch2.enabled?'dotknij tutaj':'N')+' - nowa wyprawa od początku', VW/2,372,15,P.rust);
+  txt(ctx,(Touch2.enabled?'dotknij ikonę ?':'H')+' - jak grać',VW/2,410,15,P.paper);
+  if(!Touch2.enabled) txt(ctx,'V - wycisz / włącz dźwięk',VW/2,440,14,P.paper);
   if(Touch2.enabled){
-    txt(ctx,'przyciski: ◀ ▶ — ruch      haczyk — zarzuć i zryw      ▐▌ — pauza',VW/2,486,15,P.paper);
+    txt(ctx,'przyciski: ◀ ▶ - ruch      haczyk - zarzuć i zryw      ▐▌ - pauza',VW/2,486,15,P.paper);
     if(window.innerHeight>window.innerWidth)
       txt(ctx,'(obróć telefon poziomo!)',VW/2,300,17,P.rust);
   }else
-    txt(ctx,'←→ / AD — ruch      SPACJA / W — zarzuć i zryw      ESC — pauza',VW/2,486,15,P.paper);
+    txt(ctx,'←→ / AD - ruch      SPACJA / W - zarzuć i zryw      ESC - pauza',VW/2,486,15,P.paper);
   txt(ctx,'w dół omijaj ryby • w górę łap wszystko • zbieraj perły z toni',VW/2,514,13,P.paper);
   if(game.best>0) txt(ctx,'rekord: '+game.best,VW-24,26,15,P.ink,'right');
   txt(ctx,'Stworzone przez Wojtoteka',24,26,13,P.ink,'left');

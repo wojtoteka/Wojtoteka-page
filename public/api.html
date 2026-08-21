@@ -570,7 +570,7 @@
                 <li>Dane logowania (email + hasło) otrzymujesz mailem</li>
                 <li>Wklejasz formularz na swoją stronę z kluczem API</li>
                 <li>Wiadomości trafiają do Twojego panelu: <a href="https://wojtoteka.ovh/panel" style="color: #ff9800;">wojtoteka.ovh/panel</a></li>
-                <li>Opcjonalnie — dostajesz powiadomienia email o nowych wiadomościach</li>
+                <li>Opcjonalnie - dostajesz powiadomienia email o nowych wiadomościach</li>
             </ol>
 
             <div class="alert alert-info">
@@ -615,14 +615,14 @@
 }</code><button class="copy-code-btn" onclick="copyCode(this)">📋 Kopiuj</button></pre>
 
             <div class="alert alert-warning">
-                ⚠️ <strong>Nigdy</strong> nie udostępniaj klucza API publicznie w repozytoriach. Klucz jest widoczny w kodzie HTML strony — to normalne dla formularzy kontaktowych, ale nie używaj go do wrażliwych operacji.
+                ⚠️ <strong>Nigdy</strong> nie udostępniaj klucza API publicznie w repozytoriach. Klucz jest widoczny w kodzie HTML strony - to normalne dla formularzy kontaktowych, ale nie używaj go do wrażliwych operacji.
             </div>
         </section>
 
         <!-- 4. POLA -->
         <section class="doc-section" id="fields">
             <h2>📋 Pola formularza</h2>
-            <p>Dostępne pola zależą od konfiguracji klucza API. Administrator decyduje, które pola są zbierane. Jeśli pole jest włączone dla Twojego klucza — jest <strong>wymagane</strong> w żądaniu.</p>
+            <p>Dostępne pola zależą od konfiguracji klucza API. Administrator decyduje, które pola są zbierane. Jeśli pole jest włączone dla Twojego klucza - jest <strong>wymagane</strong> w żądaniu.</p>
 
             <table class="response-table">
                 <thead>
@@ -638,7 +638,7 @@
                         <td><span class="inline-code">name</span></td>
                         <td>string</td>
                         <td>Imię / Nick nadawcy</td>
-                        <td>1–255 znaków</td>
+                        <td>1-255 znaków</td>
                     </tr>
                     <tr>
                         <td><span class="inline-code">email</span></td>
@@ -650,25 +650,25 @@
                         <td><span class="inline-code">phone</span></td>
                         <td>string</td>
                         <td>Numer telefonu</td>
-                        <td>1–50 znaków</td>
+                        <td>1-50 znaków</td>
                     </tr>
                     <tr>
                         <td><span class="inline-code">subject</span></td>
                         <td>string</td>
                         <td>Tytuł / Temat wiadomości</td>
-                        <td>1–255 znaków</td>
+                        <td>1-255 znaków</td>
                     </tr>
                     <tr>
                         <td><span class="inline-code">message</span></td>
                         <td>string</td>
                         <td>Treść wiadomości</td>
-                        <td>1–5000 znaków</td>
+                        <td>1-5000 znaków</td>
                     </tr>
                 </tbody>
             </table>
 
             <div class="alert alert-info">
-                💡 <strong>Przykład:</strong> Jeśli administrator włączył pola: <span class="field-tag">name</span> <span class="field-tag">email</span> <span class="field-tag">message</span> — to wysyłasz w body JSON dokładnie te 3 pola. Pola <span class="inline-code">phone</span> i <span class="inline-code">subject</span> będą ignorowane.
+                💡 <strong>Przykład:</strong> Jeśli administrator włączył pola: <span class="field-tag">name</span> <span class="field-tag">email</span> <span class="field-tag">message</span> - to wysyłasz w body JSON dokładnie te 3 pola. Pola <span class="inline-code">phone</span> i <span class="inline-code">subject</span> będą ignorowane.
             </div>
 
             <h3>Przykładowe body (JSON)</h3>
@@ -733,9 +733,9 @@
             <h2>💻 Przykłady integracji</h2>
 
             <h3>HTML + JavaScript (zalecane)</h3>
-            <p>Najprostszy sposób — wklej na swoją stronę HTML:</p>
+            <p>Najprostszy sposób - wklej na swoją stronę HTML:</p>
 
-            <pre><code><span class="hl-comment">&lt;!-- Formularz kontaktowy — Wojtoteka API --&gt;</span>
+            <pre><code><span class="hl-comment">&lt;!-- Formularz kontaktowy - Wojtoteka API --&gt;</span>
 <span class="hl-tag">&lt;form</span> <span class="hl-attr">id</span>=<span class="hl-string">"contactForm"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;input</span> <span class="hl-attr">type</span>=<span class="hl-string">"text"</span> <span class="hl-attr">name</span>=<span class="hl-string">"name"</span> <span class="hl-attr">placeholder</span>=<span class="hl-string">"Imię"</span> <span class="hl-attr">required</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;input</span> <span class="hl-attr">type</span>=<span class="hl-string">"email"</span> <span class="hl-attr">name</span>=<span class="hl-string">"email"</span> <span class="hl-attr">placeholder</span>=<span class="hl-string">"Email"</span> <span class="hl-attr">required</span><span class="hl-tag">&gt;</span>
@@ -950,7 +950,7 @@ curl_close(<span class="hl-keyword">$ch</span>);
             <p>Skontaktuj się z administratorem serwisu przez formularz na <a href="https://wojtoteka.ovh/kontakt.html" style="color: #ff9800;">wojtoteka.ovh/kontakt.html</a>. Administrator utworzy klucz, konto w panelu i wyśle dane na Twój email.</p>
 
             <h3>Skąd wiem, jakie pola są włączone dla mojego klucza?</h3>
-            <p>Informację tę znajdziesz w panelu administracyjnym przy swoim kluczu API, lub zapytaj administratora. Jeśli wyślesz pole, które nie jest włączone — zostanie ono zignorowane.</p>
+            <p>Informację tę znajdziesz w panelu administracyjnym przy swoim kluczu API, lub zapytaj administratora. Jeśli wyślesz pole, które nie jest włączone - zostanie ono zignorowane.</p>
 
             <h3>Czy mogę używać API z wielu domen?</h3>
             <p>Tak! CORS pozwala na żądania z dowolnego originu. Jeden klucz API może obsługiwać wiele stron.</p>
@@ -962,7 +962,7 @@ curl_close(<span class="hl-keyword">$ch</span>);
             <p>Tak, wszystkie wiadomości są zapisywane w bazie danych i widoczne w <a href="https://wojtoteka.ovh/panel" style="color: #ff9800;">panelu</a>. Możesz je przeglądać i usuwać.</p>
 
             <h3>Czy dostanę email przy nowej wiadomości?</h3>
-            <p>Jeśli administrator ustawił email powiadomień dla Twojego klucza API — tak, dostaniesz email za każdym razem, gdy ktoś wyśle wiadomość przez Twój formularz.</p>
+            <p>Jeśli administrator ustawił email powiadomień dla Twojego klucza API - tak, dostaniesz email za każdym razem, gdy ktoś wyśle wiadomość przez Twój formularz.</p>
 
             <h3>Zapomniałem hasła do panelu</h3>
             <p>Na stronie logowania panelu kliknij „Nie pamiętam hasła”. Na Twój e-mail zostanie wysłany 6-cyfrowy kod, za pomocą którego ustawisz nowe hasło.</p>

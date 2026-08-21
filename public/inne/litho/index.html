@@ -584,7 +584,7 @@
                 <div class="platform-head">
                     <span class="icon">🪟</span>
                     <span class="title">Windows</span>
-                    <span class="platform-ver" id="ver-windows">—</span>
+                    <span class="platform-ver" id="ver-windows">-</span>
                 </div>
                 <div class="platform-sub">.exe</div>
                 <div id="files-windows"><div class="empty">Ładowanie…</div></div>
@@ -594,7 +594,7 @@
                 <div class="platform-head">
                     <span class="icon">🐧</span>
                     <span class="title">Linux</span>
-                    <span class="platform-ver" id="ver-linux">—</span>
+                    <span class="platform-ver" id="ver-linux">-</span>
                 </div>
                 <div class="platform-sub">.AppImage · .deb</div>
                 <div id="files-linux"><div class="empty">Ładowanie…</div></div>
@@ -754,7 +754,7 @@
 
                 const name = document.createElement('span');
                 name.className = 'file-name';
-                name.textContent = (item.product || item.name) + ' — ' + label;
+                name.textContent = (item.product || item.name) + ' - ' + label;
                 top.appendChild(name);
 
                 const tag = document.createElement('span');

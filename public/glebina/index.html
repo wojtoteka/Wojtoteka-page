@@ -9,7 +9,7 @@
 <!-- Favicon: batyskaf z promieniem latarki, osadzony jako SVG data URI (bez zewnętrznych plików) -->
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='%230b3a5c'/><stop offset='1' stop-color='%23020a16'/></linearGradient></defs><rect width='64' height='64' rx='14' fill='url(%23g)'/><path d='M36 28 62 16v28L36 34z' fill='%23ffe9a0' opacity='.32'/><ellipse cx='25' cy='31' rx='14' ry='9.5' fill='%23ffb347'/><rect x='19' y='19' width='9' height='6' rx='2.5' fill='%23e89a2f'/><circle cx='30' cy='30' r='4' fill='%23bfefff'/><circle cx='12' cy='45' r='2' fill='%239fdcff' opacity='.8'/><circle cx='17' cy='52' r='1.5' fill='%239fdcff' opacity='.6'/></svg>">
 <style>
-/* ====== OSTATNI ODDECH — style interfejsu ====== */
+/* ====== OSTATNI ODDECH - style interfejsu ====== */
 *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
 html,body{
   margin:0; padding:0; position:fixed; inset:0; overflow:hidden;
@@ -177,7 +177,7 @@ html,body{
       🫧 Zbieraj bąbelki tlenu &nbsp;•&nbsp; 🦪 Perły = waluta w sklepie
     </div>
     <div class="instrukcja" id="instrDotyk">
-      👆 <b>Sterowanie:</b> wirtualny joystick — przeciągnij kciukiem po lewej stronie ekranu<br>
+      👆 <b>Sterowanie:</b> wirtualny joystick - przeciągnij kciukiem po lewej stronie ekranu<br>
       ⏸ <b>Pauza:</b> przycisk w prawym górnym rogu<br>
       🫧 Zbieraj bąbelki tlenu &nbsp;•&nbsp; 🦪 Perły = waluta w sklepie
     </div>
@@ -275,7 +275,7 @@ const SCIANA     = 90;    // bazowa grubość skalnych ścian
 const CHUNK_H    = 560;   // wysokość porcji generowanego świata
 const OKO_Y      = 24500; // głębokość Oka Otchłani (2450 m)
 
-// Strefy głębokości — nazwy i opisy pokazywane przy zejściu
+// Strefy głębokości - nazwy i opisy pokazywane przy zejściu
 const STREFY = [
   { od: 0,    nazwa: 'Słoneczna Toń',            opis: 'Światło jeszcze tu sięga' },
   { od: 150,  nazwa: 'Strefa Zmierzchu',         opis: 'Kolory bledną…' },
@@ -286,7 +286,7 @@ const STREFY = [
   { od: 2400, nazwa: 'Oko Otchłani',             opis: '…ono też patrzy w ciebie' },
 ];
 
-// Kolor wody zależny od głębokości (metry) — przejście turkus -> granat -> czerń
+// Kolor wody zależny od głębokości (metry) - przejście turkus -> granat -> czerń
 const KOLORY_WODY = [
   { g: 0,    k: [52, 170, 190] },
   { g: 150,  k: [16, 95, 135] },
@@ -326,14 +326,14 @@ const ULEPSZENIA = {
   sonar:   { ikona: '📡', nazwa: 'Sonar',             opis: 'Wykrywa drapieżniki',    koszty: [30, 80, 160] },
 };
 
-// Wiadomości z butelek — mały sekret świata
+// Wiadomości z butelek - mały sekret świata
 const WIADOMOSCI = [
-  '„Dzień 47: ryby wciąż udają, że mnie nie znają.” — dziennik nurka',
-  '„Jeśli to czytasz — NIE świeć latarką w Rowie. Ono lubi światło.”',
+  '„Dzień 47: ryby wciąż udają, że mnie nie znają.” - dziennik nurka',
+  '„Jeśli to czytasz - NIE świeć latarką w Rowie. Ono lubi światło.”',
   '„Sprzedam kotwicę, mało używana. Pytać na powierzchni.”',
   '„Widziałem miasto pod 1200 metrem. Okna wciąż się świecą…”',
   '„Wielorybowi zawdzięczam życie. Oddaj mu ukłon, gdy przepływa.”',
-  '„Tu byłem. — Tonący Janusz”',
+  '„Tu byłem. - Tonący Janusz”',
   '„Trzy skarby Thalass czekają na odważnego. Złoto pamięta.”',
 ];
 
@@ -372,7 +372,7 @@ const lewiatan = { stan: 'spokoj', t: 25, x: 0, y: 0, vx: 0, strona: 1 };
 const wieloryb = { aktywny: false, t: 55, x: 0, y: 0, vx: 0, dal: false };
 const oko      = { otwarcie: 0 };
 
-let ogloszenie = null;      // { tytul, sub, t } — wielki napis strefy
+let ogloszenie = null;      // { tytul, sub, t } - wielki napis strefy
 let toasty = [];            // krótkie komunikaty na dole ekranu
 let maxStrefa = -1;         // najgłębsza ogłoszona strefa w tym zejściu
 let sonarT = 0, alarmT = 0, ambientT = 0;
@@ -407,7 +407,7 @@ function szum(czas, glosnosc, filtrHz){
   src.connect(f); f.connect(g); g.connect(master); src.start();
 }
 
-// Inicjalizacja audio — wywoływana po pierwszym dotknięciu/klawiszu (wymóg przeglądarek)
+// Inicjalizacja audio - wywoływana po pierwszym dotknięciu/klawiszu (wymóg przeglądarek)
 function initAudio(){
   if (ac){ if (ac.state === 'suspended') ac.resume(); return; }
   const AC = window.AudioContext || window.webkitAudioContext;
@@ -425,7 +425,7 @@ function initAudio(){
   const g = ac.createGain(); g.gain.value = 0.05;
   src.connect(f); f.connect(g); g.connect(master); src.start();
 
-  // Złowieszczy dron Lewiatana — dwa niskie oscylatory, głośność sterowana w pętli
+  // Złowieszczy dron Lewiatana - dwa niskie oscylatory, głośność sterowana w pętli
   dronGain = ac.createGain(); dronGain.gain.value = 0; dronGain.connect(master);
   const o1 = ac.createOscillator(); o1.type = 'sine'; o1.frequency.value = 36;
   const o2 = ac.createOscillator(); o2.type = 'sawtooth'; o2.frequency.value = 54.5;
@@ -464,7 +464,7 @@ function rozmiar(){
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ciemne.width = Math.max(2, Math.round(w / 2)); ciemne.height = Math.max(2, Math.round(h / 2));
   dctx.setTransform(0.5, 0, 0, 0.5, 0, 0); // rysujemy w współrzędnych ekranu
-  // winieta — budowana raz na zmianę rozmiaru
+  // winieta - budowana raz na zmianę rozmiaru
   vinieta.width = Math.max(2, Math.round(w / 2)); vinieta.height = Math.max(2, Math.round(h / 2));
   const vc = vinieta.getContext('2d');
   const vg = vc.createRadialGradient(w / 4, h / 4, Math.min(w, h) / 4.6, w / 4, h / 4, Math.max(w, h) / 1.9);
@@ -588,7 +588,7 @@ function generujChunk(i){
     znajdzki.push({ typ: kr ? 'krysztal' : 'perla', x: px(), y: py(), faza: rnd() * TAU, wziete: false });
   }
 
-  // --- bąbelki tlenu (głębiej odrobinę rzadsze — rośnie napięcie) ---
+  // --- bąbelki tlenu (głębiej odrobinę rzadsze - rośnie napięcie) ---
   const nTlen = 1 + (rnd() < (gM < 600 ? 0.7 : 0.45) ? 1 : 0);
   for (let k = 0; k < nTlen; k++)
     znajdzki.push({ typ: 'tlen', x: px(), y: py(), faza: rnd() * TAU, wziete: false });
@@ -654,7 +654,7 @@ function generujChunk(i){
 const TYPY_DRAP = {
   kasacz:  { r: 13, szyb: 115, aggro: 250, dmg: 1 },  // mała czerwona bestia płycizn
   zarlacz: { r: 24, szyb: 170, aggro: 380, dmg: 1 },  // rekin strefy zmierzchu
-  widmo:   { r: 19, szyb: 205, aggro: 470, dmg: 2 },  // żabnica z wabikiem — świeci w mroku
+  widmo:   { r: 19, szyb: 205, aggro: 470, dmg: 2 },  // żabnica z wabikiem - świeci w mroku
 };
 function nowyDrapieznik(typ, x, y, rnd){
   const c = TYPY_DRAP[typ];
@@ -733,7 +733,7 @@ function zbierz(z){
     if (postep.relikty >= 3 && !postep.sekretZloty){
       postep.sekretZloty = true;
       toast('✨ Trzy Skarby Thalass! Twój kadłub cały pokrył się złotem…');
-    } else toast('🏺 Skarb Thalass! (+25 pereł) — masz ' + Math.min(postep.relikty, 3) + '/3');
+    } else toast('🏺 Skarb Thalass! (+25 pereł) - masz ' + Math.min(postep.relikty, 3) + '/3');
   }
   else if (z.typ === 'perlaOtchlani'){
     postep.perly += 100; run.perlyZebrane += 100;
@@ -780,7 +780,7 @@ function aktualizuj(dt){
   if (gracz.y < 14){ gracz.y = 14; gracz.vy = Math.max(0, gracz.vy); }
   if (gracz.y < 28 && run.maxG > 40){ wynurzenie(); return; }
 
-  // --- tlen (zużycie 1.35x — bez ulepszeń wystarcza na ok. 55 s) ---
+  // --- tlen (zużycie 1.35x - bez ulepszeń wystarcza na ok. 55 s) ---
   if (g < 4) gracz.tlen = Math.min(gracz.maxTlen, gracz.tlen + 30 * dt); // tuż pod taflą świeże powietrze
   gracz.tlen -= dt * 1.35;
   if (gracz.tlen <= 0){
@@ -913,7 +913,7 @@ function aktualizuj(dt){
     }
   }
 
-  // dron Lewiatana — płynna regulacja głośności
+  // dron Lewiatana - płynna regulacja głośności
   if (dronGain){
     const cel = lewiatan.stan === 'czai' ? 0.5 : lewiatan.stan === 'atak' ? 0.32 : 0;
     dronGain.gain.setTargetAtTime(cel, ac.currentTime, 0.4);
@@ -942,7 +942,7 @@ function aktualizujKamere(dt){
   cam.y = Math.max(cam.y, -h * 0.55); // nie uciekamy zbyt wysoko w niebo
 }
 
-/* ====== LEWIATAN — ogromny cień polujący w głębinach ====== */
+/* ====== LEWIATAN - ogromny cień polujący w głębinach ====== */
 function aktualizujLewiatana(dt, g){
   const L = lewiatan;
   if (L.stan === 'spokoj'){
@@ -978,7 +978,7 @@ function aktualizujLewiatana(dt, g){
   }
 }
 
-/* ====== STRAŻNIK GŁĘBIN — przyjazny wieloryb (sekret) ====== */
+/* ====== STRAŻNIK GŁĘBIN - przyjazny wieloryb (sekret) ====== */
 function aktualizujWieloryba(dt, g){
   const W = wieloryb;
   if (!W.aktywny){
@@ -1006,7 +1006,7 @@ function aktualizujWieloryba(dt, g){
   }
 }
 
-/* ====== OKO OTCHŁANI — finałowy sekret na 2450 m ====== */
+/* ====== OKO OTCHŁANI - finałowy sekret na 2450 m ====== */
 function aktualizujOko(dt){
   const blisko = Math.hypot(gracz.x - SWIAT_SZER / 2, gracz.y - OKO_Y) < 720;
   oko.otwarcie = ogr(oko.otwarcie + (blisko ? 1 : -1) * dt * 0.7, 0, 1);
@@ -1083,7 +1083,7 @@ function rysujTlo(){
 /* --- paralaksa: odległe skały (2 warstwy) + śnieg morski --- */
 function rysujParalakse(){
   const g = glebokosc();
-  // przycięcie do wody — odległe skały i śnieg morski nie wchodzą na niebo
+  // przycięcie do wody - odległe skały i śnieg morski nie wchodzą na niebo
   const linia = -cam.y;
   ctx.save();
   if (linia > 0){ ctx.beginPath(); ctx.rect(0, Math.min(linia, h), w, Math.max(0, h - linia)); ctx.clip(); }
@@ -1096,7 +1096,7 @@ function rysujParalakse(){
       ctx.beginPath(); ctx.ellipse(sx, sy, r, r * 0.62, hash2(i, 3) * 3, 0, TAU); ctx.fill();
     }
   }
-  // śnieg morski — drobiny opadające w toni (gęstszy w głębi)
+  // śnieg morski - drobiny opadające w toni (gęstszy w głębi)
   const n = Math.min(90, 24 + g * 0.05);
   ctx.fillStyle = 'rgba(225,240,250,.3)';
   for (let i = 0; i < n; i++){
@@ -1338,7 +1338,7 @@ function rysujDrapiezniki(){
       ctx.beginPath(); ctx.ellipse(2, 5, 20, 5, 0, 0, TAU); ctx.fill();
       ctx.fillStyle = d.sciga ? '#ff6a5e' : '#dfe9f0';
       ctx.beginPath(); ctx.arc(17, -3, 2.8, 0, TAU); ctx.fill();
-    } else { // widmo — żabnica z wabikiem
+    } else { // widmo - żabnica z wabikiem
       ctx.fillStyle = '#1d222c';
       ctx.beginPath(); ctx.arc(0, 0, 18, 0, TAU); ctx.fill();
       ctx.strokeStyle = 'rgba(150,200,230,.25)'; ctx.lineWidth = 1.5; ctx.stroke();
@@ -1349,7 +1349,7 @@ function rysujDrapiezniki(){
       for (let i = 0; i < 4; i++){
         ctx.beginPath(); ctx.moveTo(4 + i * 3.4, 10); ctx.lineTo(5.5 + i * 3.4, 14.5); ctx.stroke();
       }
-      // wabik — świeci (wycinany też w ciemności)
+      // wabik - świeci (wycinany też w ciemności)
       const wx = 16 + Math.sin(czasGry * 3 + d.faza) * 3, wy = -22;
       ctx.strokeStyle = '#3a4552'; ctx.lineWidth = 2;
       ctx.beginPath(); ctx.moveTo(2, -16); ctx.quadraticCurveTo(10, -26, wx, wy); ctx.stroke();
@@ -1505,7 +1505,7 @@ function rysujCiemnosc(){
   ctx.drawImage(ciemne, 0, 0, w, h);
 }
 
-/* ====== LEWIATAN (rysowany NAD ciemnością — jest czarniejszy od mroku) ====== */
+/* ====== LEWIATAN (rysowany NAD ciemnością - jest czarniejszy od mroku) ====== */
 function rysujLewiatana(){
   const L = lewiatan;
   if (L.stan === 'czai'){
@@ -1552,7 +1552,7 @@ function rysujLewiatana(){
   ctx.restore();
 }
 
-/* ====== OKO OTCHŁANI (nad ciemnością — samo świeci) ====== */
+/* ====== OKO OTCHŁANI (nad ciemnością - samo świeci) ====== */
 function rysujOko(){
   const sy = OKO_Y - cam.y;
   if (sy < -420 || sy > h + 420 || oko.otwarcie <= 0.02) return;
@@ -1634,7 +1634,7 @@ function rysujHUD(){
   }
 
   // perły (prawy górny róg; niżej gdy jest dotykowy przycisk pauzy)
-  // ikona i liczba wyrównane do wspólnej osi pionowej — środka plakietki
+  // ikona i liczba wyrównane do wspólnej osi pionowej - środka plakietki
   const pxp = w - 14;
   const pyp = czyDotyk ? Math.max(16, (btnPauza?.getBoundingClientRect().bottom || 0) + 10) : 16;
   const wysB = 34 * s, cyB = pyp + wysB / 2;
@@ -1664,7 +1664,7 @@ function rysujHUD(){
       const dx = d.x - gracz.x, dy = d.y - gracz.y, dl2 = Math.hypot(dx, dy);
       if (dl2 > zasieg || dl2 < 40) continue;
       const sx2 = d.x - cam.x, sy2 = d.y - cam.y;
-      if (sx2 > 40 && sx2 < w - 40 && sy2 > 40 && sy2 < h - 40) continue; // widoczny — bez wskaźnika
+      if (sx2 > 40 && sx2 < w - 40 && sy2 > 40 && sy2 < h - 40) continue; // widoczny - bez wskaźnika
       const kx = ogr(sx2, 26, w - 26), ky = ogr(sy2, 26, h - 26);
       ctx.fillStyle = `rgba(255,80,70,${0.5 + Math.sin(czasGry * 6) * 0.3})`;
       ctx.save(); ctx.translate(kx, ky); ctx.rotate(Math.atan2(dy, dx));
@@ -1850,7 +1850,7 @@ function pokazBaze(powod){
 }
 
 /* =========================================================================
-   RANKING (leaderboard TOP 5) — pobieranie tokenu, wczytywanie i wysyłka
+   RANKING (leaderboard TOP 5) - pobieranie tokenu, wczytywanie i wysyłka
    ========================================================================= */
 
 // Token wydawany przez serwer na start zanurzenia; wiąże czas gry z wynikiem,
@@ -1868,7 +1868,7 @@ function renderujRanking(wpisy, listaEl){
   if (!wpisy || wpisy.length === 0){
     const li = document.createElement('li');
     li.className = 'pusta';
-    li.textContent = 'Ranking jest pusty — bądź pierwszy!';
+    li.textContent = 'Ranking jest pusty - bądź pierwszy!';
     listaEl.appendChild(li);
     return;
   }
@@ -1909,7 +1909,7 @@ function zapamietanyNickGlebiny(){
   } catch { return null; }
 }
 
-// Ekran bazy: pokazuje TOP 5 i — jeśli wynik z tego zanurzenia się kwalifikuje — formularz z nickiem
+// Ekran bazy: pokazuje TOP 5 i - jeśli wynik z tego zanurzenia się kwalifikuje - formularz z nickiem
 async function wczytajRankingBazy(){
   const lista = el('rankingLista'), forma = el('rankingForma'), info = el('rankingInfo');
   lista.innerHTML = '<li class="pusta">Wczytywanie…</li>';
@@ -1977,7 +1977,7 @@ async function wyslijWynikRankingu(){
       btn.disabled = false; btn.textContent = '📝 ZAPISZ WYNIK W RANKINGU';
     }
   } catch {
-    info.textContent = 'Błąd sieci — spróbuj ponownie.';
+    info.textContent = 'Błąd sieci - spróbuj ponownie.';
     btn.disabled = false; btn.textContent = '📝 ZAPISZ WYNIK W RANKINGU';
   }
 }
@@ -2010,7 +2010,7 @@ function budujSklepDo(sk, zNaprawa){
     poz.dataset.klucz = klucz;
     sk.appendChild(poz);
   }
-  // naprawa kadłuba — tylko w sklepie dostępnym z pauzy (na powierzchni i tak naprawiają za darmo)
+  // naprawa kadłuba - tylko w sklepie dostępnym z pauzy (na powierzchni i tak naprawiają za darmo)
   if (zNaprawa){
     const poz = document.createElement('div');
     poz.className = 'sklepPoz';
