@@ -19,8 +19,8 @@ const DAYS = 30;
 const timeFmt = new Intl.DateTimeFormat('pl-PL', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
 const whenFmt = new Intl.DateTimeFormat('pl-PL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: TZ });
 const dayFmt = new Intl.DateTimeFormat('pl-PL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+const longDayFmt = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
 const percentFmt = new Intl.NumberFormat('pl-PL', { style: 'percent', maximumFractionDigits: 2 });
-const gbFmt = new Intl.NumberFormat('pl-PL', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
 
 const STATE_LABEL: Record<StatusMonitor['state'], string> = {
     up: 'Działa',
@@ -33,7 +33,6 @@ const time = (unix: number) => timeFmt.format(unix * 1000);
 const when = (unix: number) => whenFmt.format(unix * 1000);
 const day = (date: string) => dayFmt.format(new Date(`${date}T12:00:00Z`));
 const percent = (value: number) => percentFmt.format(value / 100);
-const gb = (bytes: number) => gbFmt.format(bytes / 1024 ** 3);
 
 /** "46 s", "2 min 46 s", "1 godz. 5 min", "2 dni 3 godz." */
 function duration(seconds: number): string {
@@ -87,9 +86,20 @@ function dayTone(d: StatusDay): string {
     return d.downtimes > 0 ? styles.dayDown : styles.dayUp;
 }
 
-function daySummary(d: StatusDay): string {
-    const text = `${day(d.date)}: ${percent(d.uptime)}`;
-    return d.downtimes ? `${text}, ${d.downtimes} ${plural(d.downtimes, 'przerwa', 'przerwy', 'przerw')}` : text;
+/** Dymek nad dniem: data, dostępność i liczba przerw. Przy krawędziach paska wyrównany do brzegu. */
+function DayTip({ d, index, total }: { d: StatusDay; index: number; total: number }) {
+    const edge = index < 4 ? 'start' : index >= total - 4 ? 'end' : undefined;
+    return (
+        <span className={styles.tip} data-edge={edge}>
+            <span className={styles.tipDate}>{longDayFmt.format(new Date(`${d.date}T12:00:00Z`))}</span>
+            <span>
+                Dostępność <strong>{percent(d.uptime)}</strong>
+            </span>
+            <span className={styles.tipNote}>
+                {d.downtimes ? `${d.downtimes} ${plural(d.downtimes, 'przerwa', 'przerwy', 'przerw')}` : 'bez przerw'}
+            </span>
+        </span>
+    );
 }
 
 /** Zajęty RAM: pasek i liczby. Starszy odczyt (klucz bez dostępu do metryk v3) ma podaną godzinę. */
@@ -100,17 +110,14 @@ function Load({ load }: { load: StatusLoad }) {
         <div className={styles.load} data-high={load.percent >= 85 || undefined}>
             <p className={styles.loadLabel}>
                 <Icon name="memory" size={22} />
-                Obciążenie RAM
+                Obciążenie
             </p>
             <div className={styles.meter} aria-hidden="true">
                 <span style={{ width: `${Math.min(100, load.percent)}%` }} />
             </div>
             <p className={styles.loadValue}>
-                {gb(load.ramUsed)} z {gb(load.ramTotal)} GB
-                <span className={styles.loadNote}>
-                    {' '}
-                    ({used}%{old ? `, odczyt o ${time(load.at)}` : ''})
-                </span>
+                {used}%
+                {old && <span className={styles.loadNote}> (odczyt o {time(load.at)})</span>}
             </p>
         </div>
     );
@@ -143,10 +150,12 @@ function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
                 <figure className={styles.history}>
                     <ol role="list" className={styles.days} aria-hidden="true">
                         {Array.from({ length: missing }, (_, i) => (
-                            <li key={`brak-${i}`} className={styles.dayNone} title="Monitor jeszcze nie działał" />
+                            <li key={`brak-${i}`} className={styles.dayNone} />
                         ))}
-                        {monitor.days.map(d => (
-                            <li key={d.date} className={dayTone(d)} title={daySummary(d)} />
+                        {monitor.days.map((d, i) => (
+                            <li key={d.date} className={dayTone(d)}>
+                                <DayTip d={d} index={missing + i} total={DAYS} />
+                            </li>
                         ))}
                     </ol>
                     <figcaption className={styles.axis}>
@@ -282,10 +291,6 @@ export default async function StatusPage() {
             )}
 
             <Incidents snapshot={snapshot} />
-
-            <p className={`muted small ${styles.source}`}>
-                Dane z monitoringu HetrixTools. Strona odświeża się sama co minutę.
-            </p>
         </div>
     );
 }
