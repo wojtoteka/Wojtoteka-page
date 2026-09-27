@@ -20,11 +20,7 @@ uploads/
 *.AppImage
 *.mp3
 *.mp4
-public/nonStopPop/
 public/inne/litho/file/
-
-# Skrypty utrzymywane poza repozytorium.
-public/hack/
 
 .vscode/
 .DS_Store
@@ -33,5 +29,9 @@ public/hack/
 .next/
 *.tsbuildinfo
 
-# Kopie starych stron hack i nonStopPop sprzed przejścia na Next.js.
+# Notatki dla asystentów AI, które `next dev` tworzy sam przy starcie.
+AGENTS.md
+CLAUDE.md
+
+# Kopie usuniętych stron (hack, nonStopPop) - trzymane lokalnie, poza serwisem.
 stare-strony/

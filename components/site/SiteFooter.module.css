@@ -40,14 +40,25 @@
     gap: 6px;
 }
 
+/* Podkreślenie rośnie od lewej; jako tło zawija się razem z dłuższym linkiem. */
 .col a {
     text-decoration: none;
     color: var(--ash);
+    padding-bottom: 2px;
+    background: linear-gradient(var(--sea), var(--sea)) no-repeat left bottom / 0% 2px;
+    transition: color 0.15s ease, background-size 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.col a:hover {
+.col a:hover,
+.col a:focus-visible {
     color: var(--chalk);
-    text-decoration: underline;
+    background-size: 100% 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .col a {
+        transition: color 0.15s ease;
+    }
 }
 
 .colTitle {

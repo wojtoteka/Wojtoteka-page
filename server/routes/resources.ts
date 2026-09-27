@@ -138,10 +138,7 @@ export function createResourceRouter(render: { notFound: Renderer; serverError: 
         '/RoyalCasinoBot/index.html': '/RoyalCasinoBot',
         '/RoyalCasinoBot/polityka.html': '/RoyalCasinoBot/polityka',
         '/RoyalCasinoBot/regulamin.html': '/RoyalCasinoBot/regulamin',
-        '/inne/ai.html': '/inne/ai',
-        '/inne/litho/index.html': '/inne/litho',
-        '/hack/index.html': '/hack',
-        '/nonStopPop/index.html': '/nonStopPop'
+        '/inne/litho/index.html': '/inne/litho'
     };
     router.get(Object.keys(moved), (req, res) => res.redirect(301, moved[req.path]));
 

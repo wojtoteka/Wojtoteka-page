@@ -202,10 +202,11 @@ h3 {
     line-height: 1.3;
 }
 
-/* Minimum dobrane tak, by "ADMINISTRATORA" mieściło się na ekranie 360px. */
+/* Minimum dobrane tak, by "ADMINISTRATORA" mieściło się na ekranie 360px.
+   Interlinia 1: przy ciaśniejszej ogonek Ą/Ę wchodzi w wielkie litery wiersza niżej. */
 .page-title {
     font-size: clamp(2.5rem, 7vw + 1.25rem, 6rem);
-    line-height: 0.88;
+    line-height: 1;
     text-transform: uppercase;
     font-weight: 900;
 }

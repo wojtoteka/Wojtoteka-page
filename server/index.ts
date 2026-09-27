@@ -59,7 +59,6 @@ app.use((req, res, nextFn) => {
 
 // ---------- Nagłówki bezpieczeństwa ----------
 const hcaptcha = ['https://hcaptcha.com', 'https://*.hcaptcha.com'];
-const hetrix = ['https://wl.hetrixtools.com', 'https://*.hetrixtools.com'];
 
 app.use(
     helmet({
@@ -68,11 +67,11 @@ app.use(
                 defaultSrc: ["'self'"],
                 // Next.js wstrzykuje skrypty inline z danymi strony, stąd 'unsafe-inline'.
                 // 'unsafe-eval' i websocket tylko w trybie deweloperskim (HMR).
-                scriptSrc: ["'self'", "'unsafe-inline'", 'https://js.hcaptcha.com', ...hcaptcha, 'https://static.hetrix.io', ...(dev ? ["'unsafe-eval'"] : [])],
+                scriptSrc: ["'self'", "'unsafe-inline'", 'https://js.hcaptcha.com', ...hcaptcha, ...(dev ? ["'unsafe-eval'"] : [])],
                 scriptSrcAttr: ["'none'"],
                 styleSrc: ["'self'", "'unsafe-inline'", ...hcaptcha],
-                frameSrc: [...hcaptcha, ...hetrix],
-                connectSrc: ["'self'", ...hcaptcha, ...hetrix, ...(dev ? ['ws:', 'wss:'] : [])],
+                frameSrc: hcaptcha,
+                connectSrc: ["'self'", ...hcaptcha, ...(dev ? ['ws:', 'wss:'] : [])],
                 imgSrc: ["'self'", 'data:', 'blob:'],
                 fontSrc: ["'self'"],
                 objectSrc: ["'none'"],
@@ -108,14 +107,14 @@ const GAME_PATH = /^\/(fishing|gloomcraft|nightdrive|ropeclimber|4inarow)(\/|$)/
 
 // Stare strony statyczne w public/ mają atrybuty onclick, więc dostają
 // dokładnie tę politykę, którą miała cała strona przed przejściem na Next.js.
-const LEGACY_STATIC_PATH = /^\/(RoyalCasinoBot|inne|hack|dance|nonStopPop|glebina|trybka|blystka)(\/|$)/;
+const LEGACY_STATIC_PATH = /^\/(RoyalCasinoBot|inne|glebina|trybka|blystka)(\/|$)/;
 const LEGACY_CSP = [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline' https://js.hcaptcha.com https://hcaptcha.com https://static.hetrix.io`,
+    `script-src 'self' 'unsafe-inline' https://js.hcaptcha.com https://hcaptcha.com`,
     "script-src-attr 'unsafe-inline'",
     "style-src 'self' 'unsafe-inline'",
-    `frame-src ${[...hcaptcha, ...hetrix].join(' ')}`,
-    `connect-src 'self' https://hcaptcha.com ${hetrix.join(' ')}`,
+    `frame-src ${hcaptcha.join(' ')}`,
+    "connect-src 'self' https://hcaptcha.com",
     "img-src 'self' data:",
     "font-src 'self'",
     "media-src 'self'",
@@ -125,7 +124,7 @@ const LEGACY_CSP = [
 
 // Te adresy leżą w folderach starych stron, ale renderuje je Next.js
 // z własną polityką z helmeta.
-const NEXT_PAGE_PATH = /^\/(RoyalCasinoBot(\/(polityka|regulamin))?|inne\/(ai|litho)|hack|nonStopPop)\/?$/;
+const NEXT_PAGE_PATH = /^\/(RoyalCasinoBot(\/(polityka|regulamin))?|inne\/litho)\/?$/;
 
 app.use((req, res, nextFn) => {
     if (GAME_PATH.test(req.path)) res.setHeader('Content-Security-Policy', GAME_CSP);

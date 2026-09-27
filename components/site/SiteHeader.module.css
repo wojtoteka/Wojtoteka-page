@@ -46,23 +46,33 @@
     gap: 4px 26px;
 }
 
+/* Podkreślenie to tło przy dolnej krawędzi: po najechaniu rozciąga się od lewej. */
 .navLink {
     display: inline-block;
     padding-block: 6px;
     font-weight: 600;
     text-decoration: none;
     color: var(--ash);
-    border-bottom: 3px solid transparent;
-    transition: color 0.15s ease, border-color 0.15s ease;
+    background: linear-gradient(var(--sea), var(--sea)) no-repeat left bottom / 0% 3px;
+    transition: color 0.15s ease, background-size 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-.navLink:hover {
+.navLink:hover,
+.navLink:focus-visible {
     color: var(--chalk);
+    background-size: 100% 3px;
 }
 
 .navLink[aria-current='page'] {
     color: var(--chalk);
-    border-bottom-color: var(--duck);
+    background-image: linear-gradient(var(--duck), var(--duck));
+    background-size: 100% 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .navLink {
+        transition: color 0.15s ease;
+    }
 }
 
 /* Przycisk menu widać tylko na wąskich ekranach. */
@@ -159,7 +169,7 @@
         align-items: center;
         justify-content: space-between;
         padding-block: 12px;
-        border-bottom: 0;
+        background: none;
         font-family: var(--font-display);
         font-size: 2.5rem;
         font-weight: 800;

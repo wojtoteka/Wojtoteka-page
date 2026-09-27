@@ -9,7 +9,7 @@ export function SiteFooter() {
             <div className={`wrap ${styles.grid}`}>
                 <div className={styles.about}>
                     <p className={styles.name}>Wojtoteka</p>
-                    <p className="muted">Gry w przeglądarce, aplikacje na Androida i bot na Discorda. Robione we Wrocławiu.</p>
+                    <p className="muted">Gry w przeglądarce, aplikacje na Androida i bot na Discorda.</p>
                     <p>
                         <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a>
                     </p>
@@ -30,8 +30,6 @@ export function SiteFooter() {
                     <ul role="list">
                         <li><Link href="/RoyalCasinoBot">RoyalCasino Bot</Link></li>
                         <li><Link href="/inne/litho">Litho Studio</Link></li>
-                        <li><Link href="/nonStopPop">Non-Stop Pop</Link></li>
-                        <li><Link href="/inne/ai">Porównanie AI</Link></li>
                     </ul>
                 </nav>
 

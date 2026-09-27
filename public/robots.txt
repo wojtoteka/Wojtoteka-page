@@ -5,10 +5,7 @@ Disallow: /soon
 Disallow: /budowa
 Disallow: /niedostepne
 Disallow: /status
-Disallow: /hack/
 Disallow: /inne/
-Disallow: /dance/
-Disallow: /nonStopPop/
 Disallow: /admin
 Disallow: /panel
 Disallow: /api/

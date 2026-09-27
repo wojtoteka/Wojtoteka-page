@@ -98,7 +98,7 @@ export default function Page() {
             <li><strong>hCaptcha (Intuition Machines, Inc.)</strong> - weryfikacja antyspamowa formularza kontaktowego</li>
             <li><strong>Dostawca poczty SMTP</strong> - wyłącznie do przesłania Twojej wiadomości/powiadomienia email</li>
             <li><strong>ip-api.com</strong> - przybliżona lokalizacja adresu IP, wykorzystywana wyłącznie wewnętrznie przy alertach bezpieczeństwa o podejrzanych próbach logowania do panelu</li>
-            <li><strong>HetrixTools</strong> - dostawca widgetu statusu serwerów, widoczny wyłącznie na stronie /status</li>
+            <li><strong>HetrixTools</strong> - monitoring dostępności serwerów; strona /status pobiera z niego dane po stronie serwera, więc Twoja przeglądarka nie łączy się z HetrixTools</li>
             <li><strong>Dostawca hostingu</strong> - przechowywanie danych na serwerze, na którym działa strona</li>
             </ul>
             <p>Nie sprzedajemy Twoich danych ani nie udostępniamy ich w celach marketingowych.</p>
