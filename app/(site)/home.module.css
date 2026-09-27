@@ -80,6 +80,10 @@
     .meta {
         grid-template-columns: minmax(0, 1fr);
     }
+
+    .duck {
+        display: none;
+    }
 }
 
 /* ---------- Linki ---------- */
