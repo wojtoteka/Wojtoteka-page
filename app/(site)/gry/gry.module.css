@@ -1,0 +1,281 @@
+/* ---------- Wstęp ---------- */
+
+.intro {
+    overflow: clip;
+    padding-block: clamp(8px, 2vw, 24px) clamp(48px, 7vw, 96px);
+}
+
+.introInner {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+    gap: 24px clamp(24px, 5vw, 72px);
+}
+
+.bigTitle {
+    font-size: clamp(8rem, 30vw, 26rem);
+    font-weight: 900;
+    line-height: 0.76;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    margin-left: -0.04em;
+}
+
+/* Pudełko sprayu o wysokości 1em obejmuje całe litery,
+   ujemny margines zachowuje ciasną interlinię 0.76. */
+.bigSpray {
+    line-height: 1;
+    margin-block: -0.12em;
+}
+
+.introText {
+    display: grid;
+    gap: 22px;
+    padding-bottom: 0.6em;
+}
+
+.index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    font-weight: 600;
+}
+
+.index a {
+    color: var(--ash);
+    text-decoration: none;
+}
+
+.index a:hover {
+    color: var(--chalk);
+    text-decoration: underline;
+}
+
+@media (max-width: 820px) {
+    .introInner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .introText {
+        padding-bottom: 0;
+    }
+}
+
+/* ---------- Plansze gier ----------
+   Każda gra dostaje cały ekran i kolor tła wzięty z własnej grafiki.
+   Grafika siedzi w obrysie "tuszem" w kolorze gry. */
+
+/* Stos: plansze przyklejone do góry ekranu, następna wjeżdża na poprzednią.
+   --stick liczy components/games/GameStack.tsx (0 albo ujemne dla planszy
+   wyższej niż ekran). Nazwy osi przewijania są w --self i --next. */
+.stack {
+    timeline-scope: var(--scope);
+}
+
+.stage {
+    position: sticky;
+    top: var(--stick, 0px);
+    background: var(--stage-bg);
+    min-height: 100svh;
+    display: grid;
+    align-items: center;
+    padding-block: clamp(48px, 7vw, 96px);
+    overflow: clip;
+    scroll-margin-top: 0;
+    border-radius: 28px 28px 0 0;
+    box-shadow: 0 -16px 40px rgb(0 0 0 / 0.35);
+    view-timeline-name: var(--self);
+    transform-origin: 50% 0;
+}
+
+.stage:first-child {
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* Przykrywana plansza cofa się i ciemnieje, jak kartka pod następną. */
+.stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+@supports (view-timeline-name: --a) {
+    @media (prefers-reduced-motion: no-preference) {
+        .stage {
+            animation: recede linear both;
+            animation-timeline: var(--next);
+            animation-range: entry 0% entry 100%;
+        }
+
+        .stage::after {
+            animation: dim linear both;
+            animation-timeline: var(--next);
+            animation-range: entry 0% entry 100%;
+        }
+    }
+}
+
+/* Na ostatnią planszę nic nie wjeżdża, więc zostaje jasna i w pełnym rozmiarze. */
+.stage:last-child,
+.stage:last-child::after {
+    animation: none;
+}
+
+@keyframes recede {
+    to {
+        scale: 0.93;
+    }
+}
+
+@keyframes dim {
+    to {
+        opacity: 0.7;
+    }
+}
+
+.stageInner {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    align-items: center;
+    gap: 40px 24px;
+}
+
+.art {
+    grid-column: 1 / span 7;
+    display: grid;
+    gap: 22px;
+}
+
+.artFrame {
+    display: block;
+    --ink-gap: 10px;
+    --ink-width: 4px;
+    transform: rotate(var(--tilt));
+}
+
+.artFrame img {
+    width: 100%;
+    max-height: 70svh;
+    object-fit: contain;
+    border-radius: 14px;
+    background: color-mix(in oklab, var(--stage-bg) 70%, black);
+}
+
+.caption {
+    font-size: var(--step--1);
+    color: color-mix(in oklab, var(--chalk) 72%, var(--stage-bg));
+    padding-left: 4px;
+}
+
+.copy {
+    grid-column: 9 / span 4;
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+}
+
+.stage[data-flip] .art {
+    grid-column: 6 / span 7;
+    grid-row: 1;
+}
+
+.stage[data-flip] .copy {
+    grid-column: 1 / span 4;
+    grid-row: 1;
+}
+
+.stageTitle {
+    font-size: clamp(4rem, 8.5vw, 9rem);
+    font-weight: 900;
+    line-height: 0.84;
+    text-transform: uppercase;
+    letter-spacing: -0.005em;
+    overflow-wrap: normal;
+    hyphens: manual;
+}
+
+.stageTitle[data-long] {
+    font-size: clamp(3rem, 5.4vw, 5.75rem);
+}
+
+.platform {
+    max-width: 30ch;
+    color: color-mix(in oklab, var(--chalk) 86%, var(--stage-bg));
+}
+
+/* Przewijanie przesuwa tytuł i prostuje grafikę. Tylko w przeglądarkach
+   ze scroll-driven animations i tylko bez ograniczenia ruchu. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        .stageTitle {
+            animation: titleIn linear both;
+            animation-timeline: view();
+            animation-range: entry 5% cover 42%;
+        }
+
+        .stage[data-flip] .stageTitle {
+            --from: -14%;
+        }
+
+        .artFrame {
+            animation: artIn linear both;
+            animation-timeline: view();
+            animation-range: entry 0% cover 40%;
+        }
+    }
+}
+
+@keyframes titleIn {
+    from {
+        transform: translateX(var(--from, 14%));
+    }
+    to {
+        transform: none;
+    }
+}
+
+@keyframes artIn {
+    from {
+        transform: rotate(calc(var(--tilt) * -2.5)) scale(0.9);
+    }
+    to {
+        transform: rotate(var(--tilt)) scale(1);
+    }
+}
+
+@media (max-width: 900px) {
+    .stage {
+        padding-block: 40px;
+        border-radius: 22px 22px 0 0;
+    }
+
+    .art,
+    .stage[data-flip] .art {
+        grid-column: 1 / -1;
+        grid-row: 1;
+    }
+
+    .copy,
+    .stage[data-flip] .copy {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    /* Grafika do 45% ekranu: cała plansza zwykle mieści się na jednym ekranie. */
+    .artFrame img {
+        max-height: 45svh;
+    }
+
+    /* Najdłuższe słowo, "GLOOMCRAFT", ma ok. 4,8 em. Przy 14vw mieści się
+       w 360px z marginesami, dłuższe tytuły po prostu łamią się na słowa. */
+    .stageTitle,
+    .stageTitle[data-long] {
+        font-size: clamp(2.5rem, 14vw, 6rem);
+        animation: none;
+    }
+}

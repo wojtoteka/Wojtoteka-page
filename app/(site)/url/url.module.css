@@ -1,0 +1,103 @@
+.tool {
+    display: grid;
+    gap: 24px;
+}
+
+.form {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 200px auto;
+    align-items: end;
+    gap: 16px;
+    padding: clamp(18px, 3vw, 28px);
+    background: var(--graphite);
+    border-radius: 10px;
+}
+
+.urlInput {
+    min-height: 56px;
+    font-size: var(--step-1);
+    background: var(--ink);
+}
+
+.form :global(.select) {
+    min-height: 56px;
+    background-color: var(--ink);
+}
+
+.submit {
+    min-height: 56px;
+}
+
+.trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.result {
+    display: grid;
+    justify-items: start;
+    gap: 14px;
+    padding-top: 8px;
+}
+
+.shortUrl {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(2.25rem, 5vw, 4.5rem);
+    line-height: 1;
+    overflow-wrap: anywhere;
+    text-decoration-thickness: 3px;
+}
+
+.rules {
+    margin-top: clamp(64px, 8vw, 104px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    gap: 24px 48px;
+}
+
+.ruleList {
+    display: grid;
+    border-top: 1px solid var(--line);
+}
+
+.ruleList > div {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 6px 24px;
+    padding-block: 16px;
+    border-bottom: 1px solid var(--line);
+}
+
+.ruleList dt {
+    font-weight: 700;
+}
+
+.ruleList dd {
+    color: var(--ash);
+    margin: 0;
+    max-width: 56ch;
+}
+
+@media (max-width: 860px) {
+    .form {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .submit {
+        justify-self: start;
+    }
+
+    .rules {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .ruleList > div {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

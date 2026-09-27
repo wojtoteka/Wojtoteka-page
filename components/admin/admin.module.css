@@ -1,0 +1,219 @@
+.dialog {
+    width: min(100% - 32px, 520px);
+    padding: 26px;
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    background: var(--graphite);
+    color: var(--chalk);
+}
+
+.dialogWide {
+    width: min(100% - 32px, 820px);
+}
+
+.dialog::backdrop {
+    background: rgb(10 11 13 / 0.7);
+}
+
+.dialog :global(.input),
+.dialog :global(.select),
+.dialog :global(.textarea) {
+    background-color: var(--ink);
+}
+
+.dialog :global(pre) {
+    background: var(--ink);
+}
+
+.dialogForm {
+    display: grid;
+    gap: 18px;
+}
+
+.dialogTitle {
+    font-size: var(--step-3);
+    line-height: 1;
+    overflow-wrap: anywhere;
+}
+
+.dialogProse {
+    display: grid;
+    gap: 14px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.dialogProse h3 {
+    margin-top: 10px;
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    min-height: 48px;
+    padding: 6px 8px;
+    background: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+}
+
+.chips:focus-within {
+    outline: 3px solid var(--duck);
+    outline-offset: 3px;
+}
+
+.chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 4px 3px 10px;
+    background: var(--graphite);
+    border: 1px solid var(--line-strong);
+    border-radius: 4px;
+    font-size: 0.9375rem;
+}
+
+.chip button {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: 0;
+    border-radius: 3px;
+    color: var(--ash);
+}
+
+.chip button:hover {
+    color: var(--chalk);
+    background: var(--line);
+}
+
+.chipInput {
+    flex: 1 1 220px;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    padding: 6px;
+    color: var(--chalk);
+    outline: none;
+}
+
+.iconGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.iconChoice {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--ink);
+    color: var(--ash);
+}
+
+.iconChoice:hover {
+    color: var(--chalk);
+    border-color: var(--line-strong);
+}
+
+.iconChoice[aria-pressed='true'] {
+    color: var(--ink);
+    background: var(--chalk);
+    border-color: var(--chalk);
+}
+
+.progress {
+    height: 8px;
+    background: var(--ink);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progressBar {
+    height: 100%;
+    background: var(--chalk);
+    transition: width 0.2s ease;
+}
+
+.inlineRow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.inlineRow :global(.select) {
+    width: auto;
+    min-width: 220px;
+    min-height: 40px;
+}
+
+.bars {
+    display: grid;
+    gap: 8px;
+}
+
+.barRow {
+    display: grid;
+    grid-template-columns: minmax(120px, 220px) minmax(0, 1fr) 64px;
+    align-items: center;
+    gap: 14px;
+    font-size: 0.9375rem;
+}
+
+.barTrack {
+    height: 10px;
+    background: var(--ink);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.barFill {
+    display: block;
+    height: 100%;
+    background: var(--chalk);
+    border-radius: 3px;
+}
+
+.barValue {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.days {
+    display: grid;
+    grid-template-columns: repeat(30, minmax(0, 1fr));
+    align-items: end;
+    gap: 3px;
+    height: 120px;
+    padding-top: 8px;
+    border-bottom: 1px solid var(--line-strong);
+}
+
+.day {
+    background: var(--ash);
+    border-radius: 2px 2px 0 0;
+    min-height: 2px;
+}
+
+.day:hover {
+    background: var(--chalk);
+}
+
+@media (max-width: 560px) {
+    .barRow {
+        grid-template-columns: minmax(0, 1fr) 56px;
+    }
+
+    .barTrack {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+}

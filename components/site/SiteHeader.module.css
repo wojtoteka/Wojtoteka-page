@@ -1,0 +1,193 @@
+.header {
+    position: relative;
+    z-index: 10;
+}
+
+.bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px 32px;
+    padding-block: 18px;
+}
+
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+}
+
+.logo {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+    border: 2px solid var(--chalk);
+    transform: rotate(-5deg);
+    transition: transform 0.2s ease;
+}
+
+.brand:hover .logo {
+    transform: rotate(4deg);
+}
+
+.wordmark {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.625rem;
+    line-height: 1;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+}
+
+.nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 26px;
+}
+
+.navLink {
+    display: inline-block;
+    padding-block: 6px;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--ash);
+    border-bottom: 3px solid transparent;
+    transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.navLink:hover {
+    color: var(--chalk);
+}
+
+.navLink[aria-current='page'] {
+    color: var(--chalk);
+    border-bottom-color: var(--duck);
+}
+
+/* Przycisk menu widać tylko na wąskich ekranach. */
+.toggle {
+    display: none;
+}
+
+/* ---------- Telefon: menu rozwijane pod paskiem ---------- */
+
+@media (max-width: 640px) {
+    .bar {
+        padding-block: 12px;
+    }
+
+    .toggle {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        min-height: 44px;
+        padding: 0 14px;
+        background: transparent;
+        border: 2px solid var(--line-strong);
+        border-radius: var(--radius);
+        font-weight: 700;
+        font-size: 0.9375rem;
+    }
+
+    /* Dwie kreski, po otwarciu krzyżyk. */
+    .burger {
+        position: relative;
+        width: 16px;
+        height: 10px;
+    }
+
+    .burger::before,
+    .burger::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: currentColor;
+        border-radius: 1px;
+        transition: transform 0.2s ease, top 0.2s ease;
+    }
+
+    .burger::before {
+        top: 0;
+    }
+
+    .burger::after {
+        top: 8px;
+    }
+
+    .header[data-open] .burger::before {
+        top: 4px;
+        transform: rotate(45deg);
+    }
+
+    .header[data-open] .burger::after {
+        top: 4px;
+        transform: rotate(-45deg);
+    }
+
+    .menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        padding: 4px var(--gutter) 20px;
+        background: var(--ink);
+        border-bottom: 1px solid var(--line);
+        /* Przyciemnia stronę pod otwartym menu. */
+        box-shadow: 0 100vh 0 100vh rgb(10 11 13 / 0.72);
+    }
+
+    .header[data-open] .menu {
+        display: block;
+        animation: menuIn 0.22s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .nav {
+        display: grid;
+        gap: 0;
+    }
+
+    .nav li + li {
+        border-top: 1px solid var(--line);
+    }
+
+    .navLink {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-block: 12px;
+        border-bottom: 0;
+        font-family: var(--font-display);
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--chalk);
+    }
+
+    .navLink::after {
+        content: '';
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .navLink[aria-current='page']::after {
+        background: var(--duck);
+    }
+
+    .navLink:hover {
+        color: var(--sea);
+    }
+}
+
+@keyframes menuIn {
+    from {
+        clip-path: inset(0 0 100% 0);
+    }
+    to {
+        clip-path: inset(0 0 -100vh 0);
+    }
+}

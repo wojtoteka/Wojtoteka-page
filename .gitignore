@@ -28,3 +28,10 @@ public/hack/
 
 .vscode/
 .DS_Store
+
+# Next.js i TypeScript
+.next/
+*.tsbuildinfo
+
+# Kopie starych stron hack i nonStopPop sprzed przejścia na Next.js.
+stare-strony/

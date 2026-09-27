@@ -1,0 +1,93 @@
+.footer {
+    position: relative;
+    margin-top: clamp(80px, 12vw, 160px);
+    padding-block: 48px 28px;
+    font-size: 0.9375rem;
+}
+
+/* Górna krawędź stopki to fala w kolorze morskim, ten sam motyw co linia wody w napisie. */
+.footer::before {
+    content: '';
+    position: absolute;
+    inset: -6px 0 auto;
+    height: 12px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='12' viewBox='0 0 48 12'%3E%3Cpath d='M0 6Q12 0 24 6T48 6' fill='none' stroke='%232fd3d0' stroke-width='1.5' opacity='.55'/%3E%3C/svg%3E") repeat-x left center / 48px 12px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1.3fr repeat(4, 1fr);
+    gap: 36px 32px;
+}
+
+.about {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    max-width: 34ch;
+}
+
+.name {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 2rem;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.col ul {
+    display: grid;
+    gap: 6px;
+}
+
+.col a {
+    text-decoration: none;
+    color: var(--ash);
+}
+
+.col a:hover {
+    color: var(--chalk);
+    text-decoration: underline;
+}
+
+.colTitle {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 12px;
+    letter-spacing: 0;
+}
+
+.legal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-top: 44px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    color: var(--ash);
+    font-size: var(--step--1);
+}
+
+@media (max-width: 860px) {
+    .grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .about {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Na telefonie dwie kolumny linków; długi tytuł kolumny zawija się. */
+@media (max-width: 420px) {
+    .grid {
+        gap: 32px 20px;
+    }
+
+    .legal {
+        margin-top: 32px;
+    }
+}

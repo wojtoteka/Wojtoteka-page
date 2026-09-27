@@ -1,0 +1,76 @@
+/* "WOJTOTEKA" ma szerokość 4,33 em, więc 100cqi / 4,4 wypełnia kolumnę
+   bez ucinania na każdym ekranie, od 360px do 1440px.
+   Kontenerem jest .heroInner ze strony głównej. */
+.title {
+    font-size: calc(100cqi / 4.4);
+    font-weight: 900;
+    line-height: 0.8;
+    text-transform: uppercase;
+    letter-spacing: -0.012em;
+    white-space: nowrap;
+    margin-left: -0.03em;
+}
+
+/* Napis jako naczynie: kontur z kredy i woda wlewana od dołu.
+   Tło przycięte do liter (background-clip: text) ma dwie warstwy:
+   pas fali z morską krawędzią i pełne wypełnienie pod nim.
+   --level to wysokość wody, --drift przesuwa falę w bok. */
+@property --level {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+
+@property --drift {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 0px;
+}
+
+/* Pudełko sprayu ma wysokość 1em, żeby objąć całe litery;
+   ujemny margines oddaje interlinię 0.8 z tytułu. */
+.spray {
+    line-height: 1;
+    margin-block: -0.1em;
+}
+
+.word {
+    --level: 1.4em;
+    display: inline-block;
+    /* Wypełnienie sięga tylko do brzegu pudełka; zapas obejmuje skrajne litery. */
+    padding-inline: 0.06em;
+    margin-inline: -0.06em;
+    color: transparent;
+    -webkit-text-stroke: max(1px, 0.012em) var(--chalk);
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14Q15 5 30 14T60 14T90 14T120 14V24H0Z' fill='%23eeeae2'/%3E%3Cpath d='M0 14Q15 5 30 14T60 14T90 14T120 14' fill='none' stroke='%232fd3d0' stroke-width='3.5'/%3E%3C/svg%3E"),
+        linear-gradient(var(--chalk), var(--chalk));
+    background-repeat: repeat-x, no-repeat;
+    background-size: 1.2em 0.24em, 100% var(--level);
+    background-position: left var(--drift) bottom var(--level), left 0 bottom 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .word {
+        animation:
+            fillUp 2.6s 0.3s cubic-bezier(0.45, 0.05, 0.35, 1) both,
+            drift 0.8s 0.3s linear 4;
+    }
+}
+
+@keyframes fillUp {
+    from {
+        --level: 0em;
+    }
+    to {
+        --level: 1.4em;
+    }
+}
+
+@keyframes drift {
+    to {
+        --drift: 1.2em;
+    }
+}

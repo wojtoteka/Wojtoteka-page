@@ -1,35 +1,48 @@
 {
-  "name": "wojtoteka-kontakt",
-  "version": "1.0.0",
-  "description": "Strona kontaktowa z formularzem, SMTP email powiadomieniami i panelem admina",
-  "main": "server.js",
+  "name": "wojtoteka",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Serwis wojtoteka.ovh: gry, kontakt, publiczne API, skracacz linkow i panel administracyjny",
+  "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "dev": "tsx server/index.ts --dev",
+    "build": "node --require ./scripts/exfat-readlink.cjs node_modules/next/dist/bin/next build --webpack",
+    "start": "tsx server/index.ts",
+    "preview": "tsx server/index.ts --preview",
+    "typecheck": "tsc --noEmit"
   },
-  "keywords": [
-    "contact",
-    "discord",
-    "hcaptcha",
-    "mariadb"
-  ],
   "author": "Wojtoteka",
   "license": "MIT",
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "dependencies": {
-    "axios": "^1.6.2",
-    "bcryptjs": "^2.4.3",
-    "body-parser": "^1.20.2",
-    "dotenv": "^16.3.1",
-    "ejs": "^3.1.9",
-    "express": "^4.18.2",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "express-rate-limit": "^8.2.1",
-    "express-session": "^1.17.3",
     "helmet": "^8.1.0",
-    "multer": "^2.1.1",
-    "mysql2": "^3.6.5",
-    "nodemailer": "^9.0.3"
+    "multer": "^2.0.2",
+    "mysql2": "^3.15.3",
+    "next": "16.3.6",
+    "next-auth": "5.0.0-beta.32",
+    "nodemailer": "^9.0.3",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "tsx": "^4.20.6"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
+    "@types/express": "^5.0.6",
+    "@types/multer": "^2.0.0",
+    "@types/node": "^22.20.4",
+    "@types/nodemailer": "^7.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "typescript": "5.9.3"
+  },
+  "overrides": {
+    "next-auth": {
+      "nodemailer": "$nodemailer"
+    }
   }
 }

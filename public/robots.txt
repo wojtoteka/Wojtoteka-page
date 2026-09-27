@@ -1,19 +1,17 @@
 User-agent: *
 Allow: /
 
-Disallow: /404.html
-Disallow: /503.html
-Disallow: /soon.html
-Disallow: /budowa.html
+Disallow: /soon
+Disallow: /budowa
+Disallow: /niedostepne
 Disallow: /status
-Disallow: /status.html
 Disallow: /hack/
 Disallow: /inne/
 Disallow: /dance/
 Disallow: /nonStopPop/
-Disallow: /admin.html
+Disallow: /admin
+Disallow: /panel
 Disallow: /api/
-Disallow: /panel.html
 
 User-agent: HTTrack
 User-agent: WebCopier
