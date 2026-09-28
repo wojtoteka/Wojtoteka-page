@@ -1,6 +1,7 @@
 import './env';
 import fs from 'node:fs';
 import path from 'node:path';
+import { parse } from 'node:url';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import next from 'next';
@@ -8,11 +9,11 @@ import { pool, initDatabase, testConnection } from '@/lib/db';
 import { mailer } from '@/lib/mailer';
 import { Message } from '@/lib/models/message';
 import { CLIENT_IP_HEADER, sanitizeIp } from '@/lib/security';
-import { TRACKED_PATHS } from '@/lib/site';
 import { deleteExpiredShortUrls } from '@/lib/shortener';
 import { deleteExpiredFiles, ensureUploadsDir } from '@/lib/files';
 import { blockedPage } from '@/server/blocked-page';
 import { getMaintenanceConfig, isUnderMaintenance } from '@/server/maintenance';
+import { getTrackedPaths } from '@/server/tracked-paths';
 import { limits } from '@/server/middleware';
 import { publicRouter } from '@/server/routes/public';
 import { adminRouter } from '@/server/routes/admin';
@@ -136,14 +137,21 @@ app.use((req, res, nextFn) => {
 });
 
 // ---------- Renderowanie stron błędów przez Next.js ----------
-async function renderNotFound(req: Request, res: Response): Promise<void> {
-    res.status(404);
-    await nextApp.render404(req, res);
+// app.render() i app.render404() są przestarzałe: podmieniamy ścieżkę w adresie
+// i oddajemy żądanie zwykłemu handlerowi Next.js. Handler sam ustawia status 200,
+// więc na czas renderu przypinamy nasz kod odpowiedzi.
+function renderPage(req: Request, res: Response, pathname: string, status: number): Promise<void> {
+    Object.defineProperty(res, 'statusCode', { get: () => status, set: () => {}, configurable: true });
+    return handle(req, res, parse(pathname, true));
 }
 
-async function renderUnavailable(req: Request, res: Response): Promise<void> {
-    res.status(503).setHeader('Retry-After', '300');
-    await nextApp.render(req, res, '/niedostepne');
+function renderNotFound(req: Request, res: Response): Promise<void> {
+    return renderPage(req, res, '/_not-found', 404);
+}
+
+function renderUnavailable(req: Request, res: Response): Promise<void> {
+    res.setHeader('Retry-After', '300');
+    return renderPage(req, res, '/niedostepne', 503);
 }
 
 // ---------- Blokada IP na całą stronę ----------
@@ -186,26 +194,12 @@ app.use(async (req, res, nextFn) => {
     try {
         const config = await getMaintenanceConfig();
         if (isUnderMaintenance(config, p)) {
-            res.status(503).setHeader('Retry-After', '3600');
-            await nextApp.render(req, res, '/budowa');
+            res.setHeader('Retry-After', '3600');
+            await renderPage(req, res, '/budowa', 503);
             return;
         }
     } catch {
         // błąd bazy: pokazujemy normalną stronę
-    }
-    nextFn();
-});
-
-// ---------- Statystyki odwiedzin (tylko znane ścieżki) ----------
-app.use((req, _res, nextFn) => {
-    if (req.method === 'GET' && !preview) {
-        const cleanPath = req.path.replace(/\/$/, '') || '/';
-        if (TRACKED_PATHS.has(cleanPath)) {
-            pool.query(
-                'INSERT INTO page_views (path, date, count, last_seen) VALUES (?, CURDATE(), 1, NOW()) ON DUPLICATE KEY UPDATE count = count + 1, last_seen = NOW()',
-                [cleanPath]
-            ).catch(() => {});
-        }
     }
     nextFn();
 });
@@ -238,6 +232,21 @@ app.use((req, res, nextFn) => {
         const query = req.originalUrl.slice(req.path.length);
         res.redirect(301, req.path + '/' + query);
         return;
+    }
+    nextFn();
+});
+
+// ---------- Statystyki odwiedzin (tylko ścieżki istniejące w kodzie) ----------
+// Stoi za przekierowaniem folderów, żeby /gra i /gra/ nie liczyły się podwójnie.
+app.use((req, _res, nextFn) => {
+    if (req.method === 'GET' && !preview) {
+        const cleanPath = req.path.replace(/\/$/, '') || '/';
+        if (getTrackedPaths().has(cleanPath)) {
+            pool.query(
+                'INSERT INTO page_views (path, date, count, last_seen) VALUES (?, CURDATE(), 1, NOW()) ON DUPLICATE KEY UPDATE count = count + 1, last_seen = NOW()',
+                [cleanPath]
+            ).catch(() => {});
+        }
     }
     nextFn();
 });

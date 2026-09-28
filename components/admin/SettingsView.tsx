@@ -134,7 +134,7 @@ function PageStats() {
     async function cleanup() {
         const ok = await confirm({
             title: 'Wyczyścić wpisy botów?',
-            body: 'Usunie ze statystyk wszystkie ścieżki spoza listy prawdziwych podstron. Tego nie da się cofnąć.',
+            body: 'Usunie ze statystyk wszystkie ścieżki, których nie ma w kodzie strony. Tego nie da się cofnąć.',
             confirmLabel: 'Wyczyść',
             danger: true
         });

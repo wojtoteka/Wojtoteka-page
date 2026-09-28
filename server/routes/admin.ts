@@ -15,10 +15,10 @@ import { SubAccount } from '@/lib/models/sub-account';
 import { EMAIL_REGEX, randomPassword } from '@/lib/security';
 import { expiryFromHours, generateUniqueCode, validateShortUrl } from '@/lib/shortener';
 import { MAX_UPLOAD_BYTES, UPLOADS_DIR, ensureUploadsDir, isStoredName } from '@/lib/files';
-import { TRACKED_PATHS } from '@/lib/site';
 import { invalidateMaintenanceCache } from '@/server/maintenance';
 import { requireAdmin } from '@/server/auth';
 import { badId, idParam, limits, str, validateOrigin, verifyCsrf } from '@/server/middleware';
+import { getTrackedPaths } from '@/server/tracked-paths';
 
 export const adminRouter = Router();
 
@@ -835,9 +835,14 @@ adminRouter.post('/change-password', async (req, res) => {
 
 adminRouter.get('/stats/page-views', async (_req, res) => {
     try {
-        const byPage = await select(
+        const byPage = await select<{ path: string; total: string | number; last_seen: string | null }>(
             'SELECT path, SUM(count) AS total, MAX(last_seen) AS last_seen FROM page_views GROUP BY path ORDER BY total DESC LIMIT 500'
         );
+        // Strony z kodu bez żadnej odsłony też dostają swój wiersz.
+        const seen = new Set(byPage.map(row => row.path));
+        for (const p of [...getTrackedPaths()].sort()) {
+            if (!seen.has(p)) byPage.push({ path: p, total: 0, last_seen: null });
+        }
         const last30 = await select(
             'SELECT date, SUM(count) AS total FROM page_views WHERE date >= DATE_SUB(CURDATE(), INTERVAL 30 DAY) GROUP BY date ORDER BY date ASC'
         );
@@ -850,7 +855,7 @@ adminRouter.get('/stats/page-views', async (_req, res) => {
 
 adminRouter.delete('/stats/page-views/bot-cleanup', async (_req, res) => {
     try {
-        const paths = [...TRACKED_PATHS];
+        const paths = [...getTrackedPaths()];
         const result = await execute(`DELETE FROM page_views WHERE path NOT IN (${paths.map(() => '?').join(',')})`, paths);
         res.json({ deleted: result.affectedRows });
     } catch (error) {

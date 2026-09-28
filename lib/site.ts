@@ -82,11 +82,3 @@ export async function getAnnouncementsFor(page: string): Promise<Announcement[]>
 }
 
 export { ANNOUNCEMENT_PAGES } from '@/lib/announcement-pages';
-
-/** Ścieżki liczone w statystykach odwiedzin. Nieznane ścieżki (skanery botów) są pomijane. */
-export const TRACKED_PATHS = new Set([
-    '/', '/gry', '/kontakt', '/api', '/polityka-nightdrive', '/polityka-fishingparty', '/polityka-prywatnosci',
-    '/budowa', '/soon', '/status', '/url', '/file', '/4InaRow', '/fishing', '/GloomCraft', '/Nightdrive',
-    '/nightdrive', '/ropeclimber', '/trybka', '/glebina', '/blystka', '/HiddenText', '/RoyalCasinoBot',
-    '/RoyalCasinoBot/polityka', '/RoyalCasinoBot/regulamin', '/inne/litho'
-]);
