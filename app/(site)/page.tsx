@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { BioLinkRow } from '@/components/home/BioLinkRow';
 import { HeroWordmark } from '@/components/home/HeroWordmark';
+import { SprayPaint } from '@/components/SprayPaint';
 import { GAMES, WEB_GAMES } from '@/lib/games';
 import { DEFAULT_TAGLINE, getActiveBioLinks, getSettings } from '@/lib/site';
 import styles from './home.module.css';
@@ -37,7 +38,9 @@ export default async function HomePage() {
                     <HeroWordmark id="hero-title" text={NAME} />
 
                     <div className={styles.meta}>
-                        <p className={styles.tagline}>{tagline}</p>
+                        <p className={styles.tagline}>
+                            <SprayPaint>{tagline}</SprayPaint>
+                        </p>
                         <p className={styles.what}>Gry w przeglądarce, aplikacje na Androida i bot na Discorda. Poniżej wszystko, co warto kliknąć.</p>
                     </div>
                 </div>
