@@ -1,3 +1,9 @@
+.announcements {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
 /* Kolor stanu: morski gdy działa, sygnał przy awarii, popiół przy pracach. */
 .head,
 .monitor {

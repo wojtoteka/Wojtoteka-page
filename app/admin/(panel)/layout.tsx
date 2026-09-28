@@ -17,6 +17,7 @@ const NAV: PanelNavItem[] = [
     { href: '/admin/konta', label: 'Konta panelu', icon: 'user', countKey: 'subAccounts' },
     { href: '/admin/blokady', label: 'Blokady IP', icon: 'ban', countKey: 'bannedIps' },
     { href: '/admin/ogloszenia', label: 'Ogłoszenia', icon: 'megaphone', countKey: 'announcements' },
+    { href: '/admin/ogloszenia-serwerow', label: 'Ogłoszenia serwerów', icon: 'megaphone' },
     { href: '/admin/linki', label: 'Krótkie linki', icon: 'link', countKey: 'urls' },
     { href: '/admin/pliki', label: 'Pliki', icon: 'file', countKey: 'files' },
     { href: '/admin/strona-glowna', label: 'Strona główna', icon: 'home', countKey: 'bioLinks' },

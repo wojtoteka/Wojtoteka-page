@@ -26,6 +26,22 @@ export interface ApiKeyRow {
 }
 
 const LOGIN = '/admin/logowanie';
+const MASKED_KEY = '••••••••••••••••••••••••';
+
+function MaskedApiKey({ value }: { value: string }) {
+    const [visible, setVisible] = useState(false);
+
+    return (
+        <div className={ui.keyValue}>
+            <code aria-label={visible ? undefined : 'Klucz API ukryty'}>{visible ? value : MASKED_KEY}</code>
+            <button type="button" className="btn btn-ghost btn-sm" aria-pressed={visible} onClick={() => setVisible(current => !current)}>
+                <Icon name={visible ? 'lock' : 'eye'} size={16} />
+                {visible ? 'Ukryj klucz' : 'Pokaż klucz'}
+            </button>
+            <CopyButton text={value} />
+        </div>
+    );
+}
 
 const FIELDS = [
     { key: 'collect_name', field: 'name', label: 'Imię lub nick', defaultOn: true },
@@ -81,6 +97,7 @@ export function ApiKeysView() {
     const [created, setCreated] = useState<{ name: string; key: string } | null>(null);
     const [busy, setBusy] = useState(false);
     const [guide, setGuide] = useState<ApiKeyRow | null>(null);
+    const [guideKeyVisible, setGuideKeyVisible] = useState(false);
     const guideRef = useRef<HTMLDialogElement>(null);
 
     async function create(event: FormEvent<HTMLFormElement>) {
@@ -131,6 +148,7 @@ export function ApiKeysView() {
     }
 
     function openGuide(key: ApiKeyRow) {
+        setGuideKeyVisible(false);
         setGuide(key);
         window.setTimeout(() => guideRef.current?.showModal(), 0);
     }
@@ -178,10 +196,7 @@ export function ApiKeysView() {
                         <p>
                             Klucz <strong>{created.name}</strong> jest gotowy. Przekaż go właścicielowi strony:
                         </p>
-                        <div className={ui.keyValue}>
-                            <code>{created.key}</code>
-                            <CopyButton text={created.key} />
-                        </div>
+                        <MaskedApiKey key={created.key} value={created.key} />
                     </div>
                 )}
             </form>
@@ -210,10 +225,7 @@ export function ApiKeysView() {
                                         </Tag>
                                     ))}
                                 </div>
-                                <div className={ui.keyValue}>
-                                    <code>{key.api_key}</code>
-                                    <CopyButton text={key.api_key} />
-                                </div>
+                                <MaskedApiKey key={key.api_key} value={key.api_key} />
                                 <div className={ui.actions}>
                                     <button type="button" className="btn btn-ghost btn-sm" onClick={() => openGuide(key)}>
                                         <Icon name="code" size={16} />
@@ -244,9 +256,14 @@ export function ApiKeysView() {
                             odpowiedzi serwera jest w <a href="/api#odpowiedzi">dokumentacji API</a>.
                         </p>
                         <pre>
-                            <code>{integrationCode(guide, window.location.origin)}</code>
+                            <code>{integrationCode(guideKeyVisible ? guide : { ...guide, api_key: MASKED_KEY }, window.location.origin)}</code>
                         </pre>
+                        <p className="hint">Przycisk „Kopiuj kod” kopiuje pełny kod z prawdziwym kluczem, również gdy klucz jest ukryty.</p>
                         <div className={ui.formActions}>
+                            <button type="button" className="btn btn-ghost" aria-pressed={guideKeyVisible} onClick={() => setGuideKeyVisible(visible => !visible)}>
+                                <Icon name={guideKeyVisible ? 'lock' : 'eye'} size={16} />
+                                {guideKeyVisible ? 'Ukryj klucz' : 'Pokaż klucz'}
+                            </button>
                             <CopyButton text={integrationCode(guide, window.location.origin)} label="Kopiuj kod" className="btn btn-primary" />
                             <button type="button" className="btn btn-ghost" onClick={() => guideRef.current?.close()}>
                                 Zamknij

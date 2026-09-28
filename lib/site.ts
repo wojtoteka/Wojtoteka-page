@@ -14,7 +14,7 @@ export interface Announcement {
     title: string;
     message: string;
     type: 'info' | 'warning' | 'important';
-    display_type: 'banner' | 'popup';
+    display_type: 'banner' | 'popup' | 'status';
     priority: number;
 }
 

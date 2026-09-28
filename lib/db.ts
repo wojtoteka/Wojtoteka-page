@@ -196,7 +196,7 @@ export async function initDatabase(): Promise<void> {
             title VARCHAR(255) NOT NULL,
             message TEXT NOT NULL,
             type ENUM('info', 'warning', 'important') DEFAULT 'info',
-            display_type ENUM('banner', 'popup') DEFAULT 'banner',
+            display_type ENUM('banner', 'popup', 'status') DEFAULT 'banner',
             pages VARCHAR(500) NOT NULL DEFAULT '[]',
             is_active TINYINT(1) DEFAULT 1,
             priority INT DEFAULT 0,
@@ -250,6 +250,14 @@ export async function initDatabase(): Promise<void> {
         if (!(await columnExists('announcements', col))) {
             await execute(`ALTER TABLE announcements ADD COLUMN \`${col}\` DATETIME NULL`);
         }
+    }
+
+    const announcementDisplay = await selectOne<{ column_type: string }>(
+        `SELECT COLUMN_TYPE AS column_type FROM INFORMATION_SCHEMA.COLUMNS
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'announcements' AND COLUMN_NAME = 'display_type'`
+    );
+    if (!announcementDisplay?.column_type.includes("'status'")) {
+        await execute("ALTER TABLE announcements MODIFY COLUMN display_type ENUM('banner', 'popup', 'status') DEFAULT 'banner'");
     }
 
     await execute(`

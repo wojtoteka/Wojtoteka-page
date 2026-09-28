@@ -19,6 +19,7 @@ import { invalidateMaintenanceCache } from '@/server/maintenance';
 import { requireAdmin } from '@/server/auth';
 import { badId, idParam, limits, str, validateOrigin, verifyCsrf } from '@/server/middleware';
 import { getTrackedPaths } from '@/server/tracked-paths';
+import { announcementInput } from '@/lib/announcement-input';
 
 export const adminRouter = Router();
 
@@ -350,49 +351,17 @@ adminRouter.delete('/api-messages/:id', async (req, res) => {
 
 adminRouter.get('/announcements', async (_req, res) => {
     try {
-        res.json({ announcements: await select('SELECT * FROM announcements ORDER BY priority DESC, created_at DESC') });
+        // DATETIME jest czasem lokalnym serwera. Przekazujemy go bez konwersji
+        // przez Date/UTC, aby edycja z innej strefy nie przesuwała harmonogramu.
+        res.json({ announcements: await select(
+            `SELECT *, DATE_FORMAT(starts_at, '%Y-%m-%dT%H:%i:%s') AS starts_at,
+             DATE_FORMAT(ends_at, '%Y-%m-%dT%H:%i:%s') AS ends_at
+             FROM announcements ORDER BY priority DESC, created_at DESC`
+        ) });
     } catch (error) {
         fail(res, error, 'fetching announcements', 'Nie udało się pobrać ogłoszeń.');
     }
 });
-
-/**
- * Data z pola datetime-local ("2026-10-01T12:00") zapisana jako lokalny czas
- * serwera, tak samo jak NOW() w MariaDB. Wcześniej zapisywaliśmy UTC, przez
- * co ogłoszenia startowały i kończyły się o 1-2 godziny za wcześnie.
- */
-function parseDateTime(value: unknown): string | null {
-    if (!value) return null;
-    const date = new Date(String(value));
-    if (Number.isNaN(date.getTime())) return null;
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
-}
-
-function announcementInput(body: Record<string, unknown>): { ok: false; message: string } | { ok: true; params: (string | number | null)[] } {
-    const title = str(body.title).trim();
-    const message = str(body.message).trim();
-    if (!title) return { ok: false, message: 'Dodaj tytuł ogłoszenia.' };
-    if (!message) return { ok: false, message: 'Dodaj treść ogłoszenia.' };
-    if (!['info', 'warning', 'important'].includes(String(body.type))) return { ok: false, message: 'Nieprawidłowy typ ogłoszenia.' };
-    if (!['banner', 'popup'].includes(String(body.display_type))) return { ok: false, message: 'Nieprawidłowy sposób wyświetlania.' };
-    const pages = Array.isArray(body.pages) ? body.pages.filter((p): p is string => typeof p === 'string' && p.length < 100) : [];
-    if (pages.length === 0) return { ok: false, message: 'Zaznacz co najmniej jedną stronę.' };
-    return {
-        ok: true,
-        params: [
-            title.substring(0, 255),
-            message.substring(0, 2000),
-            String(body.type),
-            String(body.display_type),
-            JSON.stringify(pages),
-            body.is_active ? 1 : 0,
-            parseInt(String(body.priority), 10) || 0,
-            parseDateTime(body.starts_at),
-            parseDateTime(body.ends_at)
-        ]
-    };
-}
 
 adminRouter.post('/announcements', async (req, res) => {
     try {

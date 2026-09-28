@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { Icon } from '@/components/Icon';
 import { ReloadButton } from '@/components/site/ReloadButton';
 import { AutoRefresh } from '@/components/site/AutoRefresh';
+import { StatusAnnouncementCard } from '@/components/site/StatusAnnouncementCard';
+import { getAnnouncementsFor } from '@/lib/site';
 import { plural } from '@/lib/client/format';
 import { getStatus, isConfigured, type StatusDay, type StatusLoad, type StatusMonitor, type StatusSnapshot } from '@/lib/hetrix';
 import styles from './status.module.css';
@@ -211,12 +213,21 @@ function Incidents({ snapshot }: { snapshot: StatusSnapshot }) {
 }
 
 export default async function StatusPage() {
+    const announcements = (await getAnnouncementsFor('status')).filter(item => item.display_type === 'status');
+    const notices = announcements.length > 0 ? (
+        <section className={styles.announcements} aria-label="Ogłoszenia dotyczące serwerów">
+            {announcements.map(announcement => <StatusAnnouncementCard key={announcement.id} announcement={announcement} />)}
+        </section>
+    ) : null;
+
     if (!isConfigured()) {
         return (
             <div className="wrap">
+                <AutoRefresh seconds={60} />
                 <header className="page-head">
                     <h1 className="page-title">Status usług</h1>
                 </header>
+                {notices}
                 <p className="notice notice-error">
                     <strong>Brak konfiguracji. </strong>
                     Ustaw HETRIX_KEY (klucz API v3) w pliku .env, żeby pokazać tu stan serwerów.
@@ -232,10 +243,12 @@ export default async function StatusPage() {
         console.error('Status:', (error as Error).message);
         return (
             <div className="wrap">
+                <AutoRefresh seconds={60} />
                 <header className="page-head">
                     <h1 className="page-title">Status usług</h1>
                     <p className="lead">Nie udało się pobrać danych z monitoringu. Spróbuj ponownie za minutę.</p>
                 </header>
+                {notices}
                 <ReloadButton label="Sprawdź ponownie" />
             </div>
         );
@@ -262,6 +275,8 @@ export default async function StatusPage() {
                     Ostatni odczyt o {time(snapshot.fetchedAt / 1000)}.
                 </p>
             </header>
+
+            {notices}
 
             {snapshot.stale && (
                 <p className={`notice ${styles.notice}`}>Monitoring chwilowo nie odpowiada. Poniżej ostatnie pobrane dane.</p>

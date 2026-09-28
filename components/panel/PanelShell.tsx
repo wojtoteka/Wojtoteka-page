@@ -42,6 +42,7 @@ export function PanelShell({
     const pathname = usePathname();
     const [counts, setCounts] = useState<Record<string, number>>({});
     const [leaving, setLeaving] = useState(false);
+    const [logoutError, setLogoutError] = useState('');
 
     const loadCounts = useCallback(async () => {
         if (!summaryUrl) return;
@@ -57,7 +58,16 @@ export function PanelShell({
 
     async function logout() {
         setLeaving(true);
-        await signOut({ redirectTo: loginPath });
+        setLogoutError('');
+        try {
+            await signOut({ redirect: false, redirectTo: loginPath });
+            // Auth.js może zwrócić adres nasłuchu serwera (np. 0.0.0.0).
+            // Ścieżka względna zachowuje domenę/IP, protokół i port przeglądarki.
+            window.location.replace(loginPath);
+        } catch {
+            setLogoutError('Nie udało się wylogować. Spróbuj ponownie.');
+            setLeaving(false);
+        }
     }
 
     return (
@@ -103,6 +113,7 @@ export function PanelShell({
                             <Icon name="logout" size={16} />
                             {leaving ? 'Wylogowywanie...' : 'Wyloguj'}
                         </button>
+                        {logoutError && <p role="alert">{logoutError}</p>}
                     </div>
                 </aside>
 
