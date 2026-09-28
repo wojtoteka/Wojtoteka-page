@@ -225,8 +225,8 @@ function stateOf(monitor: ApiMonitor): StatusMonitor['state'] {
 // dostaje 403; wtedy dane idą ze starszego v1 "Server Stats". Odstęp między
 // odczytami rośnie z liczbą serwerów, żeby zmieścić się w 1800 z 2000 zapytań
 // miesięcznie (zapas na restarty): 2 serwery co godzinę, 3 co 75 min, 5 co ok. 2 godz.
-// Po 403 v3 jest sprawdzane ponownie co 10 minut, więc po dodaniu uprawnienia
-// strona sama przechodzi na świeże dane.
+// Po 403 jedna wspólna próba v3 co 10 minut sprawdza przywrócenie uprawnienia.
+// Brak uprawnienia jest logowany raz na proces, zamiast osobno dla serwerów.
 
 const V1_MONTHLY_BUDGET = 1800;
 const MONTH_MS = 31 * 24 * 60 * 60_000;
@@ -235,7 +235,10 @@ const V3_RECHECK = 10 * 60_000;
 function v1Interval(servers: number): number {
     return Math.max(60 * 60_000, Math.ceil((MONTH_MS * servers) / V1_MONTHLY_BUDGET / 60_000) * 60_000);
 }
-let v3DeniedAt = 0;
+let v3DeniedAt: number | null = null;
+let v3Allowed = false;
+let v3PermissionCheck: Promise<void> | null = null;
+let v3DenialLogged = false;
 
 function newest<T>(items: T[], time: (item: T) => number): T | undefined {
     return items.reduce<T | undefined>((best, item) => (!best || time(item) > time(best) ? item : best), undefined);
@@ -247,7 +250,23 @@ function toLoad(total: number, percent: number | null | undefined, at: number): 
 }
 
 async function loadV3(id: string): Promise<StatusLoad | null> {
-    const metrics = await request<ApiMetrics>(`uptime-monitors/${id}/server-agent/metrics`);
+    let metrics: ApiMetrics;
+    try {
+        metrics = await request<ApiMetrics>(`uptime-monitors/${id}/server-agent/metrics`);
+    } catch (error) {
+        if (!(error instanceof HetrixError && error.status === 403)) throw error;
+        v3DeniedAt = Date.now();
+        v3Allowed = false;
+        if (!v3DenialLogged) {
+            v3DenialLogged = true;
+            console.warn('HetrixTools: brak uprawnienia v3 GET Server Agent Metrics (403). RAM będzie pobierany przez API v1, jeśli klucz ma do niego dostęp. Ponowne sprawdzenie v3 za 10 minut.');
+        }
+        // Spodziewany brak opcjonalnego uprawnienia: nie loguj błędu per monitor
+        // ani nie zwracaj starego odczytu v3 zamiast przejść na v1.
+        return null;
+    }
+    v3Allowed = true;
+    v3DeniedAt = null;
     const last = newest(metrics.stats ?? [], s => s.timestamp);
     return last ? toLoad(metrics.memory?.ram_size, last.ram, last.timestamp) : null;
 }
@@ -262,12 +281,22 @@ async function loadV1(id: string): Promise<StatusLoad | null> {
 }
 
 async function getLoad(id: string, servers: number): Promise<StatusLoad | null> {
-    if (Date.now() - v3DeniedAt > V3_RECHECK) {
+    if (v3DeniedAt === null || Date.now() - v3DeniedAt >= V3_RECHECK) {
         try {
-            return (await cached(`load3:${id}`, 60_000, () => loadV3(id))).value;
-        } catch (error) {
-            if (!(error instanceof HetrixError && error.status === 403)) return null;
-            v3DeniedAt = Date.now();
+            // Przy nieznanych/odrzuconych uprawnieniach pozostali odwiedzający
+            // i monitory czekają na tę samą próbę, zamiast wysyłać serię 403.
+            if (!v3Allowed) {
+                v3PermissionCheck ??= cached(`load3:${id}`, 60_000, () => loadV3(id))
+                    .then(() => {})
+                    .finally(() => { v3PermissionCheck = null; });
+                await v3PermissionCheck;
+            }
+            if (v3Allowed) {
+                const result = await cached(`load3:${id}`, 60_000, () => loadV3(id));
+                if (v3Allowed) return result.value;
+            }
+        } catch {
+            if (v3DeniedAt === null) return null;
         }
     }
     try {
