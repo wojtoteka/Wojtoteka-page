@@ -65,15 +65,6 @@ export function ApiMessageList({
                             </p>
                             {message.message && <p className={ui.itemBody}>{message.message}</p>}
                             <div className={ui.actions}>
-                                {message.email && (
-                                    <a
-                                        className="btn btn-ghost btn-sm"
-                                        href={`mailto:${message.email}?subject=${encodeURIComponent(`Re: ${message.subject || 'Twoja wiadomość'}`)}`}
-                                    >
-                                        <Icon name="mail" size={16} />
-                                        Odpowiedz
-                                    </a>
-                                )}
                                 {extraActions?.(message)}
                                 <button type="button" className="btn btn-danger btn-sm" onClick={() => onDelete(message)}>
                                     <Icon name="trash" size={16} />

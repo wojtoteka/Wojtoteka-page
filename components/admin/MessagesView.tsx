@@ -99,13 +99,6 @@ export function MessagesView() {
                                     </p>
                                     <p className={ui.itemBody}>{message.message}</p>
                                     <div className={ui.actions}>
-                                        <a
-                                            className="btn btn-ghost btn-sm"
-                                            href={`mailto:${message.email}?subject=${encodeURIComponent(`Re: ${message.subject || 'Twoja wiadomość'}`)}`}
-                                        >
-                                            <Icon name="mail" size={16} />
-                                            Odpowiedz
-                                        </a>
                                         {message.ip_address && (
                                             <button type="button" className="btn btn-ghost btn-sm" onClick={() => banRef.current?.open(message.ip_address!)}>
                                                 <Icon name="ban" size={16} />

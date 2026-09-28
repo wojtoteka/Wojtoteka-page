@@ -241,7 +241,11 @@ export default async function StatusPage() {
         );
     }
 
-    const { monitors } = snapshot;
+    const monitors = [...snapshot.monitors].sort((a, b) => {
+        if (!a.region && b.region) return 1;
+        if (a.region && !b.region) return -1;
+        return (a.region ?? '').localeCompare(b.region ?? '', 'pl') || a.name.localeCompare(b.name, 'pl', { numeric: true });
+    });
     const summary = monitors.length ? verdict(monitors) : null;
 
     return (
