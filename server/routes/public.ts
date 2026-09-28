@@ -245,7 +245,7 @@ publicRouter.get('/url/nonce', limits.publicResource, (req, res) => {
     let seed = csrfSeed(req);
     if (!seed || !/^[a-f0-9]{64}$/.test(seed)) {
         seed = newCsrfSeed();
-        res.cookie(CSRF_COOKIE, seed, { httpOnly: true, sameSite: 'lax', secure: secureCookies(), path: '/' });
+        res.cookie(CSRF_COOKIE, seed, { httpOnly: true, sameSite: 'lax', secure: secureCookies(req.protocol), path: '/' });
     }
     res.set('Cache-Control', 'no-store');
     res.json({ nonce: issueNonce(seed) });
@@ -332,7 +332,7 @@ function setOwnerCookie(res: Response, nick: string): void {
     res.cookie(GLEBINA.OWNER_COOKIE, signOwner(nick), {
         maxAge: GLEBINA.OWNER_COOKIE_MAX_AGE_MS,
         sameSite: 'lax',
-        secure: secureCookies(),
+        secure: secureCookies(res.req.protocol),
         path: '/'
     });
 }

@@ -86,7 +86,7 @@ export function issueCsrfToken(req: Request, res: Response): void {
     let seed = csrfSeed(req);
     if (!seed || !/^[a-f0-9]{64}$/.test(seed)) {
         seed = newCsrfSeed();
-        res.cookie(CSRF_COOKIE, seed, { httpOnly: true, sameSite: 'lax', secure: secureCookies(), path: '/' });
+        res.cookie(CSRF_COOKIE, seed, { httpOnly: true, sameSite: 'lax', secure: secureCookies(req.protocol), path: '/' });
     }
     res.set('Cache-Control', 'no-store');
     res.json({ csrfToken: csrfTokenFor(seed) });

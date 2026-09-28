@@ -10,10 +10,10 @@ import { appSecret, parseCookieHeader } from '@/lib/security';
 
 const IDLE_LIMIT_MS = SESSION_MAX_AGE * 1000;
 
-const cookieOptions = () => ({
+const cookieOptions = (req: Request) => ({
     httpOnly: true,
     sameSite: 'lax' as const,
-    secure: secureCookies(),
+    secure: secureCookies(req.protocol),
     path: '/'
 });
 
@@ -27,8 +27,8 @@ export async function readSession(req: Request): Promise<JWT | null> {
     }
 }
 
-function rejectSession(res: Response, message: string): void {
-    res.clearCookie(SESSION_COOKIE, cookieOptions());
+function rejectSession(req: Request, res: Response, message: string): void {
+    res.clearCookie(SESSION_COOKIE, cookieOptions(req));
     res.status(401).json({ message });
 }
 
@@ -45,20 +45,20 @@ export function requireRole(role: Role) {
         const now = Date.now();
         if (token.lastActivity && now - token.lastActivity > IDLE_LIMIT_MS) {
             console.warn(`[SECURITY] Session timeout (${role}) - IP: ${req.realIP}`);
-            rejectSession(res, 'Sesja wygasła po 30 minutach bezczynności.');
+            rejectSession(req, res, 'Sesja wygasła po 30 minutach bezczynności.');
             return;
         }
 
         if (token.ip && token.ip !== req.realIP) {
             console.warn(`[SECURITY] Session IP mismatch (${role})! Session IP: ${token.ip}, Request IP: ${req.realIP}`);
-            rejectSession(res, 'Sesja unieważniona: zmienił się adres IP.');
+            rejectSession(req, res, 'Sesja unieważniona: zmienił się adres IP.');
             return;
         }
 
         const ua = (req.get('user-agent') || '').slice(0, 500);
         if (token.ua !== undefined && token.ua !== ua) {
             console.warn(`[SECURITY] Session User-Agent changed (${role}) - IP: ${req.realIP}`);
-            rejectSession(res, 'Sesja unieważniona: zmieniła się przeglądarka.');
+            rejectSession(req, res, 'Sesja unieważniona: zmieniła się przeglądarka.');
             return;
         }
 
@@ -68,7 +68,7 @@ export function requireRole(role: Role) {
             salt: SESSION_COOKIE,
             maxAge: SESSION_MAX_AGE
         });
-        res.cookie(SESSION_COOKIE, refreshed, { ...cookieOptions(), maxAge: SESSION_MAX_AGE * 1000 });
+        res.cookie(SESSION_COOKIE, refreshed, { ...cookieOptions(req), maxAge: SESSION_MAX_AGE * 1000 });
 
         req.auth = { ...token, lastActivity: now };
         next();

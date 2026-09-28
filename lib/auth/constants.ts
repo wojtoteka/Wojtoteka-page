@@ -7,8 +7,13 @@ export const SESSION_COOKIE = 'wt.session';
 /** Sesja wygasa po 30 minutach bez aktywności, jak w poprzedniej wersji. */
 export const SESSION_MAX_AGE = 30 * 60;
 
-export function secureCookies(): boolean {
-    return process.env.NODE_ENV === 'production';
+/**
+ * Flaga Secure zależy od protokołu, którym przyszło żądanie, a nie od NODE_ENV.
+ * Przeglądarka odrzuca ciasteczko Secure wysłane po http, więc na instancji
+ * bez HTTPS (np. beta) logowanie "udawało się", ale sesja nigdy nie powstawała.
+ */
+export function secureCookies(protocol: string | null | undefined): boolean {
+    return protocol === 'https' || protocol === 'https:';
 }
 
 export type Role = 'admin' | 'panel';

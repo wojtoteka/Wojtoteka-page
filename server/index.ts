@@ -47,6 +47,9 @@ app.use((req, _res, nextFn) => {
         req.ip;
     req.realIP = sanitizeIp(candidate);
     req.headers[CLIENT_IP_HEADER] = req.realIP;
+    // Protokół klienta (z uwzględnieniem trust proxy) dla Auth.js w Next.js:
+    // od niego zależy flaga Secure ciasteczka sesji. Też zawsze nadpisywany.
+    req.headers['x-forwarded-proto'] = req.protocol;
     nextFn();
 });
 

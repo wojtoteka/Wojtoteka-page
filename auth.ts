@@ -9,14 +9,16 @@ import { appSecret } from '@/lib/security';
 // - panel: email + hasło z tabeli sub_accounts (operatorzy skrzynek API).
 // Sesja to zaszyfrowany JWT w ciasteczku. Express odczytuje ten sam JWT
 // (server/auth.ts), sprawdza IP i przeglądarkę i przedłuża go przy aktywności.
-export const { handlers, auth, signIn, signOut } = NextAuth({
+// Konfiguracja liczona per żądanie: flaga Secure ciasteczka zależy od protokołu
+// (x-forwarded-proto ustawia zawsze Express w server/index.ts).
+export const { handlers, auth, signIn, signOut } = NextAuth(request => ({
     secret: appSecret(),
     trustHost: true,
     session: { strategy: 'jwt', maxAge: SESSION_MAX_AGE },
     cookies: {
         sessionToken: {
             name: SESSION_COOKIE,
-            options: { httpOnly: true, sameSite: 'lax', path: '/', secure: secureCookies() }
+            options: { httpOnly: true, sameSite: 'lax', path: '/', secure: secureCookies(request?.headers.get('x-forwarded-proto')) }
         }
     },
     pages: { signIn: '/admin/logowanie', error: '/admin/logowanie' },
@@ -59,4 +61,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return session;
         }
     }
-});
+}));
