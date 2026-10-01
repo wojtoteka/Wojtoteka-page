@@ -15,7 +15,15 @@ const SEA = '47, 211, 208';
  * na opacity. Płótno ma mix-blend-mode: darken, więc kolor wychodzi tylko
  * na jasnych literach; na ciemnym tle darken zostawia tło bez zmian.
  */
-export function SprayPaint({ children, className }: { children: ReactNode; className?: string }) {
+export function SprayPaint({
+    children,
+    className,
+    paintDelay = 0
+}: {
+    children: ReactNode;
+    className?: string;
+    paintDelay?: number;
+}) {
     const boxRef = useRef<HTMLSpanElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -34,6 +42,12 @@ export function SprayPaint({ children, className }: { children: ReactNode; class
         let fading = false;
         let idleTimer = 0;
         let clearTimer = 0;
+        let canPaint = paintDelay <= 0 || reduceMotion.matches;
+        const paintTimer = canPaint
+            ? 0
+            : window.setTimeout(() => {
+                  canPaint = true;
+              }, paintDelay);
 
         // Pędzel: pełne koło z miękką krawędzią, przygotowane raz.
         function makeBrush() {
@@ -139,7 +153,7 @@ export function SprayPaint({ children, className }: { children: ReactNode; class
         }
 
         function onMove(event: PointerEvent) {
-            if (event.pointerType === 'touch' || reduceMotion.matches) return;
+            if (!canPaint || event.pointerType === 'touch' || reduceMotion.matches) return;
             const rect = box!.getBoundingClientRect();
             queue.push({ x: event.clientX - rect.left, y: event.clientY - rect.top });
             if (!frame) frame = requestAnimationFrame(flush);
@@ -161,9 +175,10 @@ export function SprayPaint({ children, className }: { children: ReactNode; class
             box.removeEventListener('pointerleave', onLeave);
             window.clearTimeout(idleTimer);
             window.clearTimeout(clearTimer);
+            window.clearTimeout(paintTimer);
             cancelAnimationFrame(frame);
         };
-    }, []);
+    }, [paintDelay]);
 
     return (
         <span ref={boxRef} className={`${styles.box} ${className ?? ''}`}>

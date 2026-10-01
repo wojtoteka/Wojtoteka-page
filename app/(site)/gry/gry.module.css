@@ -166,12 +166,6 @@
     background: color-mix(in oklab, var(--stage-bg) 70%, black);
 }
 
-.caption {
-    font-size: var(--step--1);
-    color: color-mix(in oklab, var(--chalk) 72%, var(--stage-bg));
-    padding-left: 4px;
-}
-
 .copy {
     grid-column: 9 / span 4;
     display: grid;

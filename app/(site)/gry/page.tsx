@@ -49,7 +49,6 @@ function Stage({ game, index }: { game: Game; index: number }) {
                             className={game.art.pixel ? 'pixelated' : undefined}
                         />
                     </span>
-                    <figcaption className={styles.caption}>{game.caption}</figcaption>
                 </figure>
 
                 <div className={styles.copy}>

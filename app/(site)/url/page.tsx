@@ -36,10 +36,6 @@ export default function ShortenerPage() {
                             dla dorosłych).
                         </dd>
                     </div>
-                    <div>
-                        <dt>Limit</dt>
-                        <dd>20 nowych linków na godzinę z jednego adresu IP.</dd>
-                    </div>
                 </dl>
             </section>
         </div>
