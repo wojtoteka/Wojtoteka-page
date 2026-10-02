@@ -57,7 +57,7 @@ function Stage({ game, index }: { game: Game; index: number }) {
                     </h2>
                     {game.platform === 'web' ? (
                         <>
-                            <p className={styles.platform}>Działa w przeglądarce, bez instalacji i bez zakładania konta.</p>
+                            <p className={styles.platform}>Działa w przeglądarce, bez instalacji i bez konta.</p>
                             <a href={game.href} className="btn btn-primary">
                                 <Icon name="gamepad" size={20} />
                                 Zagraj
@@ -65,7 +65,7 @@ function Stage({ game, index }: { game: Game; index: number }) {
                         </>
                     ) : (
                         <>
-                            <p className={styles.platform}>Aplikacja na Androida, do pobrania z Google Play.</p>
+                            <p className={styles.platform}>Aplikacja na Androida, do pobrania w Google Play.</p>
                             <a href={game.href} className="btn btn-primary" target="_blank" rel="noopener">
                                 <Icon name="play" size={20} />
                                 Pobierz z Google Play

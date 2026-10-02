@@ -19,7 +19,7 @@ export default function SoonPage() {
             }
         >
             <p>Ta strona jest w przygotowaniu i pojawi się niedługo.</p>
-            <p>Na razie zajrzyj na stronę główną, tam są wszystkie działające rzeczy.</p>
+            <p>Na razie zajrzyj na stronę główną, tam jest wszystko, co już działa.</p>
         </SystemPage>
     );
 }

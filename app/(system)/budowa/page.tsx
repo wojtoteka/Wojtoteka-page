@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default function MaintenancePage() {
     return (
         <SystemPage code="503" title="Trwają prace na stronie" actions={<ReloadButton label="Sprawdź ponownie" />}>
-            <p>Ta część strony jest właśnie przebudowywana. Wróć za jakiś czas.</p>
+            <p>Ta część strony jest w trakcie przebudowy. Zajrzyj tu później.</p>
             <p>
                 Coś pilnego? Napisz na <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a>.
             </p>

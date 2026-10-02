@@ -12,7 +12,7 @@ export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
     title: 'Status usług',
-    description: 'Czy serwery wojtoteka.ovh działają: stan na żywo, obciążenie RAM, dostępność z 30 dni i ostatnie przerwy.',
+    description: 'Stan serwerów wojtoteka.ovh: czy działają, ile zajmuje pamięć, jak wyglądały ostatnie 30 dni i kiedy były przerwy.',
     robots: { index: false, follow: true }
 };
 
@@ -26,8 +26,8 @@ const percentFmt = new Intl.NumberFormat('pl-PL', { style: 'percent', maximumFra
 
 const STATE_LABEL: Record<StatusMonitor['state'], string> = {
     up: 'Działa',
-    down: 'Nie odpowiada',
-    maintenance: 'Przerwa techniczna',
+    down: 'Offline',
+    maintenance: 'Prace techniczne',
     paused: 'Wstrzymany'
 };
 
@@ -61,26 +61,26 @@ function verdict(monitors: StatusMonitor[]): { title: string; line: string; tone
         const first = down.reduce((a, b) => (a.since < b.since ? a : b));
         const rest = n - down.length;
         return {
-            title: `Awaria: ${names.length > 1 ? `${names.slice(0, -1).join(', ')} i ${names.at(-1)}` : names[0]}`,
-            line: `${down.length > 1 ? 'Nie odpowiadają' : 'Nie odpowiada'} od ${when(first.since)}.${rest ? ` ${rest === 1 ? 'Reszta działa.' : 'Pozostałe działają.'}` : ''}`,
+            title: `Problem: ${names.length > 1 ? `${names.slice(0, -1).join(', ')} i ${names.at(-1)}` : names[0]}`,
+            line: `${down.length > 1 ? 'Są offline' : 'Jest offline'} od ${when(first.since)}.${rest ? ' Reszta działa normalnie.' : ''}`,
             tone: 'down'
         };
     }
     if (maintenance.length) {
         return {
-            title: 'Przerwa techniczna',
-            line: `Trwają prace: ${maintenance.map(m => m.name).join(', ')}. Pozostałe działają.`,
+            title: 'Prace techniczne',
+            line: `Trwa serwis: ${maintenance.map(m => m.name).join(', ')}. Reszta działa normalnie.`,
             tone: 'maintenance'
         };
     }
     const all =
         n === 1
-            ? servers ? 'Serwer odpowiada.' : 'Usługa działa.'
+            ? servers ? 'Serwer działa bez zastrzeżeń.' : 'Usługa działa bez zastrzeżeń.'
             : n === 2
-              ? servers ? 'Oba serwery odpowiadają.' : 'Obie usługi działają.'
+              ? servers ? 'Oba serwery działają bez zastrzeżeń.' : 'Obie usługi działają bez zastrzeżeń.'
               : servers
-                ? `Wszystkie ${n} ${plural(n, 'serwer', 'serwery', 'serwerów')} odpowiadają.`
-                : `Wszystkie ${n} ${plural(n, 'usługa', 'usługi', 'usług')} działają.`;
+                ? `Wszystkie serwery (${n}) działają bez zastrzeżeń.`
+                : `Wszystkie usługi (${n}) działają bez zastrzeżeń.`;
     return { title: 'Wszystko działa', line: all, tone: 'up' };
 }
 
@@ -104,7 +104,7 @@ function DayTip({ d, index, total }: { d: StatusDay; index: number; total: numbe
     );
 }
 
-/** Zajęty RAM: pasek i liczby. Starszy odczyt (klucz bez dostępu do metryk v3) ma podaną godzinę. */
+/** Zajęta pamięć RAM: pasek i wartość. Starszy odczyt (klucz bez dostępu do metryk v3) ma podaną godzinę. */
 function Load({ load }: { load: StatusLoad }) {
     const old = Date.now() / 1000 - load.at > 5 * 60;
     const used = Math.round(load.percent);
@@ -112,14 +112,14 @@ function Load({ load }: { load: StatusLoad }) {
         <div className={styles.load} data-high={load.percent >= 85 || undefined}>
             <p className={styles.loadLabel}>
                 <Icon name="memory" size={22} />
-                Obciążenie
+                Pamięć RAM
             </p>
             <div className={styles.meter} aria-hidden="true">
                 <span style={{ width: `${Math.min(100, load.percent)}%` }} />
             </div>
             <p className={styles.loadValue}>
                 {used}%
-                {old && <span className={styles.loadNote}> (odczyt o {time(load.at)})</span>}
+                {old && <span className={styles.loadNote}> (dane z {time(load.at)})</span>}
             </p>
         </div>
     );
@@ -141,7 +141,7 @@ function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
                         {STATE_LABEL[monitor.state]}
                     </p>
                     <p className={styles.uptime}>
-                        {monitor.uptime30 !== null ? `${percent(monitor.uptime30)} z ${monitor.days.length || DAYS} dni` : 'Brak raportu'}
+                        {monitor.uptime30 !== null ? `${percent(monitor.uptime30)} z ${monitor.days.length || DAYS} dni` : 'Brak danych'}
                     </p>
                 </div>
             </div>
@@ -164,7 +164,7 @@ function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
                         <span>{DAYS} dni temu</span>
                         <span className="sr-only">
                             {broken
-                                ? `Przerwy w ${broken} ${plural(broken, 'dniu', 'dniach', 'dniach')} z ${monitor.days.length}.`
+                                ? `Przerwy w ${broken} z ${monitor.days.length} dni.`
                                 : `Bez przerw przez ${monitor.days.length} dni.`}
                         </span>
                         <span>dziś</span>
@@ -180,7 +180,7 @@ function Incidents({ snapshot }: { snapshot: StatusSnapshot }) {
         <section className={styles.incidents} aria-labelledby="przerwy">
             <h2 id="przerwy">Ostatnie przerwy</h2>
             {snapshot.incidents.length === 0 ? (
-                <p className="muted">Monitoring nie zanotował żadnej przerwy.</p>
+                <p className="muted">Nie było żadnych przerw.</p>
             ) : (
                 <div className="table-wrap">
                     <table>
@@ -230,7 +230,7 @@ export default async function StatusPage() {
                 {notices}
                 <p className="notice notice-error">
                     <strong>Brak konfiguracji. </strong>
-                    Ustaw HETRIX_KEY (klucz API v3) w pliku .env, żeby pokazać tu stan serwerów.
+                    Dodaj HETRIX_KEY (klucz API v3) do pliku .env, a tu pojawi się stan serwerów.
                 </p>
             </div>
         );
@@ -246,7 +246,7 @@ export default async function StatusPage() {
                 <AutoRefresh seconds={60} />
                 <header className="page-head">
                     <h1 className="page-title">Status usług</h1>
-                    <p className="lead">Nie udało się pobrać danych z monitoringu. Spróbuj ponownie za minutę.</p>
+                    <p className="lead">Nie udało się pobrać danych z monitoringu. Spróbuj za minutę.</p>
                 </header>
                 {notices}
                 <ReloadButton label="Sprawdź ponownie" />
@@ -271,15 +271,15 @@ export default async function StatusPage() {
                     <span>{summary?.title ?? 'Status usług'}</span>
                 </h1>
                 <p className="lead">
-                    {summary ? `${summary.line} ` : 'Brak monitorów do pokazania. '}
-                    Ostatni odczyt o {time(snapshot.fetchedAt / 1000)}.
+                    {summary ? `${summary.line} ` : 'Nie ma jeszcze żadnych serwerów do pokazania. '}
+                    Dane z {time(snapshot.fetchedAt / 1000)}.
                 </p>
             </header>
 
             {notices}
 
             {snapshot.stale && (
-                <p className={`notice ${styles.notice}`}>Monitoring chwilowo nie odpowiada. Poniżej ostatnie pobrane dane.</p>
+                <p className={`notice ${styles.notice}`}>Monitoring chwilowo nie odpowiada, więc pokazuję ostatnie zapisane dane.</p>
             )}
 
             {snapshot.announcement && (
@@ -300,10 +300,10 @@ export default async function StatusPage() {
                         ))}
                     </ul>
                     <p className={styles.legend}>
-                        <span className={styles.legendItem}><span className={styles.dayUp} aria-hidden="true" />dzień bez przerw</span>
+                        <span className={styles.legendItem}><span className={styles.dayUp} aria-hidden="true" />bez przerw</span>
                         <span className={styles.legendItem}><span className={styles.dayDown} aria-hidden="true" />była przerwa</span>
                         {monitors.some(m => m.days.length > 0 && m.days.length < DAYS) && (
-                            <span className={styles.legendItem}><span className={styles.dayNone} aria-hidden="true" />monitor jeszcze nie działał</span>
+                            <span className={styles.legendItem}><span className={styles.dayNone} aria-hidden="true" />brak danych z tego dnia</span>
                         )}
                     </p>
                 </section>

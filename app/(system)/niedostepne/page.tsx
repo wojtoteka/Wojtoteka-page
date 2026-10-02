@@ -21,7 +21,7 @@ export default function UnavailablePage() {
                 </>
             }
         >
-            <p>Serwer ma chwilowy problem. Spróbuj ponownie za kilka minut.</p>
+            <p>Serwer ma chwilowe problemy. Spróbuj ponownie za kilka minut.</p>
             <p>
                 Jeśli problem wraca, napisz na <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a> i podaj adres strony, na której
                 się pojawił.

@@ -41,7 +41,7 @@ export default async function HomePage() {
                         <p className={styles.tagline}>
                             <SprayPaint>{tagline}</SprayPaint>
                         </p>
-                        <p className={styles.what}>Gry w przeglądarce, aplikacje na Androida i bot na Discorda. Poniżej wszystko, co warto kliknąć.</p>
+                        <p className={styles.what}>Gry w przeglądarce, aplikacje na Androida i bot na Discorda. Linki i gry znajdziesz poniżej.</p>
                     </div>
                 </div>
             </section>
