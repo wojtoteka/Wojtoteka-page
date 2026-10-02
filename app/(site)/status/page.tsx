@@ -112,7 +112,7 @@ function Load({ load }: { load: StatusLoad }) {
         <div className={styles.load} data-high={load.percent >= 85 || undefined}>
             <p className={styles.loadLabel}>
                 <Icon name="memory" size={22} />
-                Pamięć RAM
+                Obciążenie
             </p>
             <div className={styles.meter} aria-hidden="true">
                 <span style={{ width: `${Math.min(100, load.percent)}%` }} />
