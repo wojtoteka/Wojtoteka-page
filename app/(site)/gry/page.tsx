@@ -8,7 +8,7 @@ import styles from './gry.module.css';
 
 export const metadata: Metadata = {
     title: 'Gry',
-    description: 'Gry Wojtoteka: Night Drive, GloomCraft, Fishing Party, Ostatni Oddech i inne. Większość uruchomisz za darmo w przeglądarce.',
+    description: 'Gry Wojtoteka: Night Drive, Przerębel, GloomCraft, Fishing Party, Ostatni Oddech i inne. Większość uruchomisz za darmo w przeglądarce.',
     alternates: { canonical: '/gry' }
 };
 

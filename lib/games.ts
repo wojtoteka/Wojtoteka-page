@@ -36,6 +36,16 @@ export const GAMES: Game[] = [
         tilt: 2.5
     },
     {
+        slug: 'przerebel',
+        title: 'Przerębel',
+        href: '/przerebel/',
+        platform: 'web',
+        art: { src: '/przerebel/ikona.png', width: 1024, height: 1024, alt: 'Przerębel: łyżwiarz na zamarzniętym jeziorze i ciemny przerębel w lodzie' },
+        bg: '#0c1622',
+        frame: '#66c2d4',
+        tilt: -1.5
+    },
+    {
         slug: '4-in-a-row',
         title: '4 in a Row',
         href: '/4InaRow/',

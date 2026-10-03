@@ -107,7 +107,7 @@ const GAME_CSP = [
     "object-src 'none'",
     "frame-ancestors 'none'"
 ].join('; ');
-const GAME_PATH = /^\/(fishing|gloomcraft|nightdrive|ropeclimber|4inarow)(\/|$)/i;
+const GAME_PATH = /^\/(fishing|gloomcraft|nightdrive|ropeclimber|4inarow|przerebel)(\/|$)/i;
 
 // Stare strony statyczne w public/ mają atrybuty onclick, więc dostają
 // dokładnie tę politykę, którą miała cała strona przed przejściem na Next.js.
