@@ -30,6 +30,7 @@ export function SiteFooter() {
                     <ul role="list">
                         <li><Link href="/RoyalCasinoBot">RoyalCasino Bot</Link></li>
                         <li><Link href="/inne/litho">Litho Studio</Link></li>
+                        <li><a href="https://rivox.wojtoteka.ovh/">Rivox</a></li>
                     </ul>
                 </nav>
 
