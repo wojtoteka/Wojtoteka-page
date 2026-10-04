@@ -1,0 +1,200 @@
+'use client';
+
+import { useEffect, useRef, useState } from 'react';
+import { BADGES, STATUS_LABELS, type DiscordActivity, type DiscordProfile } from '@/lib/discord';
+import styles from './Discord.module.css';
+
+/** Co ile otwarta strona pyta o świeży status, gdy sekcja jest na ekranie. */
+const POLL = 15_000;
+
+const clock = (ms: number) => {
+    const s = Math.max(0, Math.floor(ms / 1000));
+    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
+
+function since(ms: number): string {
+    const minutes = Math.floor(ms / 60_000);
+    if (minutes < 1) return 'Od chwili';
+    if (minutes < 60) return `Od ${minutes} min`;
+    const hours = Math.floor(minutes / 60);
+    return minutes % 60 ? `Od ${hours} godz. ${minutes % 60} min` : `Od ${hours} godz.`;
+}
+
+function Activity({ activity, now }: { activity: DiscordActivity; now: number }) {
+    const { start, end } = activity;
+    const total = start && end ? end - start : 0;
+    const done = total ? Math.min(Math.max(now - start!, 0), total) : 0;
+
+    return (
+        <li className={styles.activity} data-kind={activity.kind}>
+            {activity.image ? (
+                <img src={activity.image} alt="" width={96} height={96} loading="lazy" className={styles.art} />
+            ) : (
+                <span className={styles.art} aria-hidden="true">
+                    {activity.title.charAt(0)}
+                </span>
+            )}
+            <div className={styles.activityText}>
+                <p className={styles.activityLabel}>{activity.label}</p>
+                <p className={styles.activityTitle}>{activity.title}</p>
+                {activity.lines.map(line => (
+                    <p key={line} className={styles.activityLine}>
+                        {line}
+                    </p>
+                ))}
+                {total > 0 ? (
+                    <p className={styles.progress}>
+                        <span>{clock(done)}</span>
+                        <span className={styles.bar} aria-hidden="true">
+                            <span style={{ transform: `scaleX(${done / total})` }} />
+                        </span>
+                        <span>{clock(total)}</span>
+                    </p>
+                ) : start ? (
+                    <p className={styles.activityLine}>{since(now - start)}</p>
+                ) : null}
+            </div>
+        </li>
+    );
+}
+
+/**
+ * Karta profilu z Discorda i status na żywo. Dane z serwera są świeże przy
+ * wczytaniu strony, potem co 15 s pytamy /discord/status, ale tylko gdy
+ * karta przeglądarki jest otwarta, a sekcja widoczna (albo tuż obok).
+ */
+export function DiscordLive({ initial, href }: { initial: DiscordProfile | null; href: string }) {
+    const root = useRef<HTMLDivElement>(null);
+    const [profile, setProfile] = useState(initial);
+    // Do pierwszego tyknięcia zegara czas z serwera: ten sam tekst na serwerze i w przeglądarce.
+    const [now, setNow] = useState(initial?.at ?? 0);
+
+    useEffect(() => {
+        const element = root.current;
+        if (!element) return;
+
+        let onScreen = false;
+        let timer = 0;
+        let last = Date.now();
+        let controller: AbortController | null = null;
+
+        const load = async () => {
+            last = Date.now();
+            controller?.abort();
+            controller = new AbortController();
+            try {
+                const response = await fetch('/discord/status', { cache: 'no-store', signal: controller.signal });
+                const data = (await response.json()) as { profile: DiscordProfile | null };
+                if (data.profile) setProfile(data.profile);
+            } catch {
+                // Brak sieci albo Lanyard nie odpowiada: zostaje ostatni znany status.
+            }
+        };
+
+        const schedule = () => {
+            window.clearInterval(timer);
+            if (!onScreen || document.visibilityState !== 'visible') return;
+            if (Date.now() - last > 5000) load();
+            timer = window.setInterval(load, POLL);
+        };
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                onScreen = entry.isIntersecting;
+                schedule();
+            },
+            { rootMargin: '300px 0px' }
+        );
+        observer.observe(element);
+        document.addEventListener('visibilitychange', schedule);
+
+        return () => {
+            observer.disconnect();
+            document.removeEventListener('visibilitychange', schedule);
+            window.clearInterval(timer);
+            controller?.abort();
+        };
+    }, []);
+
+    // Zegar tyka tylko wtedy, gdy jest co liczyć: co sekundę przy utworze, co pół minuty przy grze.
+    const timed = profile?.activities.some(a => a.start) ?? false;
+    const song = profile?.activities.some(a => a.end) ?? false;
+    useEffect(() => {
+        if (!timed) return;
+        setNow(Date.now());
+        const timer = window.setInterval(() => setNow(Date.now()), song ? 1000 : 30_000);
+        return () => window.clearInterval(timer);
+    }, [timed, song]);
+
+    if (!profile) {
+        return (
+            <div ref={root} className={styles.panel} data-status="offline">
+                <div className={styles.live}>
+                    <p className={styles.statusNote}>Nie udało się teraz sprawdzić statusu. Spróbuję ponownie za chwilę.</p>
+                    <a href={href} className={styles.fallback} target="_blank" rel="noopener">
+                        Mój profil na Discordzie <span aria-hidden="true">↗</span>
+                        <span className="sr-only"> (otwiera się w nowej karcie)</span>
+                    </a>
+                </div>
+            </div>
+        );
+    }
+
+    const { status } = profile;
+
+    return (
+        <div ref={root} className={styles.panel} data-status={status}>
+            {/* ---------- Wizytówka ---------- */}
+            <div className={styles.card}>
+                <div className={styles.banner}>
+                    <img src="/discord/banner" alt="" width={1024} height={410} loading="lazy" />
+                </div>
+
+                <div className={styles.id}>
+                    <div className={styles.avatar}>
+                        <img src={profile.avatar} alt="" width={128} height={128} loading="lazy" className={styles.avatarImg} />
+                        {profile.decoration && (
+                            <img src={profile.decoration} alt="" width={160} height={160} loading="lazy" className={styles.decoration} />
+                        )}
+                        <span className={styles.avatarDot} aria-hidden="true" />
+                    </div>
+                    <div className={styles.who}>
+                        <h3 className={styles.name}>{profile.displayName}</h3>
+                        <p className={styles.username}>@{profile.username}</p>
+                    </div>
+                </div>
+
+                {profile.note && <p className={styles.note}>{profile.note}</p>}
+
+                <ul role="list" className={styles.badges} aria-label="Odznaki">
+                    {BADGES.map((badge, i) => (
+                        <li key={badge.hash} title={badge.title}>
+                            <img src={`/discord/badge/${i}`} alt={badge.title} width={28} height={28} loading="lazy" />
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            {/* ---------- Status i aktywność ---------- */}
+            <div className={styles.live}>
+                <p key={status} className={styles.statusWord}>
+                    <span className={styles.statusDot} aria-hidden="true" />
+                    <span className={status === 'offline' ? 'v2-outline' : undefined}>{STATUS_LABELS[status]}</span>
+                </p>
+
+                {profile.activities.length > 0 ? (
+                    <ul role="list" className={styles.activities}>
+                        {profile.activities.map((activity, i) => (
+                            <Activity key={activity.title + i} activity={activity} now={now} />
+                        ))}
+                    </ul>
+                ) : (
+                    <p className={styles.idle}>
+                        <span className={styles.activityLabel}>Aktywność</span>
+                        Teraz nic nie gram i niczego nie słucham.
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+}

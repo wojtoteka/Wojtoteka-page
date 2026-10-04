@@ -1,0 +1,259 @@
+/* Rok na GitHubie: duża liczba z lewej, rekordy z prawej,
+   kalendarz na całą szerokość i języki przesunięte w prawo. */
+
+.section {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(32px, 4vw, 56px) 24px;
+    padding-block: clamp(32px, 5vw, 64px) clamp(80px, 10vw, 140px);
+}
+
+.head {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 18px 32px;
+}
+
+.head :global(.v2-label) {
+    grid-column: 1 / -1;
+}
+
+.h2 {
+    font-size: clamp(2.75rem, 7vw, 7.5rem);
+    line-height: 0.88;
+    text-transform: uppercase;
+}
+
+/* ---------- Liczba kontrybucji ---------- */
+
+.total {
+    grid-column: 1 / span 6;
+    display: grid;
+    align-content: start;
+    gap: 16px;
+}
+
+.totalNum {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: clamp(5rem, 13vw, 12.5rem);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: var(--volt);
+}
+
+.totalText {
+    max-width: 44ch;
+    color: var(--ash);
+}
+
+/* ---------- Rekordy ---------- */
+
+.stats {
+    grid-column: 8 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-self: end;
+    border-top: 1px solid var(--line);
+}
+
+.stats div {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 18px 16px 18px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.stats div:nth-child(even) {
+    padding-left: 20px;
+    border-left: 1px solid var(--line);
+}
+
+.stats dt {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.stats dd {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: clamp(2.25rem, 3.6vw, 3.75rem);
+    line-height: 1;
+}
+
+.stats dd small {
+    font-size: 0.4em;
+    letter-spacing: 0.02em;
+}
+
+.stats .statNote {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 0.75rem;
+    color: var(--ash);
+}
+
+/* ---------- Kalendarz ---------- */
+
+.calendar {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 14px;
+}
+
+.grid {
+    display: grid;
+    grid-template-rows: repeat(7, auto);
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    gap: clamp(2px, 0.35vw, 5px);
+}
+
+.cell {
+    display: block;
+    aspect-ratio: 1;
+    background: var(--graphite);
+    outline: 1px solid color-mix(in oklab, var(--chalk) 6%, transparent);
+    outline-offset: -1px;
+}
+
+.cell[data-level='1'] {
+    background: color-mix(in oklab, var(--volt) 28%, var(--ink));
+}
+
+.cell[data-level='2'] {
+    background: color-mix(in oklab, var(--volt) 52%, var(--ink));
+}
+
+.cell[data-level='3'] {
+    background: color-mix(in oklab, var(--volt) 76%, var(--ink));
+}
+
+.cell[data-level='4'] {
+    background: var(--volt);
+}
+
+/* Kratki zapalają się tydzień po tygodniu, gdy kalendarz wjedzie na ekran. */
+.grid .cell {
+    transition: transform 0.5s var(--ease), opacity 0.5s ease;
+    transition-delay: calc(var(--w) * 14ms);
+}
+
+:global(.v2[data-ready]) .calendar:not([data-in]) .grid .cell {
+    opacity: 0;
+    transform: scale(0.3);
+}
+
+.grid .cell:hover {
+    outline: 2px solid var(--chalk);
+    outline-offset: 1px;
+}
+
+.caption {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px 24px;
+    font-size: 0.75rem;
+    color: var(--ash);
+}
+
+.legend {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.legend .cell {
+    width: 12px;
+}
+
+/* ---------- Języki ---------- */
+
+.langs {
+    grid-column: 5 / -1;
+    display: grid;
+    gap: 16px;
+}
+
+.langList {
+    display: grid;
+    border-top: 1px solid var(--line);
+}
+
+.langList li {
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr) 130px;
+    align-items: center;
+    gap: 20px;
+    padding-block: 10px;
+    border-bottom: 1px solid var(--line);
+}
+
+.langName {
+    font-family: var(--font-display);
+    font-stretch: 112%;
+    font-weight: 800;
+    text-transform: uppercase;
+}
+
+.langBar {
+    height: 10px;
+    width: calc(var(--share) * 100%);
+    background: color-mix(in oklab, var(--volt) calc(100% - var(--i) * 10%), var(--ink));
+    transform-origin: left;
+    transition: transform 0.9s var(--ease);
+    transition-delay: calc(var(--i) * 70ms);
+}
+
+:global(.v2[data-ready]) .langs:not([data-in]) .langBar {
+    transform: scaleX(0);
+}
+
+.langCount {
+    font-size: 0.75rem;
+    color: var(--ash);
+    text-align: right;
+}
+
+@media (max-width: 900px) {
+    .total,
+    .stats,
+    .langs {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 700px) {
+    .head {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .head a {
+        justify-self: start;
+    }
+
+    /* Ostatnie pół roku: przy całym roku kratki miałyby 5 px. */
+    .grid .cell[data-old] {
+        display: none;
+    }
+
+    /* Nazwa i liczba w jednym rzędzie, pasek pod nimi na całą szerokość. */
+    .langList li {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 8px 12px;
+    }
+
+    .langBar {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        height: 6px;
+    }
+}

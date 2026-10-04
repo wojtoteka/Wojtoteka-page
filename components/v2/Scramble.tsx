@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react';
 
 const GLYPHS = 'ABCDEFGHIJKLMNOPRSTUWXYZ0123456789#%&*+=/<>';
+// Liczby losują same cyfry: litery są szersze i tekst skakałby na boki.
+const DIGITS = '0123456789';
 
 /**
  * Tekst, który "dekoduje się" z losowych znaków, litera po literze od lewej.
@@ -34,6 +36,7 @@ export function Scramble({
         let frame = 0;
         let timer = 0;
         let lastSwap = 0;
+        const pool = /^\d+$/.test(text) ? DIGITS : GLYPHS;
 
         const run = () => {
             cancelAnimationFrame(frame);
@@ -51,7 +54,7 @@ export function Scramble({
                     let next = '';
                     for (let i = 0; i < text.length; i++) {
                         const char = text[i];
-                        next += i < solved || char === ' ' ? char : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+                        next += i < solved || char === ' ' ? char : pool[Math.floor(Math.random() * pool.length)];
                     }
                     setShown(next);
                 }

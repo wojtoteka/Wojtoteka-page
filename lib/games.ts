@@ -1,13 +1,16 @@
 // Katalog gier. Kolory planszy (bg) i obrysu grafiki (frame) wzięte
 // z grafik samych gier, więc każda plansza na /gry ma paletę swojej gry.
+// Zrzuty ekranu są z prawdziwej rozgrywki, loga to ikony gier w jednym rozmiarze.
 
 export interface Game {
     slug: string;
     title: string;
     href: string;
     platform: 'web' | 'android';
-    /** focus: który fragment grafiki zostaje po przycięciu do 16:9 (object-position). */
-    art: { src: string; width: number; height: number; alt: string; pixel?: boolean; focus?: string };
+    /** Zrzut z rozgrywki (public/img/gry/ekrany), pokazywany na stronie głównej. */
+    shot: { src: string; width: number; height: number };
+    /** Logo gry, kwadrat 512 px (public/img/gry/loga), pokazywane na /gry. */
+    logo: { src: string; alt: string; pixel?: boolean };
     bg: string;
     frame: string;
     /** Przechylenie grafiki w stopniach: każda leży trochę inaczej. */
@@ -20,7 +23,8 @@ export const GAMES: Game[] = [
         title: 'Night Drive',
         href: '/Nightdrive/',
         platform: 'web',
-        art: { src: '/Nightdrive/sprites/poster.png', width: 538, height: 303, alt: 'Night Drive: druciane samochody i złote monety na neonowej drodze nocą' },
+        shot: { src: '/img/gry/ekrany/night-drive.webp', width: 1280, height: 620 },
+        logo: { src: '/img/gry/loga/night-drive.webp', alt: 'Logo Night Drive: sportowe auto na tle miasta i pasiastego słońca' },
         bg: '#150d24',
         frame: '#ff7ad9',
         tilt: -2
@@ -30,7 +34,8 @@ export const GAMES: Game[] = [
         title: 'Night Drive 2.0',
         href: 'https://play.google.com/store/apps/details?id=wojtoteka.nightdrive&hl=pl',
         platform: 'android',
-        art: { src: '/img/nightdrive2.png', width: 1024, height: 1024, alt: 'Night Drive 2.0: pasiaste słońce nad pustą autostradą w stylu lat 80.' },
+        shot: { src: '/img/gry/ekrany/night-drive-2.webp', width: 980, height: 612 },
+        logo: { src: '/img/gry/loga/night-drive-2.webp', alt: 'Logo Night Drive 2.0: pasiaste słońce nad pustą autostradą w stylu lat 80.' },
         bg: '#1d1030',
         frame: '#ffc79a',
         tilt: 2.5
@@ -40,7 +45,8 @@ export const GAMES: Game[] = [
         title: 'Przerębel',
         href: '/przerebel/',
         platform: 'web',
-        art: { src: '/przerebel/ikona.png', width: 1024, height: 1024, alt: 'Przerębel: łyżwiarz na zamarzniętym jeziorze i ciemny przerębel w lodzie' },
+        shot: { src: '/img/gry/ekrany/przerebel.webp', width: 1280, height: 720 },
+        logo: { src: '/img/gry/loga/przerebel.webp', alt: 'Logo Przerębla: odręczny napis na ciemnym lodzie' },
         bg: '#0c1622',
         frame: '#66c2d4',
         tilt: -1.5
@@ -50,7 +56,8 @@ export const GAMES: Game[] = [
         title: '4 in a Row',
         href: '/4InaRow/',
         platform: 'web',
-        art: { src: '/4InaRow/sprites/poster.png', width: 1280, height: 720, alt: '4 in a Row: niebieska plansza z czerwonymi i żółtymi żetonami, obok liczniki wygranych dwóch botów' },
+        shot: { src: '/img/gry/ekrany/4-in-a-row.webp', width: 1280, height: 720 },
+        logo: { src: '/img/gry/loga/4-in-a-row.webp', alt: 'Logo 4 in a Row: czerwone i żółte żetony na niebieskiej planszy' },
         bg: '#171d33',
         frame: '#f7c531',
         tilt: -1
@@ -60,7 +67,8 @@ export const GAMES: Game[] = [
         title: 'GloomCraft',
         href: '/GloomCraft/',
         platform: 'web',
-        art: { src: '/GloomCraft/sprites/poster.png', width: 1643, height: 1316, alt: 'GloomCraft: zakapturzony mag i zielony szlam w kamiennym lochu, pixel art', pixel: true, focus: '50% 100%' },
+        shot: { src: '/img/gry/ekrany/gloomcraft.webp', width: 1152, height: 720 },
+        logo: { src: '/img/gry/loga/gloomcraft.webp', alt: 'Logo GloomCraft: napis, zakapturzony mag i zielony szlam, pixel art', pixel: true },
         bg: '#10121c',
         frame: '#7ed957',
         tilt: 1.5
@@ -70,7 +78,8 @@ export const GAMES: Game[] = [
         title: 'Fishing Party',
         href: '/fishing/',
         platform: 'web',
-        art: { src: '/fishing/sprites/poster.png', width: 640, height: 360, alt: 'Fishing Party: łódka wśród skał, ryb i piranii przy piaszczystym brzegu, pixel art', pixel: true },
+        shot: { src: '/img/gry/ekrany/fishing-party.webp', width: 1280, height: 720 },
+        logo: { src: '/img/gry/loga/fishing-party.webp', alt: 'Logo Fishing Party: rybak w łódce i ryby, pixel art', pixel: true },
         bg: '#0a3a63',
         frame: '#f5b43c',
         tilt: -2.5
@@ -80,7 +89,8 @@ export const GAMES: Game[] = [
         title: 'Rope Climber',
         href: '/ropeclimber/',
         platform: 'web',
-        art: { src: '/ropeclimber/sprites/poster.png', width: 640, height: 360, alt: 'Rope Climber: postać na linie między wysokimi drzewami na tle nieba, pixel art', pixel: true },
+        shot: { src: '/img/gry/ekrany/rope-climber.webp', width: 540, height: 720 },
+        logo: { src: '/img/gry/loga/rope-climber.webp', alt: 'Logo Rope Climber: postać z hakiem przy drzewie, pixel art', pixel: true },
         bg: '#27416e',
         frame: '#a8dc8c',
         tilt: 2
@@ -90,7 +100,8 @@ export const GAMES: Game[] = [
         title: 'Trybka i Ogród Rdzy',
         href: '/trybka/',
         platform: 'web',
-        art: { src: '/trybka/okladka.png', width: 512, height: 512, alt: 'Trybka i Ogród Rdzy: mała postać z listkiem na głowie przed wielkim trybem' },
+        shot: { src: '/img/gry/ekrany/trybka.webp', width: 768, height: 480 },
+        logo: { src: '/img/gry/loga/trybka.webp', alt: 'Logo Trybki i Ogrodu Rdzy: mała postać z listkiem na głowie przed wielkim trybem' },
         bg: '#2a2018',
         frame: '#e8d7b5',
         tilt: -3
@@ -100,7 +111,8 @@ export const GAMES: Game[] = [
         title: 'Ostatni Oddech',
         href: '/glebina/',
         platform: 'web',
-        art: { src: '/glebina/logo.png', width: 1024, height: 1024, alt: 'Ostatni Oddech: pomarańczowa łódź podwodna z reflektorem w głębinie' },
+        shot: { src: '/img/gry/ekrany/ostatni-oddech.webp', width: 1280, height: 720 },
+        logo: { src: '/img/gry/loga/ostatni-oddech.webp', alt: 'Logo Ostatniego Oddechu: pomarańczowa łódź podwodna z reflektorem w głębinie' },
         bg: '#062536',
         frame: '#f2a93b',
         tilt: 3
@@ -110,7 +122,8 @@ export const GAMES: Game[] = [
         title: 'Błystka i Morze Atramentu',
         href: '/blystka/',
         platform: 'web',
-        art: { src: '/blystka/logo_512.png', width: 512, height: 512, alt: 'Błystka i Morze Atramentu: rybak w łódce z wędką, pod wodą świecąca przynęta' },
+        shot: { src: '/img/gry/ekrany/blystka.webp', width: 1280, height: 720 },
+        logo: { src: '/img/gry/loga/blystka.webp', alt: 'Logo Błystki i Morza Atramentu: rybak w łódce z wędką' },
         bg: '#153a37',
         frame: '#e9dfc7',
         tilt: -1.5

@@ -169,9 +169,45 @@
     }
 }
 
+/* Telefon: obie linie na całą szerokość, kaczka nad napisem.
+   Krój węższy (100% zamiast 125%), więc litery mogą być dużo wyższe.
+   Przy tej szerokości WOJTO ma ok. 3,85 em, a TEKA ok. 2,9 em. */
 @media (max-width: 700px) {
-    .word {
-        font-size: 19cqi;
+    /* Bez wysokości całego ekranu: napis stoi zaraz pod kaczką, a opis zaraz pod napisem. */
+    .hero {
+        min-height: 0;
+        padding-bottom: 72px;
+    }
+
+    .heroInner {
+        grid-template-rows: auto;
+        gap: 36px;
+    }
+
+    .hero .word {
+        position: relative;
+        align-self: start;
+        margin-top: calc(30cqi + 28px);
+        font-size: 25cqi;
+        font-stretch: 100%;
+        line-height: 0.86;
+        letter-spacing: -0.035em;
+    }
+
+    .secondLine {
+        display: block;
+        padding-left: 0;
+        font-size: 1.32em;
+    }
+
+    .duck {
+        position: absolute;
+        right: 0;
+        bottom: calc(100% + 28px);
+        width: 30cqi;
+        --gap: 8px;
+        --len: 14px;
+        rotate: 4deg;
     }
 
     .meta {
@@ -205,7 +241,8 @@
 .stats {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    /* minmax(0, ...): losowe znaki w trakcie animacji nie mogą przesuwać kresek. */
+    grid-template-columns: minmax(0, 1.4fr) repeat(3, minmax(0, 1fr));
     margin-top: clamp(32px, 5vw, 72px);
     border-top: 1px solid var(--line);
 }
@@ -235,6 +272,7 @@
     font-size: clamp(2.75rem, 5vw, 5.5rem);
     line-height: 1;
     letter-spacing: -0.02em;
+    font-variant-numeric: tabular-nums;
 }
 
 .stats div:first-child dd {
@@ -248,7 +286,7 @@
     }
 
     .stats {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .stats div:first-child {
@@ -569,6 +607,11 @@
     transform: translateY(-5vh);
 }
 
+/* Pionowy zrzut (Rope Climber): wąska karta, żeby nie wystawała poza ekran. */
+.cart[data-tall] {
+    width: clamp(200px, 17vw, 300px);
+}
+
 .cartTop {
     display: flex;
     justify-content: space-between;
@@ -584,11 +627,10 @@
     --gap: 10px;
 }
 
+/* Zrzut z gry w swoich proporcjach: półka ma przez to karty różnej wysokości. */
 .cover img {
     width: 100%;
-    aspect-ratio: 16 / 10;
-    object-fit: cover;
-    object-position: var(--focus, 50% 50%);
+    height: auto;
     background: var(--graphite);
     filter: grayscale(0.85) contrast(1.05);
     transition: filter 0.5s ease, transform 0.6s var(--ease);
@@ -601,6 +643,13 @@
 .cart:hover .cover img {
     filter: none;
     transform: rotate(var(--tilt));
+}
+
+/* Na dotyku nie ma najechania, więc zrzuty od razu są w kolorze. */
+@media (hover: none) {
+    .cover img {
+        filter: none;
+    }
 }
 
 .cartTitle {
@@ -623,6 +672,10 @@
     .cart:nth-child(n) {
         width: min(78vw, 360px);
         transform: none;
+    }
+
+    .cart[data-tall] {
+        width: min(48vw, 220px);
     }
 }
 

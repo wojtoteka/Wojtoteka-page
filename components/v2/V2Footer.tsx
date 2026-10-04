@@ -1,10 +1,39 @@
 import Link from 'next/link';
 import type { CSSProperties } from 'react';
+import { getGithubStats } from '@/lib/github';
+import { plural } from '@/lib/plural';
 import { PROFILES } from '@/lib/profile';
 import { Marquee } from './Marquee';
 import styles from './V2Footer.module.css';
 
-const TICKER = ['Strony internetowe', 'Front-end i back-end', 'Projekty na GitHubie', 'Formularz kontaktowy przez API', 'Gry w przeglądarce', 'Bot na Discorda'];
+interface Tick {
+    /** Liczba wyróżniona na żółto przed tekstem. */
+    n?: number | string;
+    text: string;
+}
+
+/**
+ * Pas nad stopką: na zmianę to, czym się zajmuję, i liczby z GitHuba.
+ */
+async function ticker(): Promise<Tick[]> {
+    const gh = await getGithubStats();
+    const [first, second] = gh.languages;
+    const ticks: Tick[] = [
+        { text: 'Strony internetowe' },
+        { n: gh.contributions, text: `${plural(gh.contributions, ['kontrybucja', 'kontrybucje', 'kontrybucji'])} na GitHubie w ostatnim roku` },
+        { text: 'Gry w przeglądarce' },
+        { n: gh.repos, text: plural(gh.repos, ['publiczne repozytorium', 'publiczne repozytoria', 'publicznych repozytoriów']) },
+        { text: 'Front-end i back-end' },
+        { text: 'Boty na Discorda' },
+        { text: 'Formularz kontaktowy przez API' },
+        { text: 'Aplikacje na Androida' }
+    ];
+    if (first && second) ticks.push({ text: `Najczęściej ${first.name} i ${second.name}` });
+    if (gh.bestDay) ticks.push({ n: gh.bestDay.count, text: `${plural(gh.bestDay.count, ['kontrybucja', 'kontrybucje', 'kontrybucji'])} jednego dnia` });
+    if (gh.longestStreak > 1) ticks.push({ n: gh.longestStreak, text: 'dni programowania z rzędu' });
+    ticks.push({ text: `Na GitHubie od ${gh.since}` });
+    return ticks;
+}
 
 const COLUMNS = [
     {
@@ -21,7 +50,7 @@ const COLUMNS = [
         links: [
             { href: '/RoyalCasinoBot', label: 'RoyalCasino Bot' },
             { href: '/inne/litho', label: 'Litho Studio' },
-            { href: 'https://kajet.wojtoteka.ovh/download', label: 'Kajet', external: true },
+            { href: 'https://kajet.wojtoteka.ovh', label: 'Kajet', external: true },
             { href: 'https://rivox.wojtoteka.ovh/', label: 'Rivox', external: true }
         ]
     },
@@ -51,15 +80,16 @@ const COLUMNS = [
     }
 ];
 
-export function V2Footer() {
+export async function V2Footer() {
     const year = new Date().getFullYear();
+    const ticks = await ticker();
 
     return (
         <footer className={styles.footer}>
-            <Marquee className={styles.ticker} time={36}>
-                {TICKER.map(item => (
-                    <span key={item} className={styles.tick}>
-                        <span className={styles.slash}>//</span> {item}
+            <Marquee className={styles.ticker} time={70} pauseOnHover>
+                {ticks.map(tick => (
+                    <span key={tick.text} className={styles.tick}>
+                        <span className={styles.slash}>//</span> {tick.n !== undefined && <b className={styles.tickNum}>{tick.n}</b>} {tick.text}
                     </span>
                 ))}
             </Marquee>

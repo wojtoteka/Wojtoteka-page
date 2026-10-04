@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import { Icon } from '@/components/Icon';
 import { ReloadButton } from '@/components/site/ReloadButton';
 import { AutoRefresh } from '@/components/site/AutoRefresh';
 import { StatusAnnouncementCard } from '@/components/site/StatusAnnouncementCard';
+import { Scramble } from '@/components/v2/Scramble';
+import { SplitText } from '@/components/v2/SplitText';
 import { getAnnouncementsFor } from '@/lib/site';
 import { plural } from '@/lib/client/format';
 import { getStatus, isConfigured, type StatusDay, type StatusLoad, type StatusMonitor, type StatusSnapshot } from '@/lib/hetrix';
@@ -20,7 +23,6 @@ const TZ = 'Europe/Warsaw';
 const DAYS = 30;
 const timeFmt = new Intl.DateTimeFormat('pl-PL', { hour: '2-digit', minute: '2-digit', timeZone: TZ });
 const whenFmt = new Intl.DateTimeFormat('pl-PL', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: TZ });
-const dayFmt = new Intl.DateTimeFormat('pl-PL', { day: 'numeric', month: 'short', timeZone: 'UTC' });
 const longDayFmt = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
 const percentFmt = new Intl.NumberFormat('pl-PL', { style: 'percent', maximumFractionDigits: 2 });
 
@@ -33,8 +35,8 @@ const STATE_LABEL: Record<StatusMonitor['state'], string> = {
 
 const time = (unix: number) => timeFmt.format(unix * 1000);
 const when = (unix: number) => whenFmt.format(unix * 1000);
-const day = (date: string) => dayFmt.format(new Date(`${date}T12:00:00Z`));
 const percent = (value: number) => percentFmt.format(value / 100);
+const pad = (n: number) => String(n).padStart(2, '0');
 
 /** "46 s", "2 min 46 s", "1 godz. 5 min", "2 dni 3 godz." */
 function duration(seconds: number): string {
@@ -90,7 +92,7 @@ function dayTone(d: StatusDay): string {
 
 /** Dymek nad dniem: data, dostępność i liczba przerw. Przy krawędziach paska wyrównany do brzegu. */
 function DayTip({ d, index, total }: { d: StatusDay; index: number; total: number }) {
-    const edge = index < 4 ? 'start' : index >= total - 4 ? 'end' : undefined;
+    const edge = index < 6 ? 'start' : index >= total - 6 ? 'end' : undefined;
     return (
         <span className={styles.tip} data-edge={edge}>
             <span className={styles.tipDate}>{longDayFmt.format(new Date(`${d.date}T12:00:00Z`))}</span>
@@ -111,40 +113,43 @@ function Load({ load }: { load: StatusLoad }) {
     return (
         <div className={styles.load} data-high={load.percent >= 85 || undefined}>
             <p className={styles.loadLabel}>
-                <Icon name="memory" size={22} />
+                <Icon name="memory" size={18} />
                 Obciążenie
             </p>
-            <div className={styles.meter} aria-hidden="true">
-                <span style={{ width: `${Math.min(100, load.percent)}%` }} />
-            </div>
             <p className={styles.loadValue}>
                 {used}%
                 {old && <span className={styles.loadNote}> (dane z {time(load.at)})</span>}
             </p>
+            <div className={styles.meter} aria-hidden="true">
+                <span style={{ transform: `scaleX(${Math.min(100, load.percent) / 100})` }} />
+            </div>
         </div>
     );
 }
 
-function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
+/** Karta serwera: stan, dostępność z 30 dni, obciążenie i pasek dni. */
+function MonitorCard({ monitor, index }: { monitor: StatusMonitor; index: number }) {
     const broken = monitor.days.filter(d => d.downtimes > 0).length;
     const missing = Math.max(0, DAYS - monitor.days.length);
     return (
-        <li className={styles.monitor} data-state={monitor.state}>
-            <div className={styles.monitorHead}>
-                <div>
-                    <h3 className={styles.name}>{monitor.name}</h3>
-                    {monitor.region && <p className={styles.region}>{monitor.region}</p>}
-                </div>
-                <div className={styles.state}>
-                    <p className={styles.stateLabel}>
-                        <span className={styles.dot} aria-hidden="true" />
-                        {STATE_LABEL[monitor.state]}
-                    </p>
-                    <p className={styles.uptime}>
-                        {monitor.uptime30 !== null ? `${percent(monitor.uptime30)} z ${monitor.days.length || DAYS} dni` : 'Brak danych'}
-                    </p>
-                </div>
+        <li className={`v2-frame ${styles.monitor}`} data-state={monitor.state} data-reveal style={{ '--rd': `${index * 90}ms` } as CSSProperties}>
+            <div className={styles.monitorTop}>
+                <span>{pad(index + 1)}</span>
+                <p className={styles.stateLabel}>
+                    <span className={styles.dot} aria-hidden="true" />
+                    {STATE_LABEL[monitor.state]}
+                </p>
             </div>
+
+            <div>
+                <h3 className={styles.name}>{monitor.name}</h3>
+                {monitor.region && <p className={styles.region}>{monitor.region}</p>}
+            </div>
+
+            <p className={styles.uptime}>
+                <span className={styles.uptimeNum}>{monitor.uptime30 !== null ? percent(monitor.uptime30) : 'Brak danych'}</span>
+                {monitor.uptime30 !== null && <span>dostępność z {monitor.days.length || DAYS} dni</span>}
+            </p>
 
             {monitor.load && <Load load={monitor.load} />}
 
@@ -163,9 +168,7 @@ function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
                     <figcaption className={styles.axis}>
                         <span>{DAYS} dni temu</span>
                         <span className="sr-only">
-                            {broken
-                                ? `Przerwy w ${broken} z ${monitor.days.length} dni.`
-                                : `Bez przerw przez ${monitor.days.length} dni.`}
+                            {broken ? `Przerwy w ${broken} z ${monitor.days.length} dni.` : `Bez przerw przez ${monitor.days.length} dni.`}
                         </span>
                         <span>dziś</span>
                     </figcaption>
@@ -175,40 +178,58 @@ function MonitorRow({ monitor }: { monitor: StatusMonitor }) {
     );
 }
 
-function Incidents({ snapshot }: { snapshot: StatusSnapshot }) {
+function Incidents({ snapshot, label }: { snapshot: StatusSnapshot; label: string }) {
     return (
         <section className={styles.incidents} aria-labelledby="przerwy">
-            <h2 id="przerwy">Ostatnie przerwy</h2>
+            <div className={styles.sectionHead} data-reveal>
+                <p className="v2-label">
+                    <b>{label}</b> Historia
+                </p>
+                <h2 id="przerwy" className={styles.h2}>
+                    Ostatnie <span className="v2-outline">przerwy</span>
+                </h2>
+            </div>
             {snapshot.incidents.length === 0 ? (
-                <p className="muted">Nie było żadnych przerw.</p>
+                <p className={styles.empty}>Nie było żadnych przerw.</p>
             ) : (
-                <div className="table-wrap">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th scope="col">Początek</th>
-                                <th scope="col">Serwer</th>
-                                <th scope="col">Czas trwania</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {snapshot.incidents.map(incident => (
-                                <tr key={incident.id}>
-                                    <td>{when(incident.start)}</td>
-                                    <td>
-                                        {incident.monitor}
-                                        {incident.maintenance && <span className="muted"> (prace techniczne)</span>}
-                                    </td>
-                                    <td>
-                                        {incident.end ? duration(incident.end - incident.start) : <strong className={styles.ongoing}>trwa</strong>}
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <ol role="list" className={styles.incidentList} data-reveal>
+                    {snapshot.incidents.map(incident => (
+                        <li key={incident.id} className={styles.incident}>
+                            <span className={styles.incidentWhen}>{when(incident.start)}</span>
+                            <span className={styles.incidentServer}>
+                                {incident.monitor}
+                                {incident.maintenance && <span className={styles.incidentTag}>Prace techniczne</span>}
+                            </span>
+                            <span className={styles.incidentTime}>
+                                {incident.end ? duration(incident.end - incident.start) : <strong className={styles.ongoing}>Trwa</strong>}
+                            </span>
+                        </li>
+                    ))}
+                </ol>
             )}
         </section>
+    );
+}
+
+/** Nagłówek jak na innych podstronach: pierwsze słowo pełne, reszta obrysem. */
+function Head({ title, line, tone, note }: { title: string; line: string; tone?: string; note: string }) {
+    const [first, ...others] = title.toUpperCase().split(' ');
+    const rest = others.join(' ');
+    return (
+        <header className={styles.head} data-tone={tone}>
+            <p className="v2-label">
+                <b>[STATUS]</b>
+                <Scramble text={note} delay={200} />
+            </p>
+            <h1 className={styles.title} aria-label={title}>
+                {tone && <span className={styles.mark} aria-hidden="true" />}
+                <span className={styles.titleText}>
+                    <SplitText text={first} />
+                    {rest && <SplitText text={rest} start={first.length} className={`v2-outline ${styles.titleSecond}`} />}
+                </span>
+            </h1>
+            <p className={styles.lead}>{line}</p>
+        </header>
     );
 }
 
@@ -224,14 +245,8 @@ export default async function StatusPage() {
         return (
             <div className="wrap">
                 <AutoRefresh seconds={60} />
-                <header className="page-head">
-                    <h1 className="page-title">Status usług</h1>
-                </header>
+                <Head title="Status usług" line="Brak konfiguracji. Dodaj HETRIX_KEY (klucz API v3) do pliku .env, a tu pojawi się stan serwerów." note="Brak danych" />
                 {notices}
-                <p className="notice notice-error">
-                    <strong>Brak konfiguracji. </strong>
-                    Dodaj HETRIX_KEY (klucz API v3) do pliku .env, a tu pojawi się stan serwerów.
-                </p>
             </div>
         );
     }
@@ -244,10 +259,7 @@ export default async function StatusPage() {
         return (
             <div className="wrap">
                 <AutoRefresh seconds={60} />
-                <header className="page-head">
-                    <h1 className="page-title">Status usług</h1>
-                    <p className="lead">Nie udało się pobrać danych z monitoringu. Spróbuj za minutę.</p>
-                </header>
+                <Head title="Status usług" line="Nie udało się pobrać danych z monitoringu. Spróbuj za minutę." note="Brak połączenia" />
                 {notices}
                 <ReloadButton label="Sprawdź ponownie" />
             </div>
@@ -261,20 +273,21 @@ export default async function StatusPage() {
     });
     const summary = monitors.length ? verdict(monitors) : null;
 
+    const measured = monitors.filter(m => m.uptime30 !== null);
+    const average = measured.length ? measured.reduce((sum, m) => sum + (m.uptime30 ?? 0), 0) / measured.length : null;
+    const monthAgo = snapshot.fetchedAt / 1000 - DAYS * 86400;
+    const recent = snapshot.incidents.filter(i => i.start >= monthAgo).length;
+
     return (
         <div className="wrap">
             <AutoRefresh seconds={60} />
 
-            <header className={`page-head ${styles.head}`} data-tone={summary?.tone}>
-                <h1 className={`page-title ${styles.verdict}`}>
-                    {summary && <span className={styles.mark} aria-hidden="true" />}
-                    <span>{summary?.title ?? 'Status usług'}</span>
-                </h1>
-                <p className="lead">
-                    {summary ? `${summary.line} ` : 'Nie ma jeszcze żadnych serwerów do pokazania. '}
-                    Dane z {time(snapshot.fetchedAt / 1000)}.
-                </p>
-            </header>
+            <Head
+                title={summary?.title ?? 'Status usług'}
+                line={`${summary ? summary.line : 'Nie ma jeszcze żadnych serwerów do pokazania.'} Strona odświeża się sama co minutę.`}
+                tone={summary?.tone}
+                note={`Dane z ${time(snapshot.fetchedAt / 1000)}`}
+            />
 
             {notices}
 
@@ -290,26 +303,52 @@ export default async function StatusPage() {
             )}
 
             {monitors.length > 0 && (
-                <section aria-labelledby="serwery">
-                    <h2 id="serwery" className="sr-only">
-                        Serwery
-                    </h2>
-                    <ul role="list" className={styles.monitors}>
-                        {monitors.map(monitor => (
-                            <MonitorRow key={monitor.id} monitor={monitor} />
-                        ))}
-                    </ul>
-                    <p className={styles.legend}>
-                        <span className={styles.legendItem}><span className={styles.dayUp} aria-hidden="true" />bez przerw</span>
-                        <span className={styles.legendItem}><span className={styles.dayDown} aria-hidden="true" />była przerwa</span>
-                        {monitors.some(m => m.days.length > 0 && m.days.length < DAYS) && (
-                            <span className={styles.legendItem}><span className={styles.dayNone} aria-hidden="true" />brak danych z tego dnia</span>
-                        )}
-                    </p>
-                </section>
+                <>
+                    <dl className={styles.stats} data-reveal>
+                        <div>
+                            <dt>Serwery</dt>
+                            <dd>{pad(monitors.length)}</dd>
+                        </div>
+                        <div>
+                            <dt>Średnia dostępność</dt>
+                            <dd>{average !== null ? percent(average) : 'Brak'}</dd>
+                        </div>
+                        <div>
+                            <dt>Przerwy w {DAYS} dni</dt>
+                            <dd>{pad(recent)}</dd>
+                        </div>
+                        <div>
+                            <dt>Ostatni pomiar</dt>
+                            <dd>{time(snapshot.fetchedAt / 1000)}</dd>
+                        </div>
+                    </dl>
+
+                    <section className={styles.servers} aria-labelledby="serwery">
+                        <div className={styles.sectionHead} data-reveal>
+                            <p className="v2-label">
+                                <b>[01]</b> Serwery
+                            </p>
+                            <h2 id="serwery" className={styles.h2}>
+                                Ostatnie <span className="v2-outline">{DAYS} dni</span>
+                            </h2>
+                        </div>
+                        <ul role="list" className={styles.monitors}>
+                            {monitors.map((monitor, i) => (
+                                <MonitorCard key={monitor.id} monitor={monitor} index={i} />
+                            ))}
+                        </ul>
+                        <p className={styles.legend}>
+                            <span className={styles.legendItem}><span className={styles.dayUp} aria-hidden="true" />Bez przerw</span>
+                            <span className={styles.legendItem}><span className={styles.dayDown} aria-hidden="true" />Była przerwa</span>
+                            {monitors.some(m => m.days.length > 0 && m.days.length < DAYS) && (
+                                <span className={styles.legendItem}><span className={styles.dayNone} aria-hidden="true" />Brak danych z tego dnia</span>
+                            )}
+                        </p>
+                    </section>
+                </>
             )}
 
-            <Incidents snapshot={snapshot} />
+            <Incidents snapshot={snapshot} label={monitors.length > 0 ? '[02]' : '[01]'} />
         </div>
     );
 }

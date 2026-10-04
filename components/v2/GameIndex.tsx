@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import type { Game } from '@/lib/games';
 import styles from './GameIndex.module.css';
 
 /**
  * Spis gier jako lista wierszy. Po najechaniu na wiersz obok kursora
- * pojawia się okładka gry i płynnie za nim podąża.
+ * pojawia się zrzut z gry i płynnie za nim podąża. Na ekranach dotykowych
+ * zrzut jest małą miniaturką w samym wierszu.
  */
 export function GameIndex({ games }: { games: Game[] }) {
     const previewRef = useRef<HTMLDivElement>(null);
@@ -30,7 +31,7 @@ export function GameIndex({ games }: { games: Game[] }) {
 
         const onMove = (event: PointerEvent) => {
             target.x = event.clientX + 28;
-            target.y = event.clientY - 90;
+            target.y = event.clientY - 105;
             if (!started) {
                 started = true;
                 current.x = target.x;
@@ -46,6 +47,9 @@ export function GameIndex({ games }: { games: Game[] }) {
         };
     }, []);
 
+    // Ramka podglądu przyjmuje proporcje zrzutu, nad którym jest kursor.
+    const shot = active !== null ? games[active].shot : null;
+
     return (
         <div className={styles.index} onMouseLeave={() => setActive(null)}>
             <ol role="list" className={styles.list}>
@@ -58,23 +62,21 @@ export function GameIndex({ games }: { games: Game[] }) {
                             <span className={styles.arrow} aria-hidden="true">
                                 ↓
                             </span>
+                            <img src={game.shot.src} alt="" width={game.shot.width} height={game.shot.height} loading="lazy" className={styles.thumb} />
                         </a>
                     </li>
                 ))}
             </ol>
 
-            <div ref={previewRef} className={styles.preview} data-show={active !== null || undefined} aria-hidden="true">
+            <div
+                ref={previewRef}
+                className={styles.preview}
+                data-show={active !== null || undefined}
+                style={shot ? ({ '--ar': shot.width / shot.height } as CSSProperties) : undefined}
+                aria-hidden="true"
+            >
                 {games.map((game, i) => (
-                    <img
-                        key={game.slug}
-                        src={game.art.src}
-                        alt=""
-                        width={game.art.width}
-                        height={game.art.height}
-                        loading="lazy"
-                        data-on={active === i || undefined}
-                        className={game.art.pixel ? 'pixelated' : undefined}
-                    />
+                    <img key={game.slug} src={game.shot.src} alt="" width={game.shot.width} height={game.shot.height} loading="lazy" data-on={active === i || undefined} />
                 ))}
             </div>
         </div>

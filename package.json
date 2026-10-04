@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server/index.ts --dev",
+    "prebuild": "node -e \"require('node:fs').rmSync('.next/dev/types', { recursive: true, force: true })\"",
     "build": "node --require ./scripts/exfat-readlink.cjs node_modules/next/dist/bin/next build --webpack",
     "start": "tsx server/index.ts",
     "preview": "tsx server/index.ts --preview",

@@ -63,22 +63,23 @@
     transform: none;
 }
 
-/* ---------- Okładka przy kursorze ---------- */
+/* ---------- Zrzut z gry przy kursorze ---------- */
 
 .preview {
     position: fixed;
     left: 0;
     top: 0;
     z-index: 25;
-    width: 300px;
-    aspect-ratio: 16 / 10;
+    /* Stała wysokość, szerokość z proporcji zrzutu (--ar ustawia GameIndex). */
+    height: 210px;
+    width: calc(210px * var(--ar, 1.6));
     pointer-events: none;
     overflow: hidden;
     outline: 1px solid var(--volt);
     outline-offset: 6px;
     opacity: 0;
     scale: 0.7;
-    transition: opacity 0.25s ease, scale 0.35s var(--ease);
+    transition: opacity 0.25s ease, scale 0.35s var(--ease), width 0.35s var(--ease);
 }
 
 .preview[data-show] {
@@ -118,5 +119,45 @@
 
     .arrow {
         display: none;
+    }
+}
+
+/* ---------- Miniaturka w wierszu (tylko ekrany dotykowe) ---------- */
+
+.thumb {
+    display: none;
+}
+
+@media (hover: none) {
+    .row {
+        grid-template-columns: 32px minmax(0, 1fr) clamp(80px, 22vw, 160px);
+        align-items: center;
+        column-gap: 14px;
+    }
+
+    .title,
+    .platform {
+        grid-column: 2;
+    }
+
+    /* Najdłuższe jedno słowo (GLOOMCRAFT) ma ok. 9,3 em i musi się zmieścić obok miniaturki. */
+    .title {
+        font-size: clamp(1.25rem, 5.4vw, 2.75rem);
+    }
+
+    .arrow {
+        display: none;
+    }
+
+    .thumb {
+        display: block;
+        grid-column: 3;
+        grid-row: 1 / span 2;
+        width: 100%;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        background: var(--graphite);
+        outline: 1px solid var(--line-strong);
+        outline-offset: 3px;
     }
 }

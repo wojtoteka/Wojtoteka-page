@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
+import { DiscordSection } from '@/components/v2/DiscordSection';
+import { GithubActivity } from '@/components/v2/GithubActivity';
 import { LinkRows } from '@/components/v2/LinkRows';
 import { Marquee } from '@/components/v2/Marquee';
 import { Scramble } from '@/components/v2/Scramble';
@@ -140,11 +142,28 @@ export default async function HomePage() {
                 </div>
             </section>
 
+            {/* ---------- Linki ---------- */}
+            {links.length > 0 && (
+                <section id="linki" className={`wrap ${styles.links}`} aria-labelledby="links-title">
+                    <div className={styles.linksHead} data-reveal>
+                        <p className="v2-label">
+                            <b>[04]</b> Linki
+                        </p>
+                        <h2 id="links-title" className={styles.h2}>
+                            Wszystko <span className="v2-outline">w jednym</span> miejscu
+                        </h2>
+                    </div>
+                    <div data-reveal>
+                        <LinkRows links={links} />
+                    </div>
+                </section>
+            )}
+
             {/* ---------- Projekty z GitHuba ---------- */}
             <section className={`wrap ${styles.projects}`} aria-labelledby="projects-title">
                 <div className={styles.projectsHead} data-reveal>
                     <p className="v2-label">
-                        <b>[04]</b> Wybrane projekty
+                        <b>[05]</b> Wybrane projekty
                     </p>
                     <h2 id="projects-title" className={styles.h2}>
                         Kod <span className="v2-outline">na GitHubie</span>
@@ -191,22 +210,8 @@ export default async function HomePage() {
                 </ol>
             </section>
 
-            {/* ---------- Linki ---------- */}
-            {links.length > 0 && (
-                <section id="linki" className={`wrap ${styles.links}`} aria-labelledby="links-title">
-                    <div className={styles.linksHead} data-reveal>
-                        <p className="v2-label">
-                            <b>[05]</b> Linki
-                        </p>
-                        <h2 id="links-title" className={styles.h2}>
-                            Wszystko <span className="v2-outline">w jednym</span> miejscu
-                        </h2>
-                    </div>
-                    <div data-reveal>
-                        <LinkRows links={links} />
-                    </div>
-                </section>
-            )}
+            {/* ---------- Rok na GitHubie ---------- */}
+            <GithubActivity label="[06]" />
 
             {/* ---------- Półka z grami ---------- */}
             <section className={styles.shelf} aria-labelledby="shelf-title">
@@ -214,7 +219,7 @@ export default async function HomePage() {
                     head={
                         <div className={`wrap ${styles.shelfHead}`}>
                             <p className="v2-label">
-                                <b>[06]</b> Na półce
+                                <b>[07]</b> Na półce
                             </p>
                             <h2 id="shelf-title" className={styles.h2}>
                                 Gry
@@ -230,6 +235,7 @@ export default async function HomePage() {
                             key={game.slug}
                             href={`/gry#${game.slug}`}
                             className={styles.cart}
+                            data-tall={game.shot.height > game.shot.width || undefined}
                             style={{ '--frame': game.frame, '--tilt': `${game.tilt}deg` } as CSSProperties}
                         >
                             <span className={styles.cartTop}>
@@ -239,15 +245,7 @@ export default async function HomePage() {
                                 <span>{game.platform === 'web' ? 'Przeglądarka' : 'Android'}</span>
                             </span>
                             <span className={`v2-frame ${styles.cover}`}>
-                                <img
-                                    src={game.art.src}
-                                    alt=""
-                                    width={game.art.width}
-                                    height={game.art.height}
-                                    loading="lazy"
-                                    className={game.art.pixel ? 'pixelated' : undefined}
-                                    style={game.art.focus ? ({ '--focus': game.art.focus } as CSSProperties) : undefined}
-                                />
+                                <img src={game.shot.src} alt="" width={game.shot.width} height={game.shot.height} loading="lazy" />
                             </span>
                             <span className={styles.cartTitle}>{game.title}</span>
                         </Link>
@@ -255,11 +253,14 @@ export default async function HomePage() {
                 </Shelf>
             </section>
 
+            {/* ---------- Discord na żywo ---------- */}
+            <DiscordSection label="[08]" />
+
             {/* ---------- Kontakt ---------- */}
             <section className={styles.contact} aria-label="Kontakt">
                 <div className="wrap">
                     <p className="v2-label">
-                        <b>[07]</b> Kontakt
+                        <b>[09]</b> Kontakt
                     </p>
                 </div>
                 <Link href="/kontakt" className={styles.contactLink} aria-label="Napisz do mnie: przejdź do formularza kontaktowego">

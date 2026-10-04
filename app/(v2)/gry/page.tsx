@@ -55,13 +55,13 @@ function Stage({ game, index }: { game: Game; index: number }) {
                 <figure className={styles.art}>
                     <span className={`v2-frame ${styles.artFrame}`}>
                         <img
-                            src={game.art.src}
-                            alt={game.art.alt}
-                            width={game.art.width}
-                            height={game.art.height}
+                            src={game.logo.src}
+                            alt={game.logo.alt}
+                            width={512}
+                            height={512}
                             loading="lazy"
                             decoding="async"
-                            className={game.art.pixel ? 'pixelated' : undefined}
+                            className={game.logo.pixel ? 'pixelated' : undefined}
                         />
                     </span>
                 </figure>

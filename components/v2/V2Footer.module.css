@@ -25,6 +25,15 @@
     color: var(--volt);
 }
 
+.tickNum {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: 1.15em;
+    letter-spacing: 0.02em;
+    color: var(--chalk);
+}
+
 /* ---------- Kontakt i kolumny ---------- */
 
 .top {
