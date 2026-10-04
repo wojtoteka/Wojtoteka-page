@@ -42,7 +42,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="pl" className={`${shoulders.variable} ${schibsted.variable}`}>
+        <html lang="pl" data-scroll-behavior="smooth" className={`${shoulders.variable} ${schibsted.variable}`}>
             <body>
                 {children}
             </body>
