@@ -267,8 +267,7 @@
 
 /* ---------- Teraz gram / słucham ---------- */
 
-.activities,
-.idle {
+.activities {
     margin-top: clamp(28px, 4cqi, 44px);
     border-top: 1px solid var(--line);
 }
@@ -354,13 +353,6 @@
     background: var(--volt);
     transform-origin: left;
     transition: transform 1s linear;
-}
-
-.idle {
-    display: grid;
-    gap: 6px;
-    padding-top: 22px;
-    color: var(--ash);
 }
 
 .fallback {

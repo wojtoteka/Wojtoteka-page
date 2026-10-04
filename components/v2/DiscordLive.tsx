@@ -182,17 +182,12 @@ export function DiscordLive({ initial, href }: { initial: DiscordProfile | null;
                     <span className={status === 'offline' ? 'v2-outline' : undefined}>{STATUS_LABELS[status]}</span>
                 </p>
 
-                {profile.activities.length > 0 ? (
+                {profile.activities.length > 0 && (
                     <ul role="list" className={styles.activities}>
                         {profile.activities.map((activity, i) => (
                             <Activity key={activity.title + i} activity={activity} now={now} />
                         ))}
                     </ul>
-                ) : (
-                    <p className={styles.idle}>
-                        <span className={styles.activityLabel}>Aktywność</span>
-                        Teraz nic nie gram i niczego nie słucham.
-                    </p>
                 )}
             </div>
         </div>
