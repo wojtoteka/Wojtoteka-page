@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import type { CSSProperties } from 'react';
 import { Scramble } from '@/components/v2/Scramble';
 import { SplitText } from '@/components/v2/SplitText';
 import { ShortenerForm } from './ShortenerForm';
 import styles from './url.module.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
     title: 'Skracacz linków',
     description: 'Wklej długi adres i dostań krótki link na wojtoteka.ovh. Możesz ustawić, po jakim czasie link wygaśnie.',
-    alternates: { canonical: '/url' }
-};
+    path: '/url',
+    image: 'url',
+});
 
 export default function ShortenerPage() {
     return (

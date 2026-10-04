@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import type { CSSProperties } from 'react';
 import { GameStack } from '@/components/games/GameStack';
 import { GameIndex } from '@/components/v2/GameIndex';
@@ -7,11 +8,12 @@ import { SplitText } from '@/components/v2/SplitText';
 import { ANDROID_GAMES, GAMES, WEB_GAMES, type Game } from '@/lib/games';
 import styles from './gry.module.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
     title: 'Gry',
     description: 'Gry Wojtoteka: Night Drive, Przerębel, GloomCraft, Fishing Party, Ostatni Oddech i inne. Większość uruchomisz za darmo w przeglądarce.',
-    alternates: { canonical: '/gry' }
-};
+    path: '/gry',
+    image: 'gry',
+});
 
 const pad = (n: number) => String(n).padStart(2, '0');
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { CopyButton } from '@/components/CopyButton';
@@ -8,11 +9,12 @@ import { SplitText } from '@/components/v2/SplitText';
 import { ContactForm } from './ContactForm';
 import styles from './kontakt.module.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
     title: 'Kontakt',
     description: 'Napisz do Wojtoteka przez formularz albo na kontakt@wojtoteka.ovh. Odpowiedź przychodzi na adres email, który podasz.',
-    alternates: { canonical: '/kontakt' }
-};
+    path: '/kontakt',
+    image: 'kontakt',
+});
 
 // Klucz strony hCaptcha jest publiczny. Zmienna z .env ma pierwszeństwo,
 // a wartość zapasowa to klucz, którego strona używała dotąd.

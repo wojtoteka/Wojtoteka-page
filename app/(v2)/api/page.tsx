@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import Link from 'next/link';
 import { CodeBlock } from '@/components/docs/CodeBlock';
 import { DocsLayout, type TocItem } from '@/components/docs/DocsLayout';
 import { ApiTester } from './ApiTester';
 import styles from './api.module.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
     title: 'API formularza kontaktowego',
     description: 'Wstaw formularz kontaktowy na swoją stronę. Wiadomości trafią do Twojego panelu na wojtoteka.ovh. Endpoint, pola, limity i przykłady.',
-    alternates: { canonical: '/api' }
-};
+    path: '/api',
+    image: 'api',
+});
 
 const ENDPOINT = 'https://wojtoteka.ovh/api/v1/contact';
 

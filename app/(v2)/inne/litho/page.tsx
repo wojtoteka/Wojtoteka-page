@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import { Gallery, type Shot } from '@/components/Gallery';
 import { Icon } from '@/components/Icon';
 import { scanLitho, type LithoFile } from '@/lib/litho';
@@ -6,11 +7,12 @@ import styles from './litho.module.css';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
     title: 'Litho Studio: pobierz',
     description: 'Litho Studio to program do budowania stron internetowych myszką. Zmiany trafiają od razu do zwykłych plików na dysku. Pobierz wersję na Windows albo Linux.',
-    alternates: { canonical: '/inne/litho' }
-};
+    path: '/inne/litho',
+    image: 'home',
+});
 
 const SHOTS: Shot[] = [
     { src: '/inne/litho/menu.png', alt: 'Ekran startowy Litho Studio', caption: 'Ekran startowy', width: 1542, height: 947 },

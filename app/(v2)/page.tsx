@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { SITE_NAME, SITE_URL, pageMeta } from '@/lib/seo';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { DiscordSection } from '@/components/v2/DiscordSection';
@@ -16,11 +17,13 @@ import styles from './home.module.css';
 
 export const dynamic = 'force-dynamic';
 
-export const metadata: Metadata = {
-    title: { absolute: 'Wojtoteka: strony internetowe, projekty i kontakt' },
-    description: 'Na co dzień zajmuję się stronami internetowymi. Tu znajdziesz moje projekty z GitHuba, gry w przeglądarce i kontakt.',
-    alternates: { canonical: '/' }
-};
+export const metadata: Metadata = pageMeta({
+    title: 'Wojtoteka: strony internetowe, gry i boty na Discorda',
+    description: 'Strony internetowe od wyglądu po serwer i bazę danych, gry w przeglądarce, bot RoyalCasino na Discorda i projekty z GitHuba. Zobacz, co robię, i napisz do mnie.',
+    path: '/',
+    image: 'home',
+    absoluteTitle: true,
+});
 
 const ABOUT =
     'Cześć, jestem Wojtek i na co dzień zajmuję się stronami internetowymi. Robię je od wyglądu aż po serwer i bazę danych.';
@@ -31,12 +34,40 @@ const STACK_B = STACK.slice(7);
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
+// Dane dla wyszukiwarek: kim jestem i jaka to strona (schema.org, JSON-LD).
+const JSON_LD = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+        {
+            '@type': 'WebSite',
+            '@id': `${SITE_URL}/#website`,
+            url: SITE_URL,
+            name: SITE_NAME,
+            inLanguage: 'pl-PL',
+            publisher: { '@id': `${SITE_URL}/#person` }
+        },
+        {
+            '@type': 'Person',
+            '@id': `${SITE_URL}/#person`,
+            name: 'Wojtek',
+            alternateName: SITE_NAME,
+            url: SITE_URL,
+            image: `${SITE_URL}/img/logo.png`,
+            jobTitle: 'Full-stack developer',
+            knowsAbout: STACK.map(item => item.name),
+            sameAs: [PROFILES.github, PROFILES.discord, PROFILES.googlePlay]
+        }
+    ]
+}).replace(/</g, '\\u003c');
+
 export default async function HomePage() {
     const [settings, links] = await Promise.all([getSettings(), getActiveBioLinks()]);
     const tagline = settings.tagline?.trim() || DEFAULT_TAGLINE;
 
     return (
         <>
+            <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON_LD }} />
+
             {/* ---------- Napis ---------- */}
             <section className={styles.hero} aria-labelledby="hero-title">
                 <div className={`wrap ${styles.heroInner}`}>

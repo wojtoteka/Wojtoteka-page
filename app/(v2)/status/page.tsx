@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import type { CSSProperties } from 'react';
 import { Icon } from '@/components/Icon';
 import { ReloadButton } from '@/components/site/ReloadButton';
@@ -14,8 +15,12 @@ import styles from './status.module.css';
 export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
-    title: 'Status usług',
-    description: 'Stan serwerów wojtoteka.ovh: czy działają, ile zajmuje pamięć, jak wyglądały ostatnie 30 dni i kiedy były przerwy.',
+    ...pageMeta({
+        title: 'Status usług',
+        description: 'Stan serwerów wojtoteka.ovh: czy działają, ile zajmuje pamięć, jak wyglądały ostatnie 30 dni i kiedy były przerwy.',
+        path: '/status',
+        image: 'status'
+    }),
     robots: { index: false, follow: true }
 };
 

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { pageMeta } from '@/lib/seo';
 import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/Icon';
@@ -9,11 +10,12 @@ import { TypeCycle } from '@/components/v2/TypeCycle';
 import { WordReveal } from '@/components/v2/WordReveal';
 import styles from './royal.module.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMeta({
     title: 'RoyalCasino Bot',
     description: 'Bot na Discorda z 16 grami kasynowymi na wirtualną walutę: Blackjack, Poker, Ruletka, Slots, Crash i inne. Ekonomia, osiągnięcia, dzienne questy i rankingi.',
-    alternates: { canonical: '/RoyalCasinoBot' }
-};
+    path: '/RoyalCasinoBot',
+    image: 'royalcasinobot',
+});
 
 const INVITE = 'https://discord.com/oauth2/authorize?client_id=1432001189150593155&permissions=412317194240&integration_type=0&scope=bot';
 const VOTE = 'https://top.gg/bot/1432001189150593155/vote';
