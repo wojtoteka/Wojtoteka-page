@@ -21,6 +21,8 @@ export async function GithubActivity({ label }: { label: string }) {
     // Kalendarz zaczyna się od niedzieli, jak na GitHubie: pierwszy dzień trafia do swojego wiersza.
     const offset = gh.days.length ? new Date(`${gh.days[0].date}T00:00:00Z`).getUTCDay() : 0;
     const weeks = Math.ceil((gh.days.length + offset) / 7);
+    // Udział języka: jaki procent repozytoriów (z wykrytym językiem) jest w nim napisany.
+    const totalRepos = Math.max(1, gh.languages.reduce((sum, l) => sum + l.repos, 0));
     const maxRepos = Math.max(1, ...gh.languages.map(l => l.repos));
 
     return (
@@ -112,7 +114,8 @@ export async function GithubActivity({ label }: { label: string }) {
                                 <span className={styles.langName}>{lang.name}</span>
                                 <span className={styles.langBar} aria-hidden="true" />
                                 <span className={styles.langCount}>
-                                    {lang.repos} {plural(lang.repos, ['repozytorium', 'repozytoria', 'repozytoriów'])}
+                                    {Math.round((lang.repos / totalRepos) * 100)}%
+                                    <span className="sr-only"> repozytoriów</span>
                                 </span>
                             </li>
                         ))}

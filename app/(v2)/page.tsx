@@ -45,7 +45,7 @@ export default async function HomePage() {
                         <Scramble text="Strona główna" delay={300} />
                     </p>
 
-                    <h1 id="hero-title" className={styles.word} aria-label="Wojtoteka">
+                    <h1 id="hero-title" className={styles.word} aria-label="Wojtoteka" data-sweep style={{ '--first': 5, '--last': 8 } as CSSProperties}>
                         <SplitText text="WOJTO" />
                         <span className={styles.secondLine}>
                             <SplitText text="TEKA" start={5} className={`v2-outline ${styles.fill}`} />

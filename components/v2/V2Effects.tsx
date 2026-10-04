@@ -43,6 +43,29 @@ export function V2Effects() {
         };
     }, []);
 
+    // Napisy z [data-sweep] (TEKA, CASINO) zalewają się kolorem od strony, z której
+    // wjechała myszka, i gasną w stronę, w którą wyjechała.
+    useEffect(() => {
+        const side = (element: HTMLElement, x: number) => {
+            const box = element.getBoundingClientRect();
+            element.dataset.from = x > box.left + box.width / 2 ? 'right' : 'left';
+        };
+        const onOver = (event: PointerEvent) => {
+            const element = (event.target as Element).closest<HTMLElement>('[data-sweep]');
+            if (element && !element.contains(event.relatedTarget as Node | null)) side(element, event.clientX);
+        };
+        const onOut = (event: PointerEvent) => {
+            const element = (event.target as Element).closest<HTMLElement>('[data-sweep]');
+            if (element && !element.contains(event.relatedTarget as Node | null)) side(element, event.clientX);
+        };
+        document.addEventListener('pointerover', onOver);
+        document.addEventListener('pointerout', onOut);
+        return () => {
+            document.removeEventListener('pointerover', onOver);
+            document.removeEventListener('pointerout', onOut);
+        };
+    }, []);
+
     // Wjazd sekcji. Po zmianie strony szukamy nowych elementów.
     useEffect(() => {
         const root = document.querySelector<HTMLElement>('.v2');

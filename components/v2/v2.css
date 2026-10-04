@@ -164,6 +164,17 @@ html:has(.v2)::-webkit-scrollbar-corner {
     font-weight: 800;
 }
 
+/* Nagłówki, etykiety [01] i wielkie liczby to grafika, a nie tekst do zaznaczania:
+   zwykła strzałka zamiast kursora tekstowego. Linki w środku dalej mają rączkę. */
+.v2 :is(h1, h2, h3, dt, dd, .v2-label, .v2-line) {
+    cursor: default;
+}
+
+.v2 :is(h1, h2, h3, dd, .v2-label) :is(a, button),
+.v2 :is(a, button, label) :is(h1, h2, h3, dt, dd, .v2-label, .v2-line) {
+    cursor: pointer;
+}
+
 .v2 a:hover {
     text-decoration-color: var(--volt);
 }

@@ -42,7 +42,12 @@
 /* Najechanie na napis: kontur zalewa się żółtym, litera po literze. */
 .fill :global(.v2-char) {
     transition: color 0.35s ease, -webkit-text-stroke-color 0.35s ease;
-    transition-delay: calc((var(--i) - 5) * 60ms);
+    transition-delay: calc((var(--i) - var(--first)) * 60ms);
+}
+
+/* Myszka wjechała z prawej: zalewanie idzie od ostatniej litery (V2Effects ustawia data-from). */
+.word[data-from='right'] .fill :global(.v2-char) {
+    transition-delay: calc((var(--last) - var(--i)) * 60ms);
 }
 
 .word:hover .fill :global(.v2-char) {

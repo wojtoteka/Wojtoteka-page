@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import { Icon } from '@/components/Icon';
 import { Marquee } from '@/components/v2/Marquee';
@@ -110,7 +111,7 @@ export default function RoyalCasinoPage() {
                         <Scramble text="Bot na Discorda" delay={300} />
                     </p>
 
-                    <h1 id="royal-title" className={styles.word} aria-label="RoyalCasino Bot">
+                    <h1 id="royal-title" className={styles.word} aria-label="RoyalCasino Bot" data-sweep style={{ '--first': 5, '--last': 10 } as CSSProperties}>
                         <SplitText text="ROYAL" />
                         <span className={styles.secondLine}>
                             <SplitText text="CASINO" start={5} className={`v2-outline ${styles.fill}`} />

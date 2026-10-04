@@ -218,9 +218,11 @@
 }
 
 .langCount {
-    font-size: 0.75rem;
-    color: var(--ash);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--chalk);
     text-align: right;
+    font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 900px) {
