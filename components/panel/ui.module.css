@@ -42,7 +42,7 @@
     padding: clamp(18px, 2.4vw, 26px);
     margin-bottom: 36px;
     background: var(--graphite);
-    border-radius: 10px;
+    border-radius: 0;
 }
 
 .blockTitle {

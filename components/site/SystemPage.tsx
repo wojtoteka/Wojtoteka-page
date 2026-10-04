@@ -2,33 +2,36 @@ import type { CSSProperties } from 'react';
 import styles from './SystemPage.module.css';
 
 /**
- * Strona błędu lub przerwy: tekst z lewej, z prawej numer jako pusty
- * kontur z odrobiną wody na dnie.
- * Ten sam motyw wody co w napisie na stronie głównej.
+ * Strona przerwy (budowa, wkrótce) w nowym stylu: etykieta HUD, wielki kod
+ * konturem z linią skanu, pod nim tekst i przyciski. Ten sam motyw co 503.
  */
 export function SystemPage({
     code,
+    label,
     title,
     children,
     actions
 }: {
     code: string;
+    label: string;
     title: string;
     children: React.ReactNode;
     actions?: React.ReactNode;
 }) {
     return (
-        <div className={styles.system}>
-            <div className={`wrap ${styles.inner}`}>
-                <div className={styles.art} aria-hidden="true" style={{ '--chars': code.length } as CSSProperties}>
-                    <p className={styles.code}>{code}</p>
-                </div>
+        <div className={`wrap ${styles.page}`}>
+            <p className="v2-label">
+                <b>[{label}]</b> Wojtoteka
+            </p>
 
-                <div className={styles.copy}>
-                    <h1 className={`page-title ${styles.title}`}>{title}</h1>
-                    <div className={styles.text}>{children}</div>
-                    {actions && <div className={styles.actions}>{actions}</div>}
-                </div>
+            <p className={styles.code} aria-hidden="true" style={{ '--chars': code.length } as CSSProperties}>
+                {code}
+            </p>
+
+            <div className={styles.copy}>
+                <h1 className={styles.title}>{title}</h1>
+                <div className={styles.text}>{children}</div>
+                {actions && <div className={styles.actions}>{actions}</div>}
             </div>
         </div>
     );

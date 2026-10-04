@@ -22,7 +22,7 @@ export function LoginView({
                 </Link>
 
                 <div className={styles.formWrap}>
-                    <h1 className="page-title">{title}</h1>
+                    <h1 className={`page-title ${styles.title}`}>{title}</h1>
                     <p className="muted">{intro}</p>
                     {expired && <p className="notice">Sesja wygasła albo została zamknięta. Zaloguj się ponownie.</p>}
                     {children}
@@ -32,9 +32,16 @@ export function LoginView({
             </main>
 
             <div className={styles.artSide} aria-hidden="true">
-                <figure className={`ink-frame ${styles.duck}`}>
+                <p className={styles.ghost}>
+                    <span>PA</span>
+                    <span>NEL</span>
+                </p>
+                <figure className={`v2-frame ${styles.duck}`}>
                     <img src="/img/glogo.gif" alt="" width={220} height={220} />
                 </figure>
+                <p className={`v2-label ${styles.artLabel}`}>
+                    <b>[ / ]</b> Dostęp tylko po zalogowaniu
+                </p>
             </div>
         </div>
     );

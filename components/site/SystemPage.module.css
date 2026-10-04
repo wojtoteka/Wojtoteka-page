@@ -1,109 +1,72 @@
-.system {
-    overflow: clip;
-    padding-block: clamp(16px, 4vw, 56px) clamp(56px, 7vw, 104px);
-}
-
-/* Telefon: numer nad tekstem. Komputer: tekst z lewej, numer z prawej. */
-.inner {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: clamp(20px, 3vw, 40px);
-    align-items: center;
-}
-
-@media (min-width: 900px) {
-    .inner {
-        grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
-        min-height: min(70svh, 640px);
-    }
-
-    .art {
-        grid-column: 2;
-        grid-row: 1;
-    }
-
-    .copy {
-        grid-column: 1;
-        grid-row: 1;
-    }
-}
-
-/* ---------- Numer z wodą ---------- */
-
-/* Szerokość kolumny wyznacza rozmiar: jedna cyfra ma ok. 0,48 em. */
-.art {
-    position: relative;
+.page {
     container-type: inline-size;
+    display: grid;
+    gap: 24px;
+    padding-block: clamp(16px, 3vw, 40px) clamp(40px, 6vw, 80px);
 }
 
+/* Kod konturem, przez który przejeżdża żółta linia skanu. Rozmiar liczony
+   od szerokości kolumny i liczby znaków, więc "Wkrótce" też się mieści. */
 .code {
-    --water: 0.3em;
+    position: relative;
+    overflow: hidden;
     font-family: var(--font-display);
+    font-stretch: 125%;
     font-weight: 900;
-    font-size: min(calc(100cqi / (var(--chars) * 0.5)), 26rem);
-    line-height: 1;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
+    font-size: min(calc(100cqi / (var(--chars) * 0.86)), 30rem);
+    line-height: 0.82;
+    letter-spacing: -0.04em;
     white-space: nowrap;
-    user-select: none;
+    text-transform: uppercase;
     color: transparent;
-    -webkit-text-stroke: max(2px, 0.006em) var(--line-strong);
-    background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 24' preserveAspectRatio='none'%3E%3Cpath d='M0 14Q15 5 30 14T60 14T90 14T120 14V24H0Z' fill='%232fd3d0' fill-opacity='.22'/%3E%3Cpath d='M0 14Q15 5 30 14T60 14T90 14T120 14' fill='none' stroke='%232fd3d0' stroke-width='2.5'/%3E%3C/svg%3E"),
-        linear-gradient(color-mix(in oklab, var(--sea) 22%, transparent), color-mix(in oklab, var(--sea) 22%, transparent));
-    background-repeat: repeat-x, no-repeat;
-    background-size: 1.2em 0.1em, 100% var(--water);
-    background-position: left var(--drift, 0px) bottom var(--water), left 0 bottom 0;
-    -webkit-background-clip: text;
-    background-clip: text;
+    -webkit-text-stroke: max(2px, 0.008em) color-mix(in oklab, var(--chalk) 55%, var(--ink));
+    user-select: none;
 }
 
-@property --drift {
-    syntax: '<length>';
-    inherits: false;
-    initial-value: 0px;
+.code::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: var(--volt);
+    box-shadow: 0 0 24px 4px rgb(244 211 60 / 0.35);
+    animation: scan 3.2s ease-in-out infinite alternate;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .code {
-        animation: drift 5s linear 6;
-    }
-}
-
-@keyframes drift {
+@keyframes scan {
     to {
-        --drift: 1.2em;
+        transform: translateY(calc(0.82em - 2px));
     }
 }
-
-/* ---------- Tekst ---------- */
 
 .copy {
     display: grid;
-    gap: 22px;
+    gap: 18px;
     justify-items: start;
+    max-width: 760px;
 }
 
 .title {
-    max-width: 14ch;
+    font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+    /* Interlinia 1: ogonek Ą i Ę nie wchodzi w litery wiersza niżej. */
+    line-height: 1;
+    text-transform: uppercase;
 }
 
 .text {
     display: grid;
-    gap: 12px;
-    max-width: 48ch;
-    font-size: var(--step-1);
-    line-height: 1.5;
+    gap: 10px;
+    max-width: 52ch;
+    color: var(--ash);
 }
 
-.text p:not(:first-child) {
-    font-size: var(--step-0);
-    color: var(--ash);
+.text p:first-child {
+    color: var(--chalk);
 }
 
 .actions {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
-    margin-top: 6px;
+    margin-top: 8px;
 }

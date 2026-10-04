@@ -1,0 +1,177 @@
+.page {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 24px;
+    padding-block: clamp(16px, 3vw, 40px) clamp(40px, 6vw, 80px);
+}
+
+.page > :global(.v2-label) {
+    grid-column: 1 / -1;
+}
+
+/* ---------- 503 jako kontur, przez który przejeżdża linia skanu ---------- */
+
+.code {
+    position: relative;
+    grid-column: 1 / -1;
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: clamp(8rem, 34vw, 32rem);
+    line-height: 0.8;
+    letter-spacing: -0.05em;
+    margin-left: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: max(2px, 0.008em) color-mix(in oklab, var(--chalk) 55%, var(--ink));
+    user-select: none;
+    animation: flicker 5s steps(1) infinite;
+}
+
+/* Pozioma żółta kreska zjeżdża z góry na dół i wraca, jak skaner. */
+.code::after {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 2px;
+    background: var(--volt);
+    box-shadow: 0 0 24px 4px rgb(244 211 60 / 0.35);
+    animation: scan 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes scan {
+    to {
+        transform: translateY(calc(0.8em - 2px));
+    }
+}
+
+@keyframes flicker {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    41% {
+        opacity: 0.4;
+    }
+    42% {
+        opacity: 1;
+    }
+    44% {
+        opacity: 0.55;
+    }
+    45% {
+        opacity: 1;
+    }
+}
+
+/* ---------- Tekst ---------- */
+
+.copy {
+    grid-column: 1 / span 7;
+    display: grid;
+    gap: 18px;
+    align-content: start;
+    justify-items: start;
+}
+
+.title {
+    max-width: 16ch;
+    font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+    /* Interlinia 1: ogonek Ą i Ę nie wchodzi w litery wiersza niżej. */
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.text {
+    max-width: 52ch;
+    color: var(--ash);
+}
+
+.text:first-of-type {
+    color: var(--chalk);
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.retry {
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    color: var(--ash);
+}
+
+.retry b {
+    color: var(--volt);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.retry button {
+    padding: 0;
+    background: none;
+    border: 0;
+    color: var(--chalk);
+    font-size: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.22em;
+}
+
+/* ---------- Dziennik połączenia ---------- */
+
+.log {
+    grid-column: 9 / span 4;
+    align-self: start;
+    display: grid;
+    gap: 6px;
+    padding: 18px 20px;
+    border: 1px solid var(--line);
+    background: var(--graphite);
+    font-size: 0.8125rem;
+}
+
+.log li {
+    animation: line 0.01s steps(1) both;
+    animation-delay: calc(0.5s + var(--i) * 0.6s);
+}
+
+.log li[data-state='err'] {
+    color: var(--ember);
+}
+
+.log li[data-state='wait'] {
+    color: var(--volt);
+}
+
+.log li[data-state='wait']::after {
+    content: '';
+    display: inline-block;
+    width: 0.6em;
+    height: 1em;
+    margin-left: 6px;
+    vertical-align: -0.15em;
+    background: var(--volt);
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes line {
+    from {
+        visibility: hidden;
+    }
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+@media (max-width: 900px) {
+    .copy,
+    .log {
+        grid-column: 1 / -1;
+    }
+}

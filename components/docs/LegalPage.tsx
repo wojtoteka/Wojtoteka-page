@@ -28,7 +28,6 @@ export function LegalPage({
                 {children}
                 <hr />
                 {note}
-                <p className="muted small">Wrocław, Polska</p>
             </DocsLayout>
         </div>
     );

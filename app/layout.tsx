@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         default: 'Wojtoteka',
         template: '%s | Wojtoteka'
     },
-    description: 'Gry w przeglądarce, aplikacje na Androida, bot na Discorda i kilka narzędzi. Strona Wojtoteka z Wrocławia.',
+    description: 'Wojtoteka: strony internetowe, projekty na GitHubie i gry w przeglądarce.',
     authors: [{ name: 'Wojtoteka', url: 'https://wojtoteka.ovh/' }],
     icons: { icon: '/img/logo.png', apple: '/img/logo.png' },
     openGraph: {
@@ -44,13 +44,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="pl" className={`${shoulders.variable} ${schibsted.variable}`}>
             <body>
-                {/* Filtr "tuszu" dla obrysów .ink-frame: lekko faluje prostą linię. */}
-                <svg className="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
-                    <filter id="ink-wobble" x="-5%" y="-5%" width="110%" height="110%">
-                        <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="7" />
-                        <feDisplacementMap in="SourceGraphic" scale="5" xChannelSelector="R" yChannelSelector="G" />
-                    </filter>
-                </svg>
                 {children}
             </body>
         </html>

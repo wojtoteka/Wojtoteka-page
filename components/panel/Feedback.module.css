@@ -50,7 +50,7 @@
     width: min(100% - 32px, 480px);
     padding: 26px;
     border: 1px solid var(--line-strong);
-    border-radius: 10px;
+    border-radius: 0;
     background: var(--graphite);
     color: var(--chalk);
 }

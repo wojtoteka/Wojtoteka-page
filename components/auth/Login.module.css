@@ -24,12 +24,16 @@
     text-transform: uppercase;
 }
 
+.brand {
+    font-stretch: 125%;
+    font-size: 1.125rem;
+}
+
 .brand img {
     width: 32px;
     height: 32px;
-    border-radius: 10px;
-    border: 2px solid var(--chalk);
-    transform: rotate(-5deg);
+    outline: 1px solid var(--line-strong);
+    outline-offset: 3px;
 }
 
 .formWrap {
@@ -38,6 +42,16 @@
     gap: 20px;
     width: 100%;
     max-width: 440px;
+}
+
+/* "ADMINISTRATORA" ma ok. 11 em: rozmiar liczony od kolumny formularza, nie ekranu. */
+.formWrap {
+    container-type: inline-size;
+}
+
+.formWrap .title {
+    font-stretch: 100%;
+    font-size: min(8.4cqi, 4.25rem);
 }
 
 .form {
@@ -60,31 +74,65 @@
     color: var(--chalk);
 }
 
-/* Prawa strona: grafit z kaczką w obrysie tuszem. */
+/* Prawa strona: wielki napis konturem, na nim kaczka w ramce HUD. */
 .artSide {
+    position: relative;
+    container-type: inline-size;
     display: grid;
     place-items: center;
-    background: var(--graphite);
+    border-left: 1px solid var(--line);
+    background: color-mix(in oklab, var(--chalk) 3%, transparent);
     overflow: hidden;
 }
 
+.ghost {
+    position: absolute;
+    inset: auto auto 4% -0.04em;
+    display: grid;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: 34cqi;
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: max(1.5px, 0.006em) color-mix(in oklab, var(--chalk) 32%, var(--ink));
+    user-select: none;
+}
+
+.ghost span:last-child {
+    padding-left: 0.4em;
+}
+
 .duck {
-    width: clamp(180px, 22vw, 320px);
-    transform: rotate(-7deg);
-    --ink-gap: 14px;
-    --ink-width: 4px;
+    position: relative;
+    width: clamp(160px, 18vw, 260px);
+    --gap: 14px;
+    --len: 26px;
+    animation: bob 3.6s ease-in-out infinite;
 }
 
 .duck img {
     width: 100%;
-    border-radius: 28px;
+}
+
+@keyframes bob {
+    50% {
+        transform: translateY(-10px) rotate(-3deg);
+    }
+}
+
+.artLabel {
+    position: absolute;
+    top: 28px;
+    left: 32px;
 }
 
 .dialog {
     width: min(100% - 32px, 460px);
     padding: 26px;
     border: 1px solid var(--line-strong);
-    border-radius: 10px;
+    border-radius: 0;
     background: var(--graphite);
     color: var(--chalk);
 }

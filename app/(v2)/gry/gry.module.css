@@ -1,0 +1,343 @@
+/* ---------- Wstęp ---------- */
+
+.intro {
+    container-type: inline-size;
+    display: grid;
+    gap: clamp(20px, 3vw, 36px);
+    padding-block: clamp(24px, 4vw, 56px) clamp(72px, 9vw, 128px);
+}
+
+.introGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 24px clamp(24px, 5vw, 72px);
+}
+
+.bigTitle {
+    font-size: 23cqi;
+    line-height: 0.8;
+    white-space: nowrap;
+    letter-spacing: -0.04em;
+    margin-left: -0.05em;
+}
+
+.count {
+    display: grid;
+    gap: 0;
+    min-width: 220px;
+    padding-bottom: 0.5em;
+}
+
+.count div {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    padding-block: 10px;
+    border-top: 1px solid var(--line);
+}
+
+.count dt {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.count dd {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: 2rem;
+    line-height: 1;
+}
+
+.count div:first-child dd {
+    color: var(--volt);
+}
+
+.lead {
+    max-width: 46ch;
+    font-size: clamp(1rem, 0.4vw + 0.9rem, 1.1875rem);
+    color: var(--ash);
+}
+
+.index {
+    margin-top: clamp(16px, 3vw, 40px);
+}
+
+@media (max-width: 820px) {
+    .introGrid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .count {
+        padding-bottom: 0;
+    }
+
+    .bigTitle {
+        font-size: 30cqi;
+    }
+}
+
+/* ---------- Plansze gier ----------
+   Stos: plansze przyklejone do góry ekranu, następna wjeżdża na poprzednią.
+   --stick liczy components/games/GameStack.tsx. Nazwy osi są w --self i --next. */
+
+.stack {
+    timeline-scope: var(--scope);
+}
+
+.stage {
+    position: sticky;
+    top: var(--stick, 0px);
+    display: grid;
+    align-items: center;
+    min-height: 100svh;
+    padding-block: calc(var(--head-h) + 24px) clamp(40px, 6vw, 80px);
+    overflow: clip;
+    background: color-mix(in oklab, var(--stage-bg) 55%, var(--ink));
+    border-top: 1px solid color-mix(in oklab, var(--frame) 40%, transparent);
+    view-timeline-name: var(--self);
+    transform-origin: 50% 0;
+}
+
+/* Przykrywana plansza cofa się i ciemnieje. */
+.stage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    opacity: 0;
+    pointer-events: none;
+}
+
+@supports (view-timeline-name: --a) {
+    @media (prefers-reduced-motion: no-preference) {
+        .stage {
+            animation: recede linear both;
+            animation-timeline: var(--next);
+            animation-range: entry 0% entry 100%;
+        }
+
+        .stage::after {
+            animation: dim linear both;
+            animation-timeline: var(--next);
+            animation-range: entry 0% entry 100%;
+        }
+    }
+}
+
+.stage:last-child,
+.stage:last-child::after {
+    animation: none;
+}
+
+@keyframes recede {
+    to {
+        scale: 0.92;
+    }
+}
+
+@keyframes dim {
+    to {
+        opacity: 0.75;
+    }
+}
+
+.stageInner {
+    position: relative;
+    container-type: inline-size;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-rows: auto 1fr;
+    align-items: center;
+    gap: clamp(24px, 4vw, 48px) 24px;
+}
+
+/* Pasek HUD nad planszą: numer, platforma, linia. */
+.bar {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: color-mix(in oklab, var(--chalk) 70%, var(--stage-bg));
+}
+
+.barNum {
+    color: var(--frame);
+}
+
+.barLine {
+    flex: 1;
+    height: 1px;
+    background: color-mix(in oklab, var(--chalk) 18%, transparent);
+}
+
+/* Wielki numer konturem w tle planszy. */
+.ghost {
+    position: absolute;
+    right: -0.04em;
+    bottom: -0.2em;
+    z-index: 0;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: clamp(10rem, 30vw, 28rem);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: max(1.5px, 0.006em) color-mix(in oklab, var(--frame) 55%, transparent);
+    pointer-events: none;
+    user-select: none;
+}
+
+.stage[data-flip] .ghost {
+    right: auto;
+    left: -0.04em;
+}
+
+.art {
+    position: relative;
+    z-index: 1;
+    grid-column: 1 / span 6;
+}
+
+.artFrame {
+    display: block;
+    --gap: 12px;
+    --len: 24px;
+    transform: rotate(var(--tilt));
+}
+
+.artFrame img {
+    width: 100%;
+    max-height: 62svh;
+    object-fit: contain;
+    background: color-mix(in oklab, var(--stage-bg) 70%, black);
+}
+
+.copy {
+    position: relative;
+    z-index: 1;
+    grid-column: 8 / -1;
+    display: grid;
+    justify-items: start;
+    gap: 22px;
+}
+
+.stage[data-flip] .art {
+    grid-column: 7 / -1;
+    grid-row: 2;
+}
+
+.stage[data-flip] .copy {
+    grid-column: 1 / span 5;
+    grid-row: 2;
+}
+
+.stageTitle {
+    font-size: min(6.5rem, 6.6cqi);
+    line-height: 0.86;
+    text-transform: uppercase;
+    letter-spacing: -0.025em;
+    overflow-wrap: normal;
+    hyphens: manual;
+}
+
+.stageTitle[data-long] {
+    font-size: min(4.75rem, 4.8cqi);
+}
+
+.platform {
+    max-width: 30ch;
+    color: color-mix(in oklab, var(--chalk) 80%, var(--stage-bg));
+}
+
+/* Przewijanie wsuwa tytuł z boku i prostuje grafikę. */
+@supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+        /* Zakres "entry": animacja kończy się, zanim plansza przyklei się do góry.
+           Przyklejona plansza nie przesuwa się, więc oś view() by stanęła. */
+        .stageTitle {
+            animation: titleIn linear both;
+            animation-timeline: view();
+            animation-range: entry 10% entry 100%;
+        }
+
+        .stage[data-flip] .stageTitle {
+            --from: -16%;
+        }
+
+        .artFrame {
+            animation: artIn linear both;
+            animation-timeline: view();
+            animation-range: entry 0% entry 100%;
+        }
+
+        .ghost {
+            animation: ghostIn linear both;
+            animation-timeline: view();
+            animation-range: entry 0% exit 100%;
+        }
+    }
+}
+
+@keyframes titleIn {
+    from {
+        transform: translateX(var(--from, 16%));
+        opacity: 0;
+    }
+}
+
+@keyframes artIn {
+    from {
+        transform: rotate(calc(var(--tilt) * -3)) scale(0.88);
+        clip-path: inset(0 0 100% 0);
+    }
+    to {
+        transform: rotate(var(--tilt)) scale(1);
+        clip-path: inset(-40px);
+    }
+}
+
+@keyframes ghostIn {
+    from {
+        transform: translateY(20%);
+    }
+    to {
+        transform: translateY(-20%);
+    }
+}
+
+@media (max-width: 900px) {
+    .stage {
+        padding-block: calc(var(--head-h) + 12px) 40px;
+    }
+
+    .art,
+    .stage[data-flip] .art {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .copy,
+    .stage[data-flip] .copy {
+        grid-column: 1 / -1;
+        grid-row: 3;
+    }
+
+    .artFrame img {
+        max-height: 42svh;
+    }
+
+    .stageTitle,
+    .stageTitle[data-long] {
+        font-size: clamp(2.25rem, 11vw, 5rem);
+        animation: none;
+    }
+}

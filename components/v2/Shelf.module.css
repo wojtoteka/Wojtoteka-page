@@ -1,0 +1,65 @@
+.outer {
+    position: relative;
+}
+
+.pin {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(28px, 4vh, 48px);
+    height: 100svh;
+    padding-top: var(--head-h);
+    overflow: hidden;
+}
+
+.track {
+    display: flex;
+    align-items: center;
+    gap: clamp(40px, 5vw, 88px);
+    width: max-content;
+    padding-inline: var(--gutter) 22vw;
+    will-change: transform;
+}
+
+.progress {
+    width: min(100% - 2 * var(--gutter), var(--page));
+    margin-inline: auto;
+    height: 2px;
+    background: var(--line);
+}
+
+.progress span {
+    display: block;
+    height: 100%;
+    background: var(--volt);
+    transform: scaleX(var(--shelf-p, 0));
+    transform-origin: left;
+}
+
+/* Telefon i ograniczony ruch: zwykły pasek przewijany palcem. */
+@media (max-width: 899px), (prefers-reduced-motion: reduce) {
+    .pin {
+        position: static;
+        height: auto;
+        padding-top: 0;
+        overflow: visible;
+    }
+
+    .track {
+        width: auto;
+        padding: 16px var(--gutter) 24px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scroll-padding-inline: var(--gutter);
+    }
+
+    .track > * {
+        scroll-snap-align: start;
+    }
+
+    .progress {
+        display: none;
+    }
+}

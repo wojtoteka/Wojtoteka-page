@@ -1,0 +1,297 @@
+/* ---------- Nagłówek ---------- */
+
+.head {
+    container-type: inline-size;
+    display: grid;
+    gap: clamp(18px, 2.5vw, 32px);
+    padding-block: clamp(24px, 4vw, 56px) clamp(48px, 6vw, 88px);
+}
+
+.title {
+    /* "DO MNIE" z wcięciem ma ok. 6,9 em: 14cqi mieści się w kolumnie. */
+    font-size: 14cqi;
+    line-height: 0.84;
+    white-space: nowrap;
+    letter-spacing: -0.035em;
+}
+
+.titleSecond {
+    padding-left: 0.6em;
+}
+
+.lead {
+    max-width: 44ch;
+    font-size: clamp(1rem, 0.4vw + 0.9rem, 1.1875rem);
+    color: var(--ash);
+}
+
+/* ---------- Układ: formularz szerszy, informacje węższe ---------- */
+
+.split {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+    gap: 56px clamp(40px, 7vw, 120px);
+    align-items: start;
+}
+
+.aside {
+    position: sticky;
+    top: calc(var(--head-h) + 32px);
+    display: grid;
+    gap: 40px;
+}
+
+@media (max-width: 960px) {
+    .split {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .aside {
+        position: static;
+    }
+}
+
+/* ---------- Formularz ---------- */
+
+.form {
+    display: grid;
+    gap: 34px;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 34px 32px;
+}
+
+@media (max-width: 600px) {
+    .row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+.field {
+    position: relative;
+    display: grid;
+    gap: 6px;
+}
+
+.field label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ash);
+    transition: color 0.2s ease;
+}
+
+.field label span {
+    margin-right: 6px;
+    color: var(--line-strong);
+    transition: color 0.2s ease;
+}
+
+.field:focus-within label {
+    color: var(--chalk);
+}
+
+.field:focus-within label span {
+    color: var(--volt);
+}
+
+/* Pole to tylko linia u dołu. Przy fokusie żółta linia rozjeżdża się od lewej. */
+.input {
+    width: 100%;
+    padding: 10px 0 12px;
+    background:
+        linear-gradient(var(--volt), var(--volt)) left bottom / 0% 2px no-repeat,
+        linear-gradient(var(--line-strong), var(--line-strong)) left bottom / 100% 1px no-repeat;
+    border: 0;
+    border-radius: 0;
+    font-family: var(--font-body);
+    font-size: clamp(1rem, 0.5vw + 0.85rem, 1.25rem);
+    line-height: 1.4;
+    color: var(--chalk);
+    transition: background-size 0.5s var(--ease);
+}
+
+.input::placeholder {
+    color: color-mix(in oklab, var(--ash) 55%, var(--ink));
+}
+
+.input:focus {
+    outline: none;
+    background-size: 100% 2px, 100% 1px;
+}
+
+.input:focus-visible {
+    outline: none;
+}
+
+.input:user-invalid {
+    background-image:
+        linear-gradient(var(--ember), var(--ember)),
+        linear-gradient(var(--ember), var(--ember));
+}
+
+.textarea {
+    min-height: 180px;
+    resize: vertical;
+}
+
+.counter {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    color: var(--ash);
+    font-variant-numeric: tabular-nums;
+}
+
+.meter {
+    flex: 0 0 96px;
+    height: 2px;
+    background: var(--line);
+    overflow: hidden;
+}
+
+.meter span {
+    display: block;
+    height: 100%;
+    background: var(--volt);
+    transform-origin: left;
+    transition: transform 0.2s ease;
+}
+
+.consent {
+    font-size: 0.8125rem;
+    color: var(--ash);
+}
+
+.status {
+    display: grid;
+    gap: 4px;
+    padding: 14px 18px;
+    border-left: 3px solid var(--volt);
+    background: var(--graphite);
+}
+
+.status[data-kind='error'] {
+    border-left-color: var(--ember);
+}
+
+.statusTag {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--volt);
+}
+
+.status[data-kind='error'] .statusTag {
+    color: var(--ember);
+}
+
+.submit {
+    min-height: 64px;
+    padding-inline: 32px;
+    font-size: 0.875rem;
+}
+
+/* ---------- Informacje obok ---------- */
+
+.mailBox {
+    display: grid;
+    justify-items: start;
+    gap: 16px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+}
+
+.mail {
+    font-family: var(--font-display);
+    font-stretch: 110%;
+    font-weight: 800;
+    font-size: clamp(1.5rem, 1.6vw + 0.8rem, 2.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    overflow-wrap: anywhere;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--volt);
+}
+
+.mail:hover {
+    color: var(--volt);
+}
+
+/* Inne kanały: wiersze z nazwą i strzałką, po najechaniu żółte. */
+.channels {
+    display: grid;
+    gap: 12px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--line);
+}
+
+.channels ul {
+    display: grid;
+}
+
+.channels a {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-block: 10px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-display);
+    font-stretch: 115%;
+    font-weight: 800;
+    font-size: 1.375rem;
+    line-height: 1;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color 0.2s ease, padding 0.4s var(--ease);
+}
+
+.channels a:hover {
+    color: var(--volt);
+    padding-left: 10px;
+}
+
+/* Numerowane notatki z licznikiem CSS zamiast kart. */
+.notes {
+    display: grid;
+    gap: 28px;
+    counter-reset: note;
+}
+
+.notes li {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 4px 12px;
+    counter-increment: note;
+}
+
+.notes li::before {
+    content: '0' counter(note);
+    grid-row: 1 / span 2;
+    font-size: 0.75rem;
+    color: var(--volt);
+    padding-top: 3px;
+}
+
+.noteTitle {
+    font-family: var(--font-body);
+    font-stretch: 100%;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+.notes p {
+    max-width: 42ch;
+    font-size: 0.875rem;
+    color: var(--ash);
+}

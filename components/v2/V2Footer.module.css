@@ -1,0 +1,181 @@
+.footer {
+    position: relative;
+    container-type: inline-size;
+    margin-top: clamp(96px, 12vw, 180px);
+    overflow: clip;
+    border-top: 1px solid var(--line);
+}
+
+/* ---------- Pasek z hasłami ---------- */
+
+.ticker {
+    padding-block: 18px;
+    border-bottom: 1px solid var(--line);
+}
+
+.tick {
+    white-space: nowrap;
+    font-size: 0.8125rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.slash {
+    color: var(--volt);
+}
+
+/* ---------- Kontakt i kolumny ---------- */
+
+.top {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    gap: 48px clamp(32px, 5vw, 80px);
+    padding-block: clamp(56px, 7vw, 96px) 40px;
+}
+
+.ask {
+    display: grid;
+    gap: 18px;
+    align-content: start;
+}
+
+.askTitle {
+    max-width: 18ch;
+    font-family: var(--font-display);
+    font-stretch: 112%;
+    font-weight: 800;
+    font-size: clamp(1.75rem, 2.4vw + 0.8rem, 2.75rem);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+}
+
+.mail {
+    justify-self: start;
+    font-size: clamp(1rem, 0.6vw + 0.8rem, 1.25rem);
+    color: var(--volt);
+    text-decoration-color: color-mix(in oklab, var(--volt) 45%, transparent);
+    overflow-wrap: anywhere;
+}
+
+.cols {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+    gap: 32px 24px;
+}
+
+.colTitle {
+    margin-bottom: 14px;
+    font-family: var(--font-body);
+    font-stretch: 100%;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.col ul {
+    display: grid;
+    gap: 8px;
+}
+
+/* Najechanie: przed linkiem wysuwa się żółta kreska. */
+.col a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: gap 0.3s var(--ease), color 0.2s ease;
+}
+
+.col a::before {
+    content: '';
+    width: 0;
+    height: 2px;
+    background: var(--volt);
+    transition: width 0.3s var(--ease);
+}
+
+.col a:hover {
+    gap: 8px;
+    color: var(--volt);
+}
+
+.col a:hover::before {
+    width: 14px;
+}
+
+/* ---------- Wielki napis ---------- */
+
+.giant {
+    display: flex;
+    justify-content: space-between;
+    padding-inline: var(--gutter);
+    /* Odstęp od dołu: napis nie może wchodzić na linię paska z prawami autorskimi. */
+    margin-block: 24px 0.08em;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    /* Napis ma ok. 8,4 em szerokości: dzielimy szerokość stopki, żeby zawsze się zmieścił. */
+    font-size: calc((100cqi - 2 * var(--gutter)) / 8.7);
+    line-height: 0.8;
+    letter-spacing: -0.02em;
+    color: transparent;
+    -webkit-text-stroke: max(1.5px, 0.006em) color-mix(in oklab, var(--chalk) 42%, var(--ink));
+    user-select: none;
+}
+
+.giant span {
+    display: inline-block;
+    transition: transform 0.5s var(--ease), color 0.3s ease, -webkit-text-stroke-color 0.3s ease;
+}
+
+.giant span:hover {
+    transform: translateY(-0.12em);
+    color: var(--volt);
+    -webkit-text-stroke-color: var(--volt);
+}
+
+/* ---------- Prawa autorskie ---------- */
+
+.legal {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 20px 28px;
+    border-top: 1px solid var(--line);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.up {
+    text-decoration: none;
+}
+
+.up:hover {
+    color: var(--volt);
+}
+
+@media (max-width: 1000px) {
+    .top {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 640px) {
+    .cols {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Na telefonie miejsce na pigułkę statusu, żeby nie zasłaniała stopki. */
+    .legal {
+        padding-bottom: 88px;
+    }
+}

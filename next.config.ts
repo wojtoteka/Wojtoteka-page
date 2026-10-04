@@ -4,6 +4,8 @@ import type { NextConfig } from 'next';
 // Express obsługuje API, gry z public/ i limity, Next.js renderuje wszystkie strony.
 const nextConfig: NextConfig = {
     poweredByHeader: false,
+    // Znaczek Next.js w trybie dev zasłaniał pigułkę statusu w lewym dolnym rogu.
+    devIndicators: { position: 'bottom-right' },
     reactStrictMode: true,
     // Moduły z natywnym/serwerowym kodem zostają poza bundlem, żeby Next.js
     // i Express współdzieliły jedną pulę połączeń z bazą (patrz lib/db.ts).

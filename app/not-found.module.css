@@ -1,0 +1,221 @@
+.page {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 24px;
+    padding-block: clamp(24px, 4vw, 56px) clamp(40px, 6vw, 80px);
+}
+
+.page > :global(.v2-label) {
+    grid-column: 1 / -1;
+}
+
+/* ---------- 404 z zakłóceniami ----------
+   Dwie kopie napisu (::before i ::after) w kolorach akcentu. Co kilka sekund
+   na ułamek sekundy przesuwają się i tną na paski, jak zerwany sygnał. */
+
+.code {
+    position: relative;
+    grid-column: 1 / -1;
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: clamp(8rem, 34vw, 32rem);
+    line-height: 0.78;
+    letter-spacing: -0.05em;
+    margin-left: -0.04em;
+    user-select: none;
+    animation: codeIn 1s var(--ease) both;
+}
+
+@keyframes codeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8%);
+        filter: blur(12px);
+    }
+}
+
+.code::before,
+.code::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+}
+
+.code::before {
+    color: var(--volt);
+    animation: glitchA 4.2s steps(1) 1.4s infinite;
+}
+
+.code::after {
+    color: var(--ember);
+    mix-blend-mode: screen;
+    animation: glitchB 4.2s steps(1) 1.4s infinite;
+}
+
+@keyframes glitchA {
+    0%,
+    86%,
+    100% {
+        opacity: 0;
+        transform: none;
+        clip-path: inset(0 0 100% 0);
+    }
+    87% {
+        opacity: 1;
+        transform: translate(-0.03em, 0);
+        clip-path: inset(12% 0 64% 0);
+    }
+    89% {
+        opacity: 1;
+        transform: translate(0.04em, 0);
+        clip-path: inset(58% 0 22% 0);
+    }
+    91% {
+        opacity: 1;
+        transform: translate(-0.02em, 0);
+        clip-path: inset(34% 0 48% 0);
+    }
+    93% {
+        opacity: 0;
+    }
+}
+
+@keyframes glitchB {
+    0%,
+    86%,
+    100% {
+        opacity: 0;
+        transform: none;
+        clip-path: inset(0 0 100% 0);
+    }
+    88% {
+        opacity: 1;
+        transform: translate(0.05em, 0);
+        clip-path: inset(70% 0 8% 0);
+    }
+    90% {
+        opacity: 1;
+        transform: translate(-0.04em, 0);
+        clip-path: inset(20% 0 66% 0);
+    }
+    92% {
+        opacity: 0;
+    }
+}
+
+/* ---------- Tekst ---------- */
+
+.copy {
+    grid-column: 1 / span 7;
+    display: grid;
+    gap: 20px;
+    align-content: start;
+}
+
+.title {
+    font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+    /* Interlinia 1: ogonek Ą i Ę nie wchodzi w litery wiersza niżej. */
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.path {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.875rem;
+    overflow-wrap: anywhere;
+}
+
+.path code {
+    padding: 0;
+    background: none;
+    color: var(--chalk);
+}
+
+.prompt {
+    color: var(--volt);
+}
+
+.caret {
+    width: 0.6em;
+    height: 1.1em;
+    background: var(--volt);
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.text {
+    max-width: 52ch;
+    color: var(--ash);
+}
+
+/* ---------- Gdzie dalej ---------- */
+
+.ways {
+    grid-column: 9 / span 4;
+    display: grid;
+    gap: 14px;
+    align-content: start;
+}
+
+.ways ul {
+    border-bottom: 1px solid var(--line);
+}
+
+.way {
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr) auto;
+    align-items: baseline;
+    gap: 2px 12px;
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+    text-decoration: none;
+    transition: padding 0.4s var(--ease), color 0.2s ease;
+}
+
+.way:hover {
+    padding-left: 12px;
+    color: var(--volt);
+}
+
+.wayNum {
+    font-size: 0.6875rem;
+    color: var(--ash);
+}
+
+.wayLabel {
+    font-family: var(--font-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.wayNote {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 0.75rem;
+    color: var(--ash);
+}
+
+@media (max-width: 900px) {
+    .copy,
+    .ways {
+        grid-column: 1 / -1;
+    }
+
+    .ways {
+        margin-top: 24px;
+    }
+}

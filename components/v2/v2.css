@@ -1,0 +1,413 @@
+/* =====================================================================
+   Wojtoteka v2: nowy styl, ograniczony do .v2
+   Paleta: 5 kolorów. Atrament (tło), kreda (tekst), popiół (tekst drugorzędny),
+   wolt (żółty z kaczki, rozjaśniony: akcent HUD, przyciski, aktywne linki)
+   i żar (pomarańcz: poświata w tle, zaznaczenie, błędy).
+   Kroje: Archivo rozciągnięty do wielkich napisów, JetBrains Mono do reszty.
+   Stare tokeny (--ink, --duck, --sea...) są nadpisane, więc wspólne komponenty
+   (ikony, ogłoszenia, hCaptcha) same łapią nowe kolory.
+   ===================================================================== */
+
+html:has(.v2) body {
+    background: #0b0a09;
+}
+
+/* ---------- Pasek przewijania ----------
+   Kanciasty żółty uchwyt na ciemnym torze. Chrome i Edge czytają pseudoelementy
+   ::-webkit-scrollbar, Firefox tylko scrollbar-color (stąd @supports). */
+
+html:has(.v2)::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+html:has(.v2)::-webkit-scrollbar-track {
+    background: #0b0a09;
+    border-left: 1px solid #23211e;
+}
+
+html:has(.v2)::-webkit-scrollbar-thumb {
+    background: #f4d33c;
+    border: 3px solid #0b0a09;
+    border-radius: 0;
+    min-height: 48px;
+}
+
+html:has(.v2)::-webkit-scrollbar-thumb:hover {
+    background: #efe9df;
+}
+
+html:has(.v2)::-webkit-scrollbar-corner {
+    background: #0b0a09;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+    html:has(.v2) {
+        scrollbar-color: #f4d33c #0b0a09;
+        scrollbar-width: thin;
+    }
+}
+
+/* Mniejsze paski w polach przewijanych w bok: kod, tabele, półka na telefonie. */
+.v2 ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.v2 ::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.v2 ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, #efe9df 30%, #0b0a09);
+}
+
+.v2 ::-webkit-scrollbar-thumb:hover {
+    background: #f4d33c;
+}
+
+.v2 {
+    --ink: #0b0a09;
+    --chalk: #efe9df;
+    --ash: #8b867e;
+    --volt: #f4d33c;
+    --ember: #ff5b1f;
+
+    --duck: var(--volt);
+    /* Morski był kolorem "wszystko gra" (status, linki), więc przejmuje go żółty. */
+    --sea: var(--volt);
+    --signal: var(--ember);
+    --graphite: color-mix(in oklab, var(--chalk) 5%, var(--ink));
+    --line: color-mix(in oklab, var(--chalk) 12%, var(--ink));
+    --line-strong: color-mix(in oklab, var(--chalk) 30%, var(--ink));
+
+    --font-display: var(--font-v2-display), 'Arial Black', sans-serif;
+    --font-body: var(--font-v2-mono), ui-monospace, Consolas, monospace;
+    --font-code: var(--font-v2-mono), ui-monospace, Consolas, monospace;
+
+    --radius: 0;
+    --head-h: 72px;
+    --page: 1440px;
+    --gutter: clamp(16px, 3.5vw, 48px);
+    --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    position: relative;
+    isolation: isolate;
+    flex: 1 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    background: var(--ink);
+    color: var(--chalk);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.65;
+}
+
+/* Siatka w tle, jak papier milimetrowy, wygaszana ku dołowi ekranu. */
+.v2::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+        linear-gradient(to right, rgb(239 233 223 / 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(239 233 223 / 0.05) 1px, transparent 1px);
+    background-size: 88px 88px;
+    background-position: -1px -1px;
+    -webkit-mask-image: radial-gradient(ellipse 120% 90% at 50% 0%, #000 25%, transparent 80%);
+    mask-image: radial-gradient(ellipse 120% 90% at 50% 0%, #000 25%, transparent 80%);
+}
+
+/* Ciepła poświata, która powoli idzie za kursorem (pozycję ustawia V2Effects). */
+.v2-glow {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+        radial-gradient(640px circle at var(--mx, 72%) var(--my, 18%), rgb(255 91 31 / 0.14), transparent 62%),
+        radial-gradient(900px circle at 10% 110%, rgb(244 211 60 / 0.05), transparent 60%);
+}
+
+.v2 ::selection {
+    background: var(--ember);
+    color: var(--ink);
+}
+
+.v2 #tresc {
+    padding-top: var(--head-h);
+}
+
+/* Strona awarii nie ma stałego paska, więc nie potrzebuje odstępu. */
+.v2 #tresc[data-bare] {
+    padding-top: 0;
+}
+
+.v2 .wrap {
+    width: min(100% - 2 * var(--gutter), var(--page));
+}
+
+.v2 h1,
+.v2 h2 {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    letter-spacing: -0.01em;
+    text-wrap: initial;
+}
+
+.v2 h3 {
+    font-family: var(--font-display);
+    font-stretch: 110%;
+    font-weight: 800;
+}
+
+.v2 a:hover {
+    text-decoration-color: var(--volt);
+}
+
+.v2 :focus-visible {
+    outline-color: var(--volt);
+    border-radius: 0;
+}
+
+/* ---------- Tytuł zwykłej podstrony ----------
+   Najdłuższe słowa ("DOKUMENTACJA", "PRYWATNOŚCI") mają ok. 10 em szerokości,
+   więc na telefonie rozmiar idzie od szerokości ekranu. */
+
+.v2 .page-title {
+    font-size: clamp(1.875rem, 8.4vw, 6.5rem);
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+}
+
+/* Tabela szersza niż ekran przewija się w bok zamiast poszerzać stronę. */
+@media (max-width: 760px) {
+    .v2 :not(.table-wrap) > table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/* ---------- Etykieta HUD: [01] OPIS ---------- */
+
+.v2-label {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1.4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.v2-label b {
+    color: var(--volt);
+    font-weight: 500;
+}
+
+/* ---------- Narożniki HUD wokół grafiki ---------- */
+
+.v2-frame {
+    position: relative;
+    --c: var(--frame, var(--volt));
+    --len: 18px;
+    --w: 2px;
+    --gap: 10px;
+}
+
+.v2-frame::before {
+    content: '';
+    position: absolute;
+    inset: calc(var(--gap) * -1);
+    z-index: 2;
+    pointer-events: none;
+    background:
+        linear-gradient(var(--c), var(--c)) left top / var(--len) var(--w),
+        linear-gradient(var(--c), var(--c)) left top / var(--w) var(--len),
+        linear-gradient(var(--c), var(--c)) right top / var(--len) var(--w),
+        linear-gradient(var(--c), var(--c)) right top / var(--w) var(--len),
+        linear-gradient(var(--c), var(--c)) left bottom / var(--len) var(--w),
+        linear-gradient(var(--c), var(--c)) left bottom / var(--w) var(--len),
+        linear-gradient(var(--c), var(--c)) right bottom / var(--len) var(--w),
+        linear-gradient(var(--c), var(--c)) right bottom / var(--w) var(--len);
+    background-repeat: no-repeat;
+    transition: inset 0.35s var(--ease);
+}
+
+/* ---------- Litery wjeżdżające od dołu ---------- */
+
+/* Linia przycina litery, które jeszcze nie wjechały. Zapas u dołu
+   zostawia miejsce na ogonki Ą i Ę, zapas u góry na kropkę nad Ż. */
+.v2-line {
+    display: block;
+    overflow: hidden;
+    padding-block: 0.08em 0.12em;
+    margin-block: -0.08em -0.12em;
+}
+
+.v2-char {
+    display: inline-block;
+    animation: v2-rise 0.95s var(--ease) both;
+    animation-delay: calc(var(--d, 120ms) + var(--i) * 55ms);
+}
+
+@keyframes v2-rise {
+    from {
+        transform: translateY(112%) rotate(4deg);
+    }
+}
+
+/* Kontur zamiast wypełnienia (druga linia wielkich napisów). */
+.v2-outline {
+    color: transparent;
+    -webkit-text-stroke: max(2px, 0.016em) var(--chalk);
+}
+
+/* ---------- Słowa odsłaniane przewijaniem ---------- */
+
+.v2-word {
+    opacity: clamp(0.13, calc(var(--p, 1) * var(--n) * 1.2 - var(--i)), 1);
+    transition: opacity 0.15s linear;
+}
+
+/* ---------- Wjazd sekcji przy przewijaniu ---------- */
+
+.v2[data-ready] [data-reveal]:not([data-in]) {
+    opacity: 0;
+    transform: translateY(48px);
+}
+
+.v2 [data-reveal] {
+    transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+    transition-delay: var(--rd, 0ms);
+}
+
+/* ---------- Pasek przewijanego tekstu ---------- */
+
+.v2-marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+}
+
+.v2-marquee-track {
+    display: flex;
+    flex: none;
+    gap: var(--mq-gap, 48px);
+    padding-right: var(--mq-gap, 48px);
+    animation: v2-marquee var(--mq-time, 28s) linear infinite;
+    animation-direction: var(--mq-dir, normal);
+}
+
+/* Jedna kopia treści. Marquee.tsx powiela ją, aż tor jest szerszy niż ekran. */
+.v2-marquee-unit {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--mq-gap, 48px);
+}
+
+.v2-marquee:hover .v2-marquee-track {
+    animation-play-state: var(--mq-hover, running);
+}
+
+@keyframes v2-marquee {
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* ---------- Przyciski w nowym stylu ---------- */
+
+.v2 .btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    min-height: 52px;
+    padding: 0 24px;
+    border-radius: 0;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+/* Najechanie: kreda zalewa przycisk od lewej. */
+.v2 .btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--chalk);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s var(--ease);
+}
+
+.v2 .btn:hover:not(:disabled)::before {
+    transform: scaleX(1);
+}
+
+.v2 .btn-primary {
+    background: var(--volt);
+    color: var(--ink);
+}
+
+.v2 .btn-primary:hover:not(:disabled) {
+    background: var(--volt);
+}
+
+.v2 .btn-ghost {
+    border: 1px solid var(--line-strong);
+}
+
+.v2 .btn-ghost:hover:not(:disabled) {
+    color: var(--ink);
+    border-color: var(--chalk);
+}
+
+.v2 .btn-sm {
+    min-height: 38px;
+    padding: 0 14px;
+    font-size: 0.75rem;
+}
+
+.v2 .btn .v2-arrow {
+    transition: transform 0.35s var(--ease);
+}
+
+.v2 .btn:hover .v2-arrow {
+    transform: translateX(5px);
+}
+
+/* ---------- Pola formularzy ---------- */
+
+.v2 .input,
+.v2 .textarea {
+    border-radius: 0;
+    font-family: var(--font-body);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .v2-char {
+        animation: none;
+    }
+
+    .v2-word {
+        opacity: 1;
+    }
+
+    .v2-marquee-track {
+        animation: none;
+    }
+}
