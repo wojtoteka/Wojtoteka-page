@@ -70,8 +70,9 @@ const COLUMNS = [
         ]
     },
     {
-        title: 'Prywatność',
+        title: 'Dokumenty',
         links: [
+            { href: '/regulamin', label: 'Regulamin' },
             { href: '/polityka-prywatnosci', label: 'Polityka prywatności' },
             { href: '/polityka-nightdrive', label: 'Night Drive' },
             { href: '/polityka-fishingparty', label: 'Fishing Party' },
@@ -86,7 +87,7 @@ export async function V2Footer() {
 
     return (
         <footer className={styles.footer}>
-            <Marquee className={styles.ticker} time={70} pauseOnHover>
+            <Marquee className={styles.ticker} time={70} reverse pauseOnHover>
                 {ticks.map(tick => (
                     <span key={tick.text} className={styles.tick}>
                         <span className={styles.slash}>//</span> {tick.n !== undefined && <b className={styles.tickNum}>{tick.n}</b>} {tick.text}

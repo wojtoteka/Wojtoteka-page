@@ -29,11 +29,11 @@ const TOC = [
 
 export default function Page() {
     return (
-        <LegalPage subject="Fishing Party" updated="20 lipca 2026" toc={TOC}>
+        <LegalPage subject="Fishing Party" updated="4 października 2026" toc={TOC}>
             <h2 id="s1">1. Administrator danych</h2>
             <p>Administratorem Twoich danych osobowych w rozumieniu Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) jest:</p>
             <ul>
-            <li><strong>Wojtoteka</strong></li>
+            <li><strong>Wojciech Szaliński</strong> (Wojtoteka)</li>
             <li>Email: <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a></li>
             <li>Formularz kontaktowy: <a href="/kontakt">wojtoteka.ovh/kontakt</a></li>
             </ul>

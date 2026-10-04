@@ -8,6 +8,7 @@ import { Scramble } from '@/components/v2/Scramble';
 import { SplitText } from '@/components/v2/SplitText';
 import { TypeCycle } from '@/components/v2/TypeCycle';
 import { WordReveal } from '@/components/v2/WordReveal';
+import { GameSlots } from './GameSlots';
 import styles from './royal.module.css';
 
 export const metadata: Metadata = pageMeta({
@@ -205,23 +206,27 @@ export default function RoyalCasinoPage() {
                     </h2>
                     <p className={styles.headNote}>Każdą grę uruchamiasz komendą o tej samej nazwie.</p>
                 </div>
-                <ol role="list" className={styles.gameList}>
-                    {GAMES.map((game, i) => (
-                        <li key={game.command} className={styles.game} data-reveal>
-                            <span className={styles.gameNum}>{pad(i + 1)}</span>
-                            <div className={styles.gameHead}>
-                                <h3 className={styles.gameName}>{game.name}</h3>
-                                <code className={styles.command}>{game.command}</code>
-                            </div>
-                            <p className={styles.gameText}>{game.text}</p>
-                            <p className={styles.gameMeta}>
-                                {game.meta.map(item => (
-                                    <span key={item}>{item}</span>
-                                ))}
-                            </p>
-                        </li>
-                    ))}
-                </ol>
+                <GameSlots games={GAMES} />
+                <details className={styles.allGames}>
+                    <summary>Wszystkie gry na jednej liście</summary>
+                    <ol role="list" className={styles.gameList}>
+                        {GAMES.map((game, i) => (
+                            <li key={game.command} className={styles.game}>
+                                <span className={styles.gameNum}>{pad(i + 1)}</span>
+                                <div className={styles.gameHead}>
+                                    <h3 className={styles.gameName}>{game.name}</h3>
+                                    <code className={styles.command}>{game.command}</code>
+                                </div>
+                                <p className={styles.gameText}>{game.text}</p>
+                                <p className={styles.gameMeta}>
+                                    {game.meta.map(item => (
+                                        <span key={item}>{item}</span>
+                                    ))}
+                                </p>
+                            </li>
+                        ))}
+                    </ol>
+                </details>
             </section>
 
             {/* ---------- Funkcje ---------- */}

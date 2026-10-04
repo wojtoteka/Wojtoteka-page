@@ -402,6 +402,40 @@
     grid-column: 1 / -1;
 }
 
+/* Pełna lista pod automatem, zwinięta. */
+.allGames summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-block: 14px;
+    border-top: 1px solid var(--line);
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ash);
+    cursor: pointer;
+    list-style: none;
+    transition: color 0.2s ease;
+}
+
+.allGames summary::-webkit-details-marker {
+    display: none;
+}
+
+.allGames summary::before {
+    content: '+';
+    width: 1ch;
+    color: var(--volt);
+}
+
+.allGames[open] summary::before {
+    content: '−';
+}
+
+.allGames summary:hover {
+    color: var(--chalk);
+}
+
 /* Jak tabela wypłat przy automacie: nazwa, opis i stawki w jednym równym wierszu.
    Najechany wiersz dostaje żółtą kreskę z lewej i lekkie tło. */
 .gameList {

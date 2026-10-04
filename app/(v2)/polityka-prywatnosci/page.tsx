@@ -22,11 +22,11 @@ const TOC = [
 
 export default function Page() {
     return (
-        <LegalPage subject="wojtoteka.ovh" updated="27 września 2026" toc={TOC}>
+        <LegalPage subject="wojtoteka.ovh" updated="4 października 2026" toc={TOC}>
             <h2 id="s1">1. Administrator danych</h2>
             <p>Administratorem Twoich danych osobowych w rozumieniu Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) jest:</p>
             <ul>
-            <li><strong>Wojtoteka</strong></li>
+            <li><strong>Wojciech Szaliński</strong> (Wojtoteka)</li>
             <li>Email: <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a></li>
             <li>Formularz kontaktowy: <a href="/kontakt">wojtoteka.ovh/kontakt</a></li>
             </ul>
@@ -51,6 +51,11 @@ export default function Page() {
             <li>Podczas logowania zapisujemy adres IP i identyfikator przeglądarki (User-Agent) w ramach zabezpieczenia sesji przed przejęciem</li>
             <li>Sesja jest przechowywana w ciasteczku technicznym (patrz sekcja 5) i wygasa automatycznie po 30 minutach bezczynności</li>
             </ul>
+            <p><strong>API formularza i panel skrzynki (/api, /panel):</strong></p>
+            <ul>
+            <li>Posiadacz konta: adres email, hasło (zapisane jako skrót, nie jawnym tekstem), nazwa klucza API i opcjonalny adres do powiadomień - aby prowadzić konto i dostarczać wiadomości</li>
+            <li>Wiadomości wysłane przez formularz na stronie posiadacza konta (pola wybrane dla klucza, np. imię, email, telefon, temat, treść) oraz adres IP nadawcy. <strong>Administratorem tych danych jest właściciel strony, na której jest formularz</strong> - my przetwarzamy je w jego imieniu na podstawie umowy powierzenia zawartej w <a href="/regulamin">Regulaminie</a> (art. 28 RODO). Z prośbą o dostęp lub usunięcie zwróć się najpierw do właściciela tej strony</li>
+            </ul>
             <p><strong>Ranking gry „Głębina” (/glebina):</strong></p>
             <ul>
             <li>Nick, który dobrowolnie wpisujesz przy zgłoszeniu wyniku do rankingu, oraz osiągnięty wynik</li>
@@ -71,7 +76,7 @@ export default function Page() {
             </ul>
             <h2 id="s4">4. Podstawy prawne przetwarzania</h2>
             <ul>
-            <li><strong>Art. 6 ust. 1 lit. b RODO</strong> - przetwarzanie niezbędne do udzielenia odpowiedzi na Twoje zapytanie z formularza kontaktowego</li>
+            <li><strong>Art. 6 ust. 1 lit. b RODO</strong> - przetwarzanie niezbędne do udzielenia odpowiedzi na Twoje zapytanie z formularza kontaktowego oraz do prowadzenia konta w panelu skrzynki zgodnie z <a href="/regulamin">Regulaminem</a></li>
             <li><strong>Art. 6 ust. 1 lit. a RODO (zgoda)</strong> - dobrowolne zgłoszenie nicku i wyniku do rankingu gry</li>
             <li><strong>Art. 6 ust. 1 lit. f RODO</strong> - prawnie uzasadniony interes administratora: bezpieczeństwo sesji panelu logowania, ochrona przed spamem/nadużyciami i utrzymanie stabilności strony</li>
             </ul>
@@ -104,6 +109,7 @@ export default function Page() {
             <h2 id="s7">7. Okres przechowywania danych</h2>
             <ul>
             <li><strong>Wiadomości z formularza kontaktowego</strong> - do czasu ręcznego usunięcia przez administratora</li>
+            <li><strong>Konto w panelu skrzynki i wiadomości z API</strong> - do usunięcia przez posiadacza konta albo do zamknięcia konta</li>
             <li><strong>Dane logowania do panelu</strong> - sesja wygasa automatycznie po 30 minutach bezczynności lub po wylogowaniu</li>
             <li><strong>Wpisy w rankingu Głębiny</strong> - przechowywane jest wyłącznie TOP 5 wyników; słabsze wpisy są automatycznie usuwane</li>
             <li><strong>Zablokowane adresy IP</strong> - zgodnie z ustalonym czasem blokady (blokady mogą być też stałe, w przypadku poważnych nadużyć)</li>

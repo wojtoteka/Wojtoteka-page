@@ -1,0 +1,311 @@
+/* Bębny z grami w stylu strony: ciemne walce 3D, cienkie linie, żółta linia wygranej
+   i narożniki HUD (.v2-frame) jak przy logo w nagłówku. */
+
+.slots {
+    --face-h: clamp(52px, 6vw, 80px);
+
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    grid-template-areas:
+        'machine pay'
+        'picker pay'
+        'hint pay';
+    align-items: start;
+    gap: 20px clamp(28px, 4vw, 64px);
+}
+
+.machine {
+    grid-area: machine;
+    display: grid;
+    gap: 24px;
+}
+
+/* ---------- Bębny ---------- */
+
+.reels {
+    display: grid;
+    grid-template-columns: minmax(0, 0.6fr) minmax(0, 2.2fr) minmax(0, 1.25fr);
+    gap: 1px;
+    border: 1px solid var(--line-strong);
+    background: var(--line);
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.reels:active {
+    cursor: grabbing;
+}
+
+/* Okno jednego bębna. Widać ścianę na linii i kawałki sąsiednich. */
+.reel {
+    container-type: inline-size;
+    position: relative;
+    height: calc(var(--face-h) * 2.6);
+    overflow: hidden;
+    background: var(--ink);
+    perspective: calc(var(--face-h) * 9);
+}
+
+/* Ściany u góry i u dołu gasną w tło, więc płaskie okno wygląda jak zaokrąglony walec. */
+.reel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(to bottom, color-mix(in oklab, var(--ink) 85%, transparent), color-mix(in oklab, var(--ink) 30%, transparent) 30%, transparent 40%, transparent 60%, color-mix(in oklab, var(--ink) 30%, transparent) 70%, color-mix(in oklab, var(--ink) 85%, transparent));
+}
+
+.drum {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50% - var(--face-h) / 2);
+    height: var(--face-h);
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* Ściana bębna. Promień to wysokość ściany / (2 * tg(180° / liczba gier)).
+   Na bębnach z --dir: -1 gry leżą w odwrotnej kolejności. Taki bęben kręci się w przeciwną
+   stronę, a na linii i tak stoi ta sama gra co na bębnie z nazwą. */
+.face {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding-inline: 8px;
+    border-block: 1px solid var(--line);
+    background: var(--graphite);
+    color: var(--chalk);
+    white-space: nowrap;
+    backface-visibility: hidden;
+    transform: rotateX(calc(var(--i) * var(--dir) * -360deg / var(--count))) translateZ(calc(var(--face-h) / (2 * tan(180deg / var(--count)))));
+}
+
+.num,
+.cmd {
+    --dir: -1;
+}
+
+.name {
+    --dir: 1;
+}
+
+.num .face {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 800;
+    font-size: min(calc(var(--face-h) * 0.5), 40cqi);
+    color: var(--volt);
+}
+
+.name .face {
+    font-family: var(--font-display);
+    font-stretch: 118%;
+    font-weight: 800;
+    font-size: min(calc(var(--face-h) * 0.42), 10.5cqi);
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
+}
+
+.cmd .face {
+    font-family: var(--font-code);
+    font-size: min(calc(var(--face-h) * 0.24), 12cqi);
+    letter-spacing: 0.04em;
+    color: var(--ash);
+}
+
+/* Linia wygranej: żółte kreski nad i pod środkowym rzędem, nie przecinają napisów. */
+.payline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50% - var(--face-h) / 2);
+    height: var(--face-h);
+    border-block: 1px solid var(--volt);
+    pointer-events: none;
+}
+
+/* Znaczniki linii po bokach, poza bębnami. */
+.payline::before,
+.payline::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 10px;
+    height: 2px;
+    background: var(--volt);
+}
+
+.payline::before {
+    left: -14px;
+}
+
+.payline::after {
+    right: -14px;
+}
+
+.machine[data-win] .payline {
+    animation: winLine 0.3s steps(1) 6;
+}
+
+@keyframes winLine {
+    0% {
+        background: color-mix(in oklab, var(--volt) 14%, transparent);
+        box-shadow: 0 0 24px color-mix(in oklab, var(--volt) 35%, transparent);
+    }
+    50% {
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+/* ---------- Przyciski ---------- */
+
+.controls {
+    display: flex;
+    gap: 8px;
+}
+
+.controls :global(.btn) {
+    min-width: 44px;
+    justify-content: center;
+}
+
+.spinBtn {
+    flex: 1;
+}
+
+/* ---------- Tablica z opisem gry ---------- */
+
+.paytable {
+    grid-area: pay;
+    align-self: center;
+    padding: clamp(20px, 2.4vw, 32px);
+    border: 1px solid var(--line-strong);
+    background: linear-gradient(to bottom right, color-mix(in oklab, var(--volt) 6%, transparent), transparent 60%);
+}
+
+.payInner {
+    display: grid;
+    gap: 12px;
+    animation: payIn 0.45s var(--ease) both;
+}
+
+@keyframes payIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+}
+
+.payNum {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.payNum b {
+    color: var(--volt);
+}
+
+.paytable .payName {
+    font-stretch: 118%;
+    font-size: clamp(2rem, 3.6vw, 3.5rem);
+    line-height: 0.92;
+    letter-spacing: -0.015em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+}
+
+.payCmd {
+    justify-self: start;
+    padding: 4px 10px;
+    border: 1px solid var(--volt);
+    font-size: 0.875rem;
+    color: var(--volt);
+}
+
+.payText {
+    max-width: 48ch;
+}
+
+.payMeta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+}
+
+.payMeta span {
+    padding: 3px 9px;
+    border: 1px solid var(--line-strong);
+    font-size: 0.6875rem;
+    letter-spacing: 0.06em;
+    color: var(--ash);
+    white-space: nowrap;
+}
+
+/* ---------- Numery gier ---------- */
+
+.picker {
+    grid-area: picker;
+    display: grid;
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: 6px;
+}
+
+.picker button {
+    width: 100%;
+    min-height: 36px;
+    border: 1px solid var(--line-strong);
+    background: transparent;
+    color: var(--ash);
+    font-family: var(--font-code);
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.picker button:hover {
+    border-color: var(--volt);
+    color: var(--chalk);
+}
+
+.picker button[aria-current] {
+    border-color: var(--volt);
+    background: var(--volt);
+    color: var(--ink);
+}
+
+.hint {
+    grid-area: hint;
+    font-size: 0.75rem;
+    color: var(--ash);
+}
+
+@media (max-width: 900px) {
+    .slots {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: 'machine' 'pay' 'picker' 'hint';
+    }
+}
+
+/* Na wąskim ekranie komenda jest w tablicy pod spodem, więc trzeci bęben znika. */
+@media (max-width: 560px) {
+    .reels {
+        grid-template-columns: minmax(0, 0.7fr) minmax(0, 2.6fr);
+    }
+
+    .cmd {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .payInner,
+    .machine[data-win] .payline {
+        animation: none;
+    }
+}

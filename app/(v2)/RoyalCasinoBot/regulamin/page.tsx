@@ -19,7 +19,7 @@ const TOC = [
     { id: 's8', label: 'Ograniczenie odpowiedzialności' },
     { id: 's9', label: 'Zmiany w regulaminie' },
     { id: 's10', label: 'Prawo właściwe' },
-    { id: 's11', label: 'Kontakt' }
+    { id: 's11', label: 'Zgłoszenia i reklamacje' }
 ];
 
 export default function Page() {
@@ -27,7 +27,7 @@ export default function Page() {
         <LegalPage
             title="Regulamin"
             subject="RoyalCasino Bot"
-            updated="20 lipca 2026"
+            updated="4 października 2026"
             toc={TOC}
             note={
                 <p>
@@ -37,6 +37,7 @@ export default function Page() {
         >
             <h2 id="s1">1. Akceptacja regulaminu</h2>
             <p>Korzystając z bota <strong>RoyalCasino</strong>, akceptujesz niniejszy Regulamin. Jeśli nie zgadzasz się z jego postanowieniami, natychmiast zaprzestań korzystania z bota.</p>
+            <p>Bota prowadzi <strong>Wojciech Szaliński</strong> (Wojtoteka), kontakt: <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a>. Korzystanie z bota jest bezpłatne.</p>
             <h2 id="s2">2. Opis usługi</h2>
             <p>RoyalCasino to bot Discord oferujący wirtualne gry kasynowe (Blackjack, Poker, Ruletka, Slots, Crash, Coinflip, Dice, War, HiLo, Miny, Zdrapka, Koło Fortuny, Keno, Plinko, Limbo, Pojedynek) z fikcyjną walutą. Bot zawiera system questów, głosowania, ekonomii i osiągnięć. Cała waluta i przedmioty są <strong>wirtualne i nie mają żadnej wartości pieniężnej w świecie rzeczywistym</strong>.</p>
             <div className="notice">
@@ -53,6 +54,7 @@ export default function Page() {
             <ul>
             <li>Cała waluta jest <strong>fikcyjna</strong> i nie może być wymieniona na prawdziwe pieniądze</li>
             <li>Zastrzegamy sobie prawo do korekty sald w celu naprawy błędów lub exploitów</li>
+            <li>Waluty <strong>nie da się kupić</strong> za prawdziwe pieniądze i nie da się jej wypłacić. Bot nie oferuje nagród rzeczowych ani pieniężnych</li>
             <li>Waluta może zostać zresetowana podczas dużych aktualizacji (z wcześniejszym powiadomieniem)</li>
             </ul>
             <h2 id="s5">5. Zabronione działania</h2>
@@ -61,8 +63,10 @@ export default function Page() {
             <ul>
             <li>Wykorzystywanie błędów (exploitów) lub nieuczciwa rozgrywka</li>
             <li>Udostępnianie konta lub posiadanie wielu kont w celu uzyskania przewagi</li>
+            <li>Sprzedawanie lub kupowanie wirtualnej waluty, kont i przedmiotów za prawdziwe pieniądze, także poza botem</li>
+            <li>Ustawianie wyników pojedynków i przekazywanie waluty między kontami przez celowe przegrane</li>
             <li>Spamowanie komend lub nadużywanie funkcji bota</li>
-            <li>Łamanie <a href="https://discord.com/terms" target="_blank">Regulaminu Discorda</a> lub Wytycznych Społeczności</li>
+            <li>Łamanie <a href="https://discord.com/terms" target="_blank" rel="noopener">Regulaminu Discorda</a> lub Wytycznych Społeczności</li>
             </ul>
             </div>
             <h2 id="s6">6. Zastrzeżenia</h2>
@@ -79,17 +83,18 @@ export default function Page() {
             <li>Modyfikacji funkcji, wartości walut lub mechanik gier</li>
             </ul>
             <h2 id="s8">8. Ograniczenie odpowiedzialności</h2>
-            <p>RoyalCasino to darmowa usługa rozrywkowa. Nie ponosimy odpowiedzialności za jakiekolwiek szkody wynikające z korzystania z bota lub jego niedostępności.</p>
+            <p>RoyalCasino to darmowa usługa rozrywkowa. Nie ponosimy odpowiedzialności za szkody wynikające z korzystania z bota lub jego niedostępności, w granicach dopuszczalnych przez prawo. Postanowienie to nie wyłącza praw, które przysługują konsumentom na mocy przepisów bezwzględnie obowiązujących.</p>
             <h2 id="s9">9. Zmiany w regulaminie</h2>
-            <p>Możemy zaktualizować niniejszy Regulamin w dowolnym momencie. Dalsze korzystanie z bota oznacza akceptację zaktualizowanego Regulaminu.</p>
+            <p>Możemy zaktualizować niniejszy Regulamin, np. przy nowych grach lub zmianie przepisów. Datę zmiany pokazujemy na górze dokumentu. Dalsze korzystanie z bota oznacza akceptację zaktualizowanego Regulaminu.</p>
             <h2 id="s10">10. Prawo właściwe</h2>
             <p>Niniejszy Regulamin podlega prawu <strong>Rzeczypospolitej Polskiej</strong>.</p>
-            <h2 id="s11">11. Kontakt</h2>
-            <p>W przypadku pytań lub zgłaszania naruszeń skontaktuj się z nami:</p>
+            <h2 id="s11">11. Zgłoszenia i reklamacje</h2>
+            <p>Błędy, nadużycia innych graczy i reklamacje zgłosisz komendą <code>/zgłoszenie</code> albo:</p>
             <ul>
             <li>Email: <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a></li>
             <li>Formularz kontaktowy: <a href="/kontakt">wojtoteka.ovh/kontakt</a></li>
             </ul>
+            <p>Opisz problem i podaj swoją nazwę na Discordzie. Odpowiadamy w ciągu <strong>14 dni</strong>.</p>
         </LegalPage>
     );
 }
