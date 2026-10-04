@@ -24,6 +24,23 @@
     --tone: var(--ash);
 }
 
+/* Kropki stanu jak sygnalizacja: zielona gdy działa, czerwona przy awarii, żółta przy pracach. */
+.head,
+.monitor {
+    --light: #23a55a;
+}
+
+.head[data-tone='down'],
+.monitor[data-state='down'] {
+    --light: #f23f43;
+}
+
+.head[data-tone='maintenance'],
+.monitor[data-state='maintenance'],
+.monitor[data-state='paused'] {
+    --light: #f0b232;
+}
+
 /* ---------- Nagłówek ---------- */
 
 .head {
@@ -58,8 +75,8 @@
     height: 0.5em;
     margin-top: 0.14em;
     border-radius: 50%;
-    background: var(--tone);
-    box-shadow: 0 0 0 0 color-mix(in oklab, var(--tone) 55%, transparent);
+    background: var(--light);
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--light) 55%, transparent);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -207,7 +224,7 @@
     width: 9px;
     height: 9px;
     border-radius: 50%;
-    background: var(--tone);
+    background: var(--light);
 }
 
 .monitor[data-state='up'] .dot {
@@ -216,7 +233,7 @@
 
 @keyframes blink {
     50% {
-        box-shadow: 0 0 0 5px color-mix(in oklab, var(--tone) 25%, transparent);
+        box-shadow: 0 0 0 5px color-mix(in oklab, var(--light) 25%, transparent);
     }
 }
 
@@ -331,11 +348,11 @@
 }
 
 .dayUp {
-    background: color-mix(in oklab, var(--volt) 78%, var(--ink));
+    background: color-mix(in oklab, #23a55a 85%, var(--ink));
 }
 
 .dayDown {
-    background: var(--ember);
+    background: #f23f43;
 }
 
 /* Dni sprzed dodania monitora: pusty kontur, żeby paski wszystkich serwerów miały tę samą skalę. */

@@ -10,7 +10,7 @@ import styles from './V2Header.module.css';
 const NAV = [
     { href: '/gry', label: 'Gry' },
     { href: '/kontakt', label: 'Kontakt' },
-    { href: '/api', label: 'API' },
+    { href: '/status', label: 'Status usług' },
     { href: '/url', label: 'Skracacz' }
 ];
 

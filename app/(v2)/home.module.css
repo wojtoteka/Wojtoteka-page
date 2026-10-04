@@ -583,6 +583,18 @@
 
 .shelfHead .h2 {
     font-size: clamp(3.5rem, 9vw, 9rem);
+    white-space: nowrap;
+}
+
+/* Telefon: "GRY" w jednej linii, przycisk pod spodem. */
+@media (max-width: 560px) {
+    .shelfHead {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .shelfHead :global(.btn) {
+        justify-self: start;
+    }
 }
 
 .cart {
