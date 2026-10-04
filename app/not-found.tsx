@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { RequestedPath } from '@/components/v2/RequestedPath';
 import { Scramble } from '@/components/v2/Scramble';
-import { StatusPill } from '@/components/v2/StatusPill';
 import { V2Footer } from '@/components/v2/V2Footer';
 import { V2Header } from '@/components/v2/V2Header';
 import { V2Shell } from '@/components/v2/V2Shell';
@@ -66,7 +65,6 @@ export default function NotFound() {
                 </div>
             </main>
             <V2Footer />
-            <StatusPill />
         </V2Shell>
     );
 }
