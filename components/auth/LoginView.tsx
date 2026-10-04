@@ -36,9 +36,6 @@ export function LoginView({
                     <span>PA</span>
                     <span>NEL</span>
                 </p>
-                <figure className={`v2-frame ${styles.duck}`}>
-                    <img src="/img/glogo.gif" alt="" width={220} height={220} />
-                </figure>
                 <p className={`v2-label ${styles.artLabel}`}>
                     <b>[ / ]</b> Dostęp tylko po zalogowaniu
                 </p>
