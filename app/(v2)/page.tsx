@@ -110,7 +110,7 @@ export default async function HomePage() {
                 <WordReveal text={ABOUT} className={styles.aboutText} />
                 <dl className={styles.stats} data-reveal>
                     <div>
-                        <dt>Technologie</dt>
+                        <dt>Stack</dt>
                         <dd>
                             <Scramble text={pad(STACK.length)} trigger="view" duration={900} />
                         </dd>

@@ -10,6 +10,26 @@ Disallow: /admin
 Disallow: /panel
 Disallow: /api/
 
+# Boty AI: publiczne strony mogą czytać, prywatnych części nie.
+# Skrót strony dla modeli: /llms.txt, pełna wersja: /llms-full.txt
+User-agent: GPTBot
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: ClaudeBot
+User-agent: Claude-User
+User-agent: Claude-SearchBot
+User-agent: PerplexityBot
+User-agent: Google-Extended
+Allow: /
+Disallow: /soon
+Disallow: /budowa
+Disallow: /niedostepne
+Disallow: /status
+Disallow: /inne/
+Disallow: /admin
+Disallow: /panel
+Disallow: /api/
+
 User-agent: HTTrack
 User-agent: WebCopier
 User-agent: WebZIP

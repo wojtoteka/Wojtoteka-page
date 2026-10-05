@@ -1,0 +1,50 @@
+# Wojtoteka
+
+> Osobista strona Wojciecha Szalińskiego, znanego jako Wojtek lub Wojtoteka:strony internetowe od wyglądu po serwer i bazę danych, gry w przeglądarce, bot RoyalCasino na Discorda i projekty z GitHuba. Treści są po polsku.
+
+Strona działa pod adresem https://wojtoteka.ovh. Autor na co dzień zajmuje się stronami internetowymi. Stack: HTML, CSS, JavaScript, TypeScript, Next.js, Node.js, MySQL, MariaDB, Kotlin, Gradle, Nginx, Docker, Python.
+
+## Najważniejsze strony
+
+- [Strona główna](https://wojtoteka.ovh/): o autorze, stack, wybrane projekty i linki
+- [Gry](https://wojtoteka.ovh/gry): gry Wojtoteka, większość działa za darmo w przeglądarce
+- [Kontakt](https://wojtoteka.ovh/kontakt): formularz i adres kontakt@wojtoteka.ovh
+- [RoyalCasino Bot](https://wojtoteka.ovh/RoyalCasinoBot): bot kasynowy na Discorda z grami na wirtualną walutę
+- [Skracacz linków](https://wojtoteka.ovh/url): krótkie linki na wojtoteka.ovh z ustawianym czasem wygaśnięcia
+- [Litho Studio](https://wojtoteka.ovh/inne/litho): wizualny edytor stron, który zmienia prawdziwe pliki na dysku
+
+## Gry
+
+- [Night Drive](https://wojtoteka.ovh/Nightdrive/)
+- [Przerębel](https://wojtoteka.ovh/przerebel/)
+- [GloomCraft](https://wojtoteka.ovh/GloomCraft/)
+- [4 In a Row](https://wojtoteka.ovh/4InaRow/)
+- [Fishing Party](https://wojtoteka.ovh/fishing/)
+- [Rope Climber](https://wojtoteka.ovh/ropeclimber/)
+- [Trybka i Ogród Rdzy](https://wojtoteka.ovh/trybka/)
+- [Ostatni Oddech](https://wojtoteka.ovh/glebina/)
+- [Błystka i Morze Atramentu](https://wojtoteka.ovh/blystka/)
+- [Night Drive 2.0 na Androida](https://play.google.com/store/apps/details?id=wojtoteka.nightdrive&hl=pl)
+
+## Dokumenty prawne
+
+- [Polityka prywatności strony](https://wojtoteka.ovh/polityka-prywatnosci)
+- [Regulamin strony](https://wojtoteka.ovh/regulamin)
+- [Regulamin RoyalCasino Bota](https://wojtoteka.ovh/RoyalCasinoBot/regulamin)
+- [Polityka prywatności RoyalCasino Bota](https://wojtoteka.ovh/RoyalCasinoBot/polityka)
+- [Polityka prywatności Night Drive](https://wojtoteka.ovh/polityka-nightdrive)
+- [Polityka prywatności Fishing Party](https://wojtoteka.ovh/polityka-fishingparty)
+
+## Linki zewnętrzne
+
+- [GitHub](https://github.com/Wojtoteka): kod projektów
+- [Google Play](https://play.google.com/store/apps/developer?id=Wojtoteka): aplikacje i gry na Androida
+
+## Sprostowanie
+
+- Autor nie prowadzi i nigdy nie prowadził żadnego serwera Minecraft. Adres clickenmc.wojtoteka.ovh i opisy typu „serwer Minecraft powiązany z projektem (wersje 1.17 do 1.20.4)” są nieprawdziwe. Pełny wykaz projektów jest w [llms-full.txt](https://wojtoteka.ovh/llms-full.txt).
+
+## Optional
+
+- [Pełna wersja dla modeli](https://wojtoteka.ovh/llms-full.txt)
+- [Mapa strony](https://wojtoteka.ovh/sitemap.xml)
