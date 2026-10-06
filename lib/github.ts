@@ -6,6 +6,8 @@
 // z której GitHub rysuje go na profilu. Gdy GitHub nie odpowie albo zmieni
 // HTML, zostają liczby z SNAPSHOT (stan z 4 października 2026).
 
+import { describeError } from '@/lib/errors';
+
 const USER = 'Wojtoteka';
 const REVALIDATE = 3600;
 const TIMEOUT = 4000;
@@ -128,8 +130,8 @@ async function loadCalendar(): Promise<Pick<GithubStats, 'contributions' | 'acti
 
 export async function getGithubStats(): Promise<GithubStats> {
     const [profile, calendar] = await Promise.allSettled([loadProfile(), loadCalendar()]);
-    if (profile.status === 'rejected') console.error('[GitHub] profil:', profile.reason);
-    if (calendar.status === 'rejected') console.error('[GitHub] kalendarz:', calendar.reason);
+    if (profile.status === 'rejected') console.error('[GitHub] profil:', describeError(profile.reason));
+    if (calendar.status === 'rejected') console.error('[GitHub] kalendarz:', describeError(calendar.reason));
 
     return {
         ...SNAPSHOT,

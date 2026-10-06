@@ -8,6 +8,8 @@
 // app/discord/[...path]/route.ts: CSP strony wpuszcza tylko obrazki z tej domeny,
 // a przeglądarka odwiedzającego nie łączy się z serwerami Discorda.
 
+import { describeError } from '@/lib/errors';
+
 export const DISCORD_ID = '1328758394588500024';
 
 const TIMEOUT = 3000;
@@ -120,7 +122,7 @@ export async function getDiscordProfile(): Promise<DiscordProfile | null> {
         if (!json.success) throw new Error('Lanyard: success = false');
         data = json.data;
     } catch (error) {
-        console.error('[Discord] Lanyard:', error);
+        console.error('[Discord] Lanyard:', describeError(error));
         return null;
     }
 

@@ -11,6 +11,7 @@ import { expiryFromHours, generateUniqueCode, validateShortUrl } from '@/lib/sho
 import { GLEBINA, getTop5, signOwner, signToken, validateNick, verifyOwnerCookie, verifyToken } from '@/lib/glebina';
 import { filterLithoFiles, scanLitho } from '@/lib/litho';
 import { secureCookies } from '@/lib/auth/constants';
+import { describeError } from '@/lib/errors';
 import { csrfSeed, issueCsrfToken, limits, str, validateOrigin, verifyCsrf } from '@/server/middleware';
 
 export const publicRouter = Router();
@@ -27,7 +28,7 @@ async function verifyHCaptcha(token: string): Promise<boolean> {
         if (!data.success) console.warn('[SECURITY] hCaptcha verification failed:', data['error-codes'] || data);
         return data.success === true;
     } catch (error) {
-        console.error('hCaptcha verification error:', error);
+        console.error('hCaptcha verification error:', describeError(error));
         return false;
     }
 }
