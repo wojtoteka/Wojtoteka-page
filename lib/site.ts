@@ -16,6 +16,8 @@ export interface Announcement {
     type: 'info' | 'warning' | 'important';
     display_type: 'banner' | 'popup' | 'status';
     priority: number;
+    /** JSON z nazwami serwerów (tylko ogłoszenia na /status); "[]" = ogólne. */
+    servers: string;
 }
 
 export const DEFAULT_TAGLINE = 'developer html,css,js';
@@ -59,7 +61,7 @@ export async function getAnnouncementsFor(page: string): Promise<Announcement[]>
     if (!page || preview()) return [];
     try {
         const rows = await select<Announcement & { pages: string }>(
-            `SELECT id, title, message, type, display_type, pages, priority FROM announcements
+            `SELECT id, title, message, type, display_type, pages, servers, priority FROM announcements
              WHERE is_active = 1
                AND (starts_at IS NULL OR starts_at <= NOW())
                AND (ends_at IS NULL OR ends_at > NOW())

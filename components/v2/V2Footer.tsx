@@ -63,9 +63,10 @@ const COLUMNS = [
         ]
     },
     {
-        title: 'Formularz na Twoją stronę',
+        title: 'API',
         links: [
-            { href: '/api', label: 'Dokumentacja API' },
+            { href: '/api', label: 'API formularza' },
+            { href: '/api/status', label: 'API Status' },
             { href: '/panel', label: 'Panel skrzynki' }
         ]
     },

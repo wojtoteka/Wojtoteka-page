@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
 import { pageMeta } from '@/lib/seo';
 import type { CSSProperties } from 'react';
+import Link from 'next/link';
 import { Icon } from '@/components/Icon';
 import { ReloadButton } from '@/components/site/ReloadButton';
 import { AutoRefresh } from '@/components/site/AutoRefresh';
 import { StatusAnnouncementCard } from '@/components/site/StatusAnnouncementCard';
 import { Scramble } from '@/components/v2/Scramble';
 import { SplitText } from '@/components/v2/SplitText';
-import { getAnnouncementsFor } from '@/lib/site';
+import { getAnnouncementsFor, type Announcement } from '@/lib/site';
+import { concerns, parseServers } from '@/lib/status-api';
 import { plural } from '@/lib/client/format';
-import { getStatus, isConfigured, type StatusDay, type StatusLoad, type StatusMonitor, type StatusSnapshot } from '@/lib/hetrix';
+import { getStatus, isConfigured, sortMonitors, type StatusDay, type StatusLoad, type StatusMonitor, type StatusSnapshot } from '@/lib/hetrix';
 import styles from './status.module.css';
 
 export const dynamic = 'force-dynamic';
@@ -132,8 +134,25 @@ function Load({ load }: { load: StatusLoad }) {
     );
 }
 
+type Notice = Announcement & { serverList: string[] };
+
+const NOTICE_LABEL = { info: 'Informacja', warning: 'Ostrzeżenie', important: 'Ważne' } as const;
+const NOTICE_RANK = { info: 1, warning: 2, important: 3 } as const;
+
+/** Oznaczenie serwera z ogłoszeniem: najważniejsze ogłoszenie, link do jego treści wyżej. */
+function NoticeFlag({ notices }: { notices: Notice[] }) {
+    const top = notices.reduce((a, b) => (NOTICE_RANK[b.type] > NOTICE_RANK[a.type] ? b : a));
+    return (
+        <a href={`#ogloszenie-${top.id}`} className={styles.flag} data-type={top.type}>
+            <Icon name="megaphone" size={16} />
+            {NOTICE_LABEL[top.type]}: {top.title || 'ogłoszenie dla tego serwera'}
+            {notices.length > 1 && <span className={styles.flagMore}> (+{notices.length - 1})</span>}
+        </a>
+    );
+}
+
 /** Karta serwera: stan, dostępność z 30 dni, obciążenie i pasek dni. */
-function MonitorCard({ monitor, index }: { monitor: StatusMonitor; index: number }) {
+function MonitorCard({ monitor, index, notices }: { monitor: StatusMonitor; index: number; notices: Notice[] }) {
     const broken = monitor.days.filter(d => d.downtimes > 0).length;
     const missing = Math.max(0, DAYS - monitor.days.length);
     return (
@@ -150,6 +169,8 @@ function MonitorCard({ monitor, index }: { monitor: StatusMonitor; index: number
                 <h3 className={styles.name}>{monitor.name}</h3>
                 {monitor.region && <p className={styles.region}>{monitor.region}</p>}
             </div>
+
+            {notices.length > 0 && <NoticeFlag notices={notices} />}
 
             <p className={styles.uptime}>
                 <span className={styles.uptimeNum}>{monitor.uptime30 !== null ? percent(monitor.uptime30) : 'Brak danych'}</span>
@@ -239,12 +260,18 @@ function Head({ title, line, tone, note }: { title: string; line: string; tone?:
 }
 
 export default async function StatusPage() {
-    const announcements = (await getAnnouncementsFor('status')).filter(item => item.display_type === 'status');
+    const announcements: Notice[] = (await getAnnouncementsFor('status'))
+        .filter(item => item.display_type === 'status')
+        .map(item => ({ ...item, serverList: parseServers(item.servers) }));
     const notices = announcements.length > 0 ? (
         <section className={styles.announcements} aria-label="Ogłoszenia dotyczące serwerów">
-            {announcements.map(announcement => <StatusAnnouncementCard key={announcement.id} announcement={announcement} />)}
+            {announcements.map(announcement => (
+                <StatusAnnouncementCard key={announcement.id} id={`ogloszenie-${announcement.id}`} announcement={announcement} servers={announcement.serverList} />
+            ))}
         </section>
     ) : null;
+    // Oznaczenie na karcie serwera tylko dla ogłoszeń przypisanych do serwerów; ogólne dotyczą wszystkich.
+    const noticesFor = (name: string) => announcements.filter(a => a.serverList.length > 0 && concerns(a.serverList, name));
 
     if (!isConfigured()) {
         return (
@@ -271,11 +298,7 @@ export default async function StatusPage() {
         );
     }
 
-    const monitors = [...snapshot.monitors].sort((a, b) => {
-        if (!a.region && b.region) return 1;
-        if (a.region && !b.region) return -1;
-        return (a.region ?? '').localeCompare(b.region ?? '', 'pl') || a.name.localeCompare(b.name, 'pl', { numeric: true });
-    });
+    const monitors = sortMonitors(snapshot.monitors);
     const summary = monitors.length ? verdict(monitors) : null;
 
     const measured = monitors.filter(m => m.uptime30 !== null);
@@ -339,7 +362,7 @@ export default async function StatusPage() {
                         </div>
                         <ul role="list" className={styles.monitors}>
                             {monitors.map((monitor, i) => (
-                                <MonitorCard key={monitor.id} monitor={monitor} index={i} />
+                                <MonitorCard key={monitor.id} monitor={monitor} index={i} notices={noticesFor(monitor.name)} />
                             ))}
                         </ul>
                         <p className={styles.legend}>
@@ -354,6 +377,10 @@ export default async function StatusPage() {
             )}
 
             <Incidents snapshot={snapshot} label={monitors.length > 0 ? '[02]' : '[01]'} />
+
+            <p className={styles.apiLink}>
+                Chcesz powiadomień o tych serwerach na Discordzie albo w swojej aplikacji? <Link href="/api/status">API Status</Link>
+            </p>
         </div>
     );
 }

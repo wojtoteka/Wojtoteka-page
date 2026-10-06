@@ -259,6 +259,25 @@ export async function initDatabase(): Promise<void> {
     if (!announcementDisplay?.column_type.includes("'status'")) {
         await execute("ALTER TABLE announcements MODIFY COLUMN display_type ENUM('banner', 'popup', 'status') DEFAULT 'banner'");
     }
+    // Ogłoszenia serwerów: lista nazw serwerów (JSON, pusta = ogłoszenie ogólne) oraz to,
+    // co ostatnio poszło do API Status, żeby wykryć edycję, zmianę poziomu i zakończenie.
+    if (!(await columnExists('announcements', 'servers'))) {
+        await execute("ALTER TABLE announcements ADD COLUMN servers VARCHAR(1000) NOT NULL DEFAULT '[]' AFTER pages");
+    }
+    if (!(await columnExists('announcements', 'api_published'))) {
+        await execute('ALTER TABLE announcements ADD COLUMN api_published TINYINT(1) NOT NULL DEFAULT 0');
+        await execute('ALTER TABLE announcements ADD COLUMN api_snapshot TEXT NULL');
+    }
+
+    await execute(`
+        CREATE TABLE IF NOT EXISTS status_events (
+            id BIGINT AUTO_INCREMENT PRIMARY KEY,
+            type VARCHAR(40) NOT NULL,
+            servers VARCHAR(1000) NOT NULL DEFAULT '[]',
+            payload TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            INDEX idx_created_at (created_at)
+        ) ${TABLE_OPTIONS}`);
 
     await execute(`
         CREATE TABLE IF NOT EXISTS page_views (

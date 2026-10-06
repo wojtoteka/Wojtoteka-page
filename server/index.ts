@@ -19,6 +19,8 @@ import { publicRouter } from '@/server/routes/public';
 import { adminRouter } from '@/server/routes/admin';
 import { panelRouter } from '@/server/routes/panel';
 import { createResourceRouter } from '@/server/routes/resources';
+import { statusApiRouter } from '@/server/routes/status-api';
+import { deleteOldEvents, statusTick } from '@/lib/status-api';
 
 const dev = process.env.NODE_ENV !== 'production';
 // Produkcja wymusza HTTPS. HTTPS_REDIRECT=off pozwala uruchomić build lokalnie po http.
@@ -154,11 +156,16 @@ function renderUnavailable(req: Request, res: Response): Promise<void> {
     return renderPage(req, res, '/niedostepne', 503);
 }
 
+// Strony z dokumentacją (Next.js): /api (formularz) i /api/status (API Status).
+// Leżą pod /api, ale to zwykłe podstrony: obowiązują je blokady IP i konserwacja.
+const DOCS_PAGES = new Set(['/api', '/api/status']);
+const isDocsPage = (p: string) => DOCS_PAGES.has(p.replace(/\/$/, ''));
+
 // ---------- Blokada IP na całą stronę ----------
 app.use(async (req, res, nextFn) => {
     const p = req.path;
     if (preview) return nextFn();
-    if (p.startsWith('/api/') || p.startsWith('/admin') || p.startsWith('/panel') || p.startsWith('/img/')) return nextFn();
+    if ((p.startsWith('/api/') && !isDocsPage(p)) || p.startsWith('/admin') || p.startsWith('/panel') || p.startsWith('/img/')) return nextFn();
     try {
         if (req.realIP !== 'unknown' && (await Message.isIPBannedSiteWide(req.realIP))) {
             res.status(403).type('html').send(blockedPage());
@@ -178,7 +185,7 @@ app.use(async (req, res, nextFn) => {
     if ('dev' in req.query) return nextFn();
     const p = req.path;
     if (
-        p.startsWith('/api/') ||
+        (p.startsWith('/api/') && !isDocsPage(p)) ||
         p.startsWith('/_next/') ||
         p.startsWith('/img/') ||
         p.startsWith('/js/') ||
@@ -277,10 +284,10 @@ app.use((err: unknown, req: Request, res: Response, nextFn: NextFunction) => {
 
 app.use('/api/admin', adminRouter);
 app.use('/api/panel', panelRouter);
+app.use('/api/v1/status', statusApiRouter);
 app.use('/api', publicRouter);
 app.use('/api', (req, res, nextFn) => {
-    // /api bez niczego dalej to strona z dokumentacją (Next.js).
-    if (req.originalUrl.split('?')[0].replace(/\/$/, '') === '/api') return nextFn();
+    if (isDocsPage(req.originalUrl.split('?')[0])) return nextFn();
     res.status(404).json({ message: 'Nie ma takiego endpointu.' });
 });
 
@@ -326,11 +333,15 @@ async function start(): Promise<void> {
         ensureUploadsDir();
         void mailer.verifyConnection();
 
-        const cleanup = () => Promise.all([deleteExpiredShortUrls(), deleteExpiredFiles()]).catch(error =>
+        const cleanup = () => Promise.all([deleteExpiredShortUrls(), deleteExpiredFiles(), deleteOldEvents()]).catch(error =>
             console.error('Error during expired entries cleanup:', error)
         );
         void cleanup();
         setInterval(cleanup, 5 * 60 * 1000);
+
+        // API Status: ogłoszenia z harmonogramem i zmiany stanu serwerów (zdarzenia dla botów).
+        void statusTick();
+        setInterval(() => void statusTick(), 30 * 1000);
 
         await nextApp.prepare();
 

@@ -7,6 +7,21 @@ function parseDateTime(value: unknown): string | null {
     return normalized.replace('T', ' ');
 }
 
+/** Nazwy serwerów z panelu (np. "IT-01"): bez duplikatów, przycięte, najwyżej 30. */
+function serverNames(value: unknown): string[] {
+    if (!Array.isArray(value)) return [];
+    const seen = new Set<string>();
+    const names: string[] = [];
+    for (const item of value) {
+        if (typeof item !== 'string') continue;
+        const name = item.trim().substring(0, 100);
+        if (!name || seen.has(name.toLowerCase())) continue;
+        seen.add(name.toLowerCase());
+        names.push(name);
+    }
+    return names.slice(0, 30);
+}
+
 export function announcementInput(body: Record<string, unknown>): { ok: false; message: string } | { ok: true; params: (string | number | null)[] } {
     const title = typeof body.title === 'string' ? body.title.trim() : '';
     const message = typeof body.message === 'string' ? body.message.trim() : '';
@@ -22,9 +37,12 @@ export function announcementInput(body: Record<string, unknown>): { ok: false; m
     if (body.starts_at && !startsAt) return { ok: false, message: 'Podaj poprawną datę początku.' };
     if (body.ends_at && !endsAt) return { ok: false, message: 'Podaj poprawną datę końca.' };
     if (startsAt && endsAt && endsAt <= startsAt) return { ok: false, message: 'Data końca musi być późniejsza niż data początku.' };
+    // Serwery dotyczą tylko ogłoszeń na /status; pusta lista to ogłoszenie ogólne.
+    const servers = serverNames(serverStatus ? body.servers : []);
+    if (JSON.stringify(servers).length > 1000) return { ok: false, message: 'Zaznaczono za dużo serwerów.' };
     return {
         ok: true,
         params: [title.substring(0, 255), message.substring(0, 2000), String(body.type), String(body.display_type),
-            JSON.stringify(pages), body.is_active ? 1 : 0, parseInt(String(body.priority), 10) || 0, startsAt, endsAt]
+            JSON.stringify(pages), body.is_active ? 1 : 0, parseInt(String(body.priority), 10) || 0, startsAt, endsAt, JSON.stringify(servers)]
     };
 }

@@ -20,6 +20,8 @@ import { requireAdmin } from '@/server/auth';
 import { badId, idParam, limits, str, validateOrigin, verifyCsrf } from '@/server/middleware';
 import { getTrackedPaths } from '@/server/tracked-paths';
 import { announcementInput } from '@/lib/announcement-input';
+import { announcementDeleted, syncAnnouncements } from '@/lib/status-api';
+import { getServers, isConfigured as hetrixConfigured, sortMonitors } from '@/lib/hetrix';
 
 export const adminRouter = Router();
 
@@ -354,7 +356,8 @@ adminRouter.get('/announcements', async (_req, res) => {
         // DATETIME jest czasem lokalnym serwera. Przekazujemy go bez konwersji
         // przez Date/UTC, aby edycja z innej strefy nie przesuwała harmonogramu.
         res.json({ announcements: await select(
-            `SELECT *, DATE_FORMAT(starts_at, '%Y-%m-%dT%H:%i:%s') AS starts_at,
+            `SELECT id, title, message, type, display_type, pages, servers, is_active, priority, created_at,
+             DATE_FORMAT(starts_at, '%Y-%m-%dT%H:%i:%s') AS starts_at,
              DATE_FORMAT(ends_at, '%Y-%m-%dT%H:%i:%s') AS ends_at
              FROM announcements ORDER BY priority DESC, created_at DESC`
         ) });
@@ -371,9 +374,10 @@ adminRouter.post('/announcements', async (req, res) => {
             return;
         }
         const result = await execute(
-            'INSERT INTO announcements (title, message, type, display_type, pages, is_active, priority, starts_at, ends_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            'INSERT INTO announcements (title, message, type, display_type, pages, is_active, priority, starts_at, ends_at, servers) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             input.params
         );
+        await syncAnnouncements();
         res.status(201).json({ message: 'Ogłoszenie dodane.', id: result.insertId });
     } catch (error) {
         fail(res, error, 'creating announcement', 'Nie udało się dodać ogłoszenia.');
@@ -390,9 +394,10 @@ adminRouter.patch('/announcements/:id', async (req, res) => {
             return;
         }
         const result = await execute(
-            'UPDATE announcements SET title=?, message=?, type=?, display_type=?, pages=?, is_active=?, priority=?, starts_at=?, ends_at=? WHERE id=?',
+            'UPDATE announcements SET title=?, message=?, type=?, display_type=?, pages=?, is_active=?, priority=?, starts_at=?, ends_at=?, servers=? WHERE id=?',
             [...input.params, id]
         );
+        await syncAnnouncements();
         if (result.affectedRows === 0) res.status(404).json({ message: 'Nie ma takiego ogłoszenia.' });
         else res.json({ message: 'Zapisano zmiany w ogłoszeniu.' });
     } catch (error) {
@@ -405,6 +410,7 @@ adminRouter.patch('/announcements/:id/toggle', async (req, res) => {
     if (!id) return badId(res);
     try {
         const result = await execute('UPDATE announcements SET is_active = NOT is_active WHERE id = ?', [id]);
+        await syncAnnouncements();
         if (result.affectedRows === 0) res.status(404).json({ message: 'Nie ma takiego ogłoszenia.' });
         else res.json({ message: 'Zmieniono widoczność ogłoszenia.' });
     } catch (error) {
@@ -416,11 +422,27 @@ adminRouter.delete('/announcements/:id', async (req, res) => {
     const id = idParam(req);
     if (!id) return badId(res);
     try {
+        await announcementDeleted(id);
         const result = await execute('DELETE FROM announcements WHERE id = ?', [id]);
         if (result.affectedRows === 0) res.status(404).json({ message: 'Nie ma takiego ogłoszenia.' });
         else res.json({ message: 'Ogłoszenie usunięte.' });
     } catch (error) {
         fail(res, error, 'deleting announcement', 'Nie udało się usunąć ogłoszenia.');
+    }
+});
+
+// Serwery z HetrixTools do przypisania ogłoszenia (te same, co na /status).
+adminRouter.get('/status-servers', async (_req, res) => {
+    if (!hetrixConfigured()) {
+        res.json({ servers: [], error: 'Brak klucza HETRIX_KEY w .env, więc lista serwerów jest pusta.' });
+        return;
+    }
+    try {
+        const { servers } = await getServers();
+        res.json({ servers: sortMonitors(servers).map(({ name, region, state }) => ({ name, region, state })) });
+    } catch (error) {
+        console.error('Error fetching status servers:', (error as Error).message);
+        res.json({ servers: [], error: 'HetrixTools chwilowo nie odpowiada. Zapisane serwery zostają bez zmian.' });
     }
 });
 

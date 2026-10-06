@@ -23,6 +23,11 @@ i zmienia hasło. Reset hasła kodem z maila.
 **Publiczne API.** `POST /api/v1/contact` z nagłówkiem `X-API-Key`. Pola, limity i przykłady
 są na stronie `/api`, razem z testerem na żywo.
 
+**API Status.** Publiczne `GET /api/v1/status/*` bez kluczy (limit 60 żądań na minutę z IP):
+stan serwerów z HetrixTools, dostępność z 30 dni, obciążenie, ogłoszenia serwerów przypisane
+w panelu do konkretnych serwerów oraz zdarzenia dla botów (`/events` i strumień SSE `/stream`).
+Dokumentacja na `/api/status`, logika w [`lib/status-api.ts`](lib/status-api.ts).
+
 **Skracacz linków.** `/url/:code` z konfigurowalnym filtrem: wymóg HTTPS, czarna lista domen,
 słowa kluczowe, wyjątki i log zablokowanych prób. Polityka siedzi w
 [`s_url/security-config.ts`](s_url/security-config.ts) i [`s_url/blocked-domains.ts`](s_url/blocked-domains.ts).

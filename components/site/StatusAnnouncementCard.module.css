@@ -33,3 +33,24 @@
     white-space: pre-wrap;
     color: var(--chalk);
 }
+
+.card {
+    scroll-margin-top: 120px;
+}
+
+.servers {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-left: 12px;
+    vertical-align: middle;
+}
+
+.server {
+    padding: 1px 8px;
+    border: 1px solid color-mix(in srgb, var(--announcement-color) 55%, transparent);
+    border-radius: 4px;
+    color: var(--chalk);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+}

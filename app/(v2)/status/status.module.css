@@ -567,3 +567,55 @@
         animation: none;
     }
 }
+
+/* Oznaczenie serwera, którego dotyczy ogłoszenie (kolory jak w StatusAnnouncementCard). */
+.flag {
+    --flag: #60a5fa;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-self: start;
+    max-width: 100%;
+    padding: 6px 12px;
+    border: 1px solid color-mix(in srgb, var(--flag) 45%, transparent);
+    border-left: 3px solid var(--flag);
+    background: color-mix(in srgb, var(--flag) 10%, transparent);
+    color: var(--chalk);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    overflow-wrap: anywhere;
+}
+
+.flag svg {
+    flex: none;
+    color: var(--flag);
+}
+
+.flag[data-type='warning'] {
+    --flag: #facc15;
+}
+
+.flag[data-type='important'] {
+    --flag: #f87171;
+}
+
+.flag:hover,
+.flag:focus-visible {
+    background: color-mix(in srgb, var(--flag) 18%, transparent);
+}
+
+.flagMore {
+    color: var(--ash);
+    font-weight: 400;
+}
+
+.apiLink {
+    margin-top: clamp(40px, 6vw, 72px);
+    color: var(--ash);
+    font-size: 0.875rem;
+}
+
+.apiLink a {
+    color: var(--chalk);
+}

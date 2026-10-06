@@ -19,6 +19,7 @@ interface Announcement {
     type: 'info' | 'warning' | 'important';
     display_type: 'banner' | 'popup' | 'status';
     pages: string;
+    servers: string;
     is_active: number;
     priority: number;
     starts_at: string | null;
@@ -31,7 +32,45 @@ const TYPES = { info: 'Informacja', warning: 'Ostrzeżenie', important: 'Ważne'
 const COLORS = { info: 'niebieski', warning: 'żółty', important: 'czerwony' } as const;
 const DISPLAY = { banner: 'Pasek nad stroną', popup: 'Okienko na środku', status: 'Pod statusem, nad serwerami' } as const;
 
-function parsePages(raw: string): string[] {
+interface StatusServer {
+    name: string;
+    region: string | null;
+    state: 'up' | 'down' | 'maintenance' | 'paused';
+}
+
+const STATE = { up: 'działa', down: 'offline', maintenance: 'prace techniczne', paused: 'wstrzymany' } as const;
+
+/** Serwery z HetrixTools do zaznaczenia. Zapisane nazwy spoza listy (np. po zmianie nazwy) też są widoczne. */
+function ServerPicker({ selected }: { selected: string[] }) {
+    const { data, loading } = useResource<{ servers: StatusServer[]; error?: string }>('/api/admin/status-servers', LOGIN);
+    const known = data?.servers ?? [];
+    const missing = selected.filter(name => !known.some(s => s.name.toLowerCase() === name.toLowerCase()));
+    return (
+        <fieldset className={ui.fieldset}>
+            <legend>Których serwerów dotyczy</legend>
+            <div className={ui.options}>
+                {known.map(server => (
+                    <label key={server.name} className="check">
+                        <input type="checkbox" name="servers" value={server.name} defaultChecked={selected.some(n => n.toLowerCase() === server.name.toLowerCase())} />{' '}
+                        {server.name}
+                        <span className={styles.serverNote}>{server.region ? `${server.region}, ` : ''}{STATE[server.state]}</span>
+                    </label>
+                ))}
+                {missing.map(name => (
+                    <label key={name} className="check">
+                        <input type="checkbox" name="servers" value={name} defaultChecked /> {name}
+                        <span className={styles.serverNote}>nie ma go w monitoringu</span>
+                    </label>
+                ))}
+            </div>
+            {loading && !data && <p className="hint">Wczytywanie serwerów z HetrixTools...</p>}
+            {data?.error && <p className="hint">{data.error}</p>}
+            <p className="hint">Nic nie zaznaczone = ogłoszenie ogólne, dla wszystkich serwerów. Zaznaczony serwer dostaje oznaczenie na /status, a boty z API Status, które go obserwują, dostają powiadomienie.</p>
+        </fieldset>
+    );
+}
+
+function parseList(raw: string): string[] {
     try {
         const pages = JSON.parse(raw || '[]');
         return Array.isArray(pages) ? pages : [];
@@ -59,6 +98,7 @@ export function AnnouncementsView({ serverStatus = false }: { serverStatus?: boo
             type: values.get('type'),
             display_type: serverStatus ? 'status' : values.get('display_type'),
             pages: serverStatus ? ['status'] : values.getAll('pages'),
+            servers: serverStatus ? values.getAll('servers') : [],
             priority: Number(values.get('priority') || 0),
             is_active: values.get('is_active') === 'on',
             // Czas lokalny z pola datetime-local, serwer zapisuje go bez przeliczania na UTC.
@@ -107,14 +147,14 @@ export function AnnouncementsView({ serverStatus = false }: { serverStatus?: boo
         }
     }
 
-    const selectedPages = editing ? parsePages(editing.pages) : [];
+    const selectedPages = editing ? parseList(editing.pages) : [];
     const announcements = data?.announcements.filter(item => serverStatus ? item.display_type === 'status' : item.display_type !== 'status') ?? [];
 
     return (
         <>
             <PanelHeader
                 title={serverStatus ? 'Ogłoszenia serwerów' : 'Ogłoszenia'}
-                description={serverStatus ? 'Komunikaty na /status, pod nagłówkiem stanu usług i nad listą serwerów. Ustaw treść, kolor i termin wyświetlania.' : 'Komunikat na wybranych podstronach: jako pasek nad treścią albo okienko, które odwiedzający zamyka jednym kliknięciem.'}
+                description={serverStatus ? 'Komunikaty na /status, pod nagłówkiem stanu usług i nad listą serwerów. Ustaw treść, kolor, serwery i termin wyświetlania. Dodanie, edycja i wyłączenie trafiają też do API Status.' : 'Komunikat na wybranych podstronach: jako pasek nad treścią albo okienko, które odwiedzający zamyka jednym kliknięciem.'}
                 actions={<RefreshButton onClick={reload} loading={loading} />}
             />
 
@@ -160,6 +200,7 @@ export function AnnouncementsView({ serverStatus = false }: { serverStatus?: boo
                         </div>
                     </fieldset>}
                 </div>
+                {serverStatus && <ServerPicker selected={editing ? parseList(editing.servers) : []} />}
                 {!serverStatus && <fieldset className={ui.fieldset}>
                     <legend>Na których stronach</legend>
                     <div className={ui.options}>
@@ -205,7 +246,8 @@ export function AnnouncementsView({ serverStatus = false }: { serverStatus?: boo
                 ) : (
                     <ul role="list" className={ui.list}>
                         {announcements.map(item => {
-                            const pages = parsePages(item.pages);
+                            const pages = parseList(item.pages);
+                            const servers = parseList(item.servers);
                             return (
                                 <li key={item.id} className={`${ui.item} ${item.is_active ? '' : ui.itemDimmed}`}>
                                     <div className={ui.itemHead}>
@@ -218,14 +260,18 @@ export function AnnouncementsView({ serverStatus = false }: { serverStatus?: boo
                                         {item.is_active ? <Tag>Włączone</Tag> : <Tag tone="muted">Wyłączone</Tag>}
                                         {item.priority ? <Tag tone="muted">kolejność {item.priority}</Tag> : null}
                                     </div>
-                                    {serverStatus ? <StatusAnnouncementCard announcement={item} /> : <p className={ui.itemBody}>{item.message}</p>}
+                                    {serverStatus ? <StatusAnnouncementCard announcement={item} servers={servers} /> : <p className={ui.itemBody}>{item.message}</p>}
                                     <p className={ui.meta}>
-                                        <span>
-                                            Strony:{' '}
-                                            {pages.length
-                                                ? pages.map(p => ANNOUNCEMENT_PAGES.find(x => x.value === p)?.label ?? p).join(', ')
-                                                : 'żadna (ogłoszenie się nie pokaże)'}
-                                        </span>
+                                        {serverStatus ? (
+                                            <span>Serwery: {servers.length ? servers.join(', ') : 'wszystkie (ogłoszenie ogólne)'}</span>
+                                        ) : (
+                                            <span>
+                                                Strony:{' '}
+                                                {pages.length
+                                                    ? pages.map(p => ANNOUNCEMENT_PAGES.find(x => x.value === p)?.label ?? p).join(', ')
+                                                    : 'żadna (ogłoszenie się nie pokaże)'}
+                                            </span>
+                                        )}
                                         {item.starts_at && <span>od {formatFullDate(item.starts_at)}</span>}
                                         {item.ends_at && <span>do {formatFullDate(item.ends_at)}</span>}
                                     </p>

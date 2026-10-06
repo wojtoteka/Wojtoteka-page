@@ -39,6 +39,11 @@ export const limits = {
         keyGenerator: req => `${ipKeyGenerator(req.realIP || 'unknown')}-${req.params.id}`,
         standardHeaders: false
     }),
+    // API Status jest publiczne i bez kluczy, więc jedyną ochroną jest limit na adres IP.
+    // Zmiana tej wartości wymaga też poprawki w dokumentacji (app/(v2)/api/status).
+    statusApi: limiter(1, 60, 'Zbyt wiele żądań do API Status. Limit to 60 na minutę z jednego adresu IP.', {
+        message: { error: 'rate_limited', message: 'Zbyt wiele żądań do API Status. Limit to 60 na minutę z jednego adresu IP.' }
+    }),
     glebinaToken: limiter(15, 40, 'Zbyt wiele żądań. Spróbuj ponownie za chwilę.'),
     glebinaScore: limiter(15, 10, 'Zbyt wiele prób zapisu wyniku. Spróbuj ponownie za 15 minut.')
 };

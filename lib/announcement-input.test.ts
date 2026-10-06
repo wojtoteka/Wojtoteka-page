@@ -9,8 +9,17 @@ test('ogłoszenie serwerów może nie mieć tytułu i zawsze trafia tylko na sta
         const input = announcementInput({ ...base, type, pages: ['all', 'index'] });
         assert.equal(input.ok, true);
         if (!input.ok) return;
-        assert.deepEqual(input.params, ['', base.message, type, 'status', '["status"]', 1, 0, null, null]);
+        assert.deepEqual(input.params, ['', base.message, type, 'status', '["status"]', 1, 0, null, null, '[]']);
     }
+});
+
+test('ogłoszenie serwerów zapisuje wybrane serwery bez duplikatów; zwykłe ogłoszenie je pomija', () => {
+    const input = announcementInput({ ...base, servers: [' IT-01 ', 'it-01', 'PL-01', '', 5] });
+    assert.equal(input.ok, true);
+    if (input.ok) assert.equal(input.params[9], '["IT-01","PL-01"]');
+    const banner = announcementInput({ ...base, title: 'Tytuł', display_type: 'banner', pages: ['index'], servers: ['IT-01'] });
+    assert.equal(banner.ok, true);
+    if (banner.ok) assert.equal(banner.params[9], '[]');
 });
 
 test('harmonogram zachowuje podane godziny lokalne i pozwala na otwarte granice', () => {

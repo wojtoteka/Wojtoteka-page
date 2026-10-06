@@ -307,7 +307,8 @@ async function getLoad(id: string, servers: number): Promise<StatusLoad | null> 
     }
 }
 
-export async function getStatus(): Promise<StatusSnapshot> {
+/** Monitory w kolejności strony statusu HetrixTools; bez niej monitory z publicznym raportem. */
+async function loadChosen() {
     if (!isConfigured()) throw new HetrixError('Brak klucza HETRIX_KEY');
     const pageId = statusPageId();
 
@@ -320,12 +321,54 @@ export async function getStatus(): Promise<StatusSnapshot> {
             : Promise.resolve({ value: null, stale: false, at: Date.now() })
     ]);
 
-    // Kolejność i wybór jak na stronie statusu w HetrixTools; bez niej monitory z publicznym raportem.
     const all = monitorsRes.value;
     const page = pageRes.value;
     const chosen = page
         ? page.monitors.map(id => all.find(m => m.id === id)).filter((m): m is ApiMonitor => !!m)
         : all.filter(m => m.public_report);
+    return { chosen, page, stale: monitorsRes.stale || pageRes.stale, at: monitorsRes.at };
+}
+
+/** Serwer bez raportów i obciążenia: tylko nazwa i stan (lista w panelu, wykrywanie zmian stanu). */
+export interface StatusServer {
+    id: string;
+    name: string;
+    type: string;
+    region: string | null;
+    state: StatusMonitor['state'];
+    lastCheck: number;
+    since: number;
+}
+
+/** Lekka lista serwerów: dwa zapytania z tej samej pamięci podręcznej co strona /status. */
+export async function getServers(): Promise<{ servers: StatusServer[]; stale: boolean; fetchedAt: number }> {
+    const { chosen, stale, at } = await loadChosen();
+    return {
+        servers: chosen.map(m => ({
+            id: m.id,
+            name: m.name,
+            type: m.type,
+            region: regionName(m.category),
+            state: stateOf(m),
+            lastCheck: m.last_check,
+            since: m.last_status_change
+        })),
+        stale,
+        fetchedAt: at
+    };
+}
+
+/** Kolejność jak na /status: najpierw serwery z regionem (alfabetycznie), potem po nazwie. */
+export function sortMonitors<T extends { name: string; region: string | null }>(monitors: T[]): T[] {
+    return [...monitors].sort((a, b) => {
+        if (!a.region && b.region) return 1;
+        if (a.region && !b.region) return -1;
+        return (a.region ?? '').localeCompare(b.region ?? '', 'pl') || a.name.localeCompare(b.name, 'pl', { numeric: true });
+    });
+}
+
+export async function getStatus(): Promise<StatusSnapshot> {
+    const { chosen, page, stale: listStale, at } = await loadChosen();
 
     const agents = chosen.filter(m => m.has_agent).length;
     const offset = warsawOffset();
@@ -373,7 +416,7 @@ export async function getStatus(): Promise<StatusSnapshot> {
             ? { tone: page.announcement_type, title: page.announcement_title, body: page.announcement_body }
             : null;
 
-    const stale = monitorsRes.stale || pageRes.stale || details.some(d => d.report?.stale || d.downtimes?.stale);
+    const stale = listStale || details.some(d => d.report?.stale || d.downtimes?.stale);
 
-    return { monitors, incidents, announcement, fetchedAt: monitorsRes.at, stale };
+    return { monitors, incidents, announcement, fetchedAt: at, stale };
 }
