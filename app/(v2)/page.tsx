@@ -244,13 +244,16 @@ export default async function HomePage() {
             {/* ---------- Rok na GitHubie ---------- */}
             <GithubActivity label="[06]" />
 
+            {/* ---------- Discord na żywo ---------- */}
+            <DiscordSection label="[07]" />
+
             {/* ---------- Półka z grami ---------- */}
             <section className={styles.shelf} aria-labelledby="shelf-title">
                 <Shelf
                     head={
                         <div className={`wrap ${styles.shelfHead}`}>
                             <p className="v2-label">
-                                <b>[07]</b> Na półce
+                                <b>[08]</b> Na półce
                             </p>
                             <h2 id="shelf-title" className={styles.h2}>
                                 Gry
@@ -283,9 +286,6 @@ export default async function HomePage() {
                     ))}
                 </Shelf>
             </section>
-
-            {/* ---------- Discord na żywo ---------- */}
-            <DiscordSection label="[08]" />
 
             {/* ---------- Kontakt ---------- */}
             <section className={styles.contact} aria-label="Kontakt">

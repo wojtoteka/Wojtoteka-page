@@ -116,6 +116,72 @@ export function DiscordLive({ initial, href }: { initial: DiscordProfile | null;
         };
     }, []);
 
+    // Przechył 3D za kursorem: panel się przegina, baner lekko jedzie w bok,
+    // a boki podświetlają się w stronę, w którą przechylamy. Wyłączone na dotyku
+    // i gdy ktoś woli mniej ruchu na ekranie.
+    useEffect(() => {
+        const element = root.current;
+        if (!element || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+        const MAX_TILT = 7; // deg
+        const MAX_GLOW = 46; // %
+        const MAX_SHIFT = 10; // px
+
+        let frame = 0;
+        let pending: { x: number; y: number } | null = null;
+
+        const apply = () => {
+            frame = 0;
+            if (!pending) return;
+            const { x, y } = pending;
+            const nx = x * 2 - 1;
+            const ny = y * 2 - 1;
+            element.style.setProperty('--tilt-x', `${(-ny * MAX_TILT).toFixed(2)}deg`);
+            element.style.setProperty('--tilt-y', `${(nx * MAX_TILT).toFixed(2)}deg`);
+            element.style.setProperty('--banner-x', `${(nx * MAX_SHIFT).toFixed(1)}px`);
+            element.style.setProperty('--banner-y', `${(ny * MAX_SHIFT * 0.6).toFixed(1)}px`);
+            element.style.setProperty('--glow-l', `${Math.max(0, -nx * MAX_GLOW).toFixed(1)}%`);
+            element.style.setProperty('--glow-r', `${Math.max(0, nx * MAX_GLOW).toFixed(1)}%`);
+        };
+
+        const onMove = (event: PointerEvent) => {
+            if (event.pointerType === 'touch') return;
+            const rect = element.getBoundingClientRect();
+            pending = {
+                x: Math.min(1, Math.max(0, (event.clientX - rect.left) / rect.width)),
+                y: Math.min(1, Math.max(0, (event.clientY - rect.top) / rect.height))
+            };
+            if (!frame) frame = requestAnimationFrame(apply);
+        };
+
+        const onEnter = (event: PointerEvent) => {
+            if (event.pointerType === 'touch') return;
+            element.setAttribute('data-tilt', 'active');
+            onMove(event);
+        };
+
+        const reset = () => {
+            element.removeAttribute('data-tilt');
+            element.style.setProperty('--tilt-x', '0deg');
+            element.style.setProperty('--tilt-y', '0deg');
+            element.style.setProperty('--banner-x', '0px');
+            element.style.setProperty('--banner-y', '0px');
+            element.style.setProperty('--glow-l', '0%');
+            element.style.setProperty('--glow-r', '0%');
+        };
+
+        element.addEventListener('pointerenter', onEnter);
+        element.addEventListener('pointermove', onMove);
+        element.addEventListener('pointerleave', reset);
+
+        return () => {
+            element.removeEventListener('pointerenter', onEnter);
+            element.removeEventListener('pointermove', onMove);
+            element.removeEventListener('pointerleave', reset);
+            cancelAnimationFrame(frame);
+        };
+    }, []);
+
     // Zegar tyka tylko wtedy, gdy jest co liczyć: co sekundę przy utworze, co pół minuty przy grze.
     const timed = profile?.activities.some(a => a.start) ?? false;
     const song = profile?.activities.some(a => a.end) ?? false;
