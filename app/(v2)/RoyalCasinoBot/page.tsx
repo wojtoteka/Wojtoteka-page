@@ -18,7 +18,7 @@ export const metadata: Metadata = pageMeta({
     image: 'royalcasinobot',
 });
 
-const INVITE = 'https://discord.com/oauth2/authorize?client_id=1432001189150593155&permissions=412317194240&integration_type=0&scope=bot';
+const INVITE = 'https://discord.com/oauth2/authorize?client_id=1432001189150593155&permissions=274878286912&integration_type=0&scope=bot';
 const VOTE = 'https://top.gg/bot/1432001189150593155/vote';
 const TOPGG = 'https://top.gg/bot/1432001189150593155';
 
