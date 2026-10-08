@@ -55,6 +55,8 @@ export function GameSlots({ games }: { games: SlotGame[] }) {
     const hoverRef = useRef(false);
     const holdRef = useRef(0);
     const spinningRef = useRef(false);
+    // Skok numerem: tablica też czeka, aż bębny staną.
+    const waitRef = useRef(false);
     const dragRef = useRef<{ y: number; pos: number; faceH: number } | null>(null);
     const shownRef = useRef(0);
     const announceRef = useRef(false);
@@ -68,7 +70,7 @@ export function GameSlots({ games }: { games: SlotGame[] }) {
             if (drum) drum.style.transform = `rotateX(${DIRS[k] * pos * angle}deg)`;
         });
         // Przy losowaniu tablica czeka na wynik, zamiast migać każdą mijaną grą.
-        if (spinningRef.current) return;
+        if (spinningRef.current || waitRef.current) return;
         const index = mod(Math.round(posRef.current[1]), count);
         if (index !== shownRef.current) {
             shownRef.current = index;
@@ -84,13 +86,21 @@ export function GameSlots({ games }: { games: SlotGame[] }) {
 
     /** Ręczny ruch: wszystkie bębny jadą do tej samej gry i chwilę na niej stoją. */
     const goTo = useCallback(
-        (target: number, dur: number) => {
+        (target: number, dur: number, wait = false) => {
             const now = performance.now();
             velRef.current = 0;
             holdRef.current = now + HOLD_MS;
+            waitRef.current = wait;
             setAnnounceOnce(true);
             setWin(false);
-            tweensRef.current = posRef.current.map(from => ({ from, to: target, start: now, dur: reducedMotion() ? 0 : dur, ease: easeOutCubic }));
+            tweensRef.current = posRef.current.map((from, k) => ({
+                from,
+                to: target,
+                start: now,
+                dur: reducedMotion() ? 0 : dur,
+                ease: easeOutCubic,
+                done: wait && k === 1 ? () => (waitRef.current = false) : undefined
+            }));
         },
         []
     );
@@ -111,7 +121,7 @@ export function GameSlots({ games }: { games: SlotGame[] }) {
         // Najkrótsza droga, żeby z 01 na 16 nie kręcić przez cały bęben.
         let delta = mod(i - mod(base(), count), count);
         if (delta > count / 2) delta -= count;
-        goTo(base() + delta, STEP_MS + Math.abs(delta) * 60);
+        goTo(base() + delta, STEP_MS + Math.abs(delta) * 60, true);
     };
 
     /** Losowanie: bębny kręcą się kilka razy i stają kolejno na losowej grze. */
@@ -243,6 +253,7 @@ export function GameSlots({ games }: { games: SlotGame[] }) {
         event.currentTarget.setPointerCapture(event.pointerId);
         const faceH = (windowRefs.current[1]?.clientHeight ?? 200) / 2.6;
         tweensRef.current = [null, null, null];
+        waitRef.current = false;
         velRef.current = 0;
         dragRef.current = { y: event.clientY, pos: posRef.current[1], faceH };
         setAnnounceOnce(true);
