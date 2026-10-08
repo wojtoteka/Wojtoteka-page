@@ -30,8 +30,7 @@ const COLUMNS = [
         links: [
             { href: '/RoyalCasinoBot', label: 'RoyalCasino Bot' },
             { href: 'https://github.com/wojtoteka/FishingParty_apk', label: 'Fishing Party', external: true, newTab: true },
-            { href: 'https://kajet.wojtoteka.ovh', label: 'Kajet', external: true },
-            { href: 'https://rivox.wojtoteka.ovh/', label: 'Rivox', external: true }
+            { href: 'https://kajet.wojtoteka.ovh', label: 'Kajet', external: true }
         ]
     },
     {
