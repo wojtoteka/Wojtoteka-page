@@ -27,7 +27,7 @@ export default function Page() {
         <LegalPage
             title="Regulamin"
             subject="RoyalCasino Bot"
-            updated="4 października 2026"
+            updated="8 października 2026"
             toc={TOC}
             note={
                 <p>
@@ -39,7 +39,7 @@ export default function Page() {
             <p>Korzystając z bota <strong>RoyalCasino</strong>, akceptujesz niniejszy Regulamin. Jeśli nie zgadzasz się z jego postanowieniami, natychmiast zaprzestań korzystania z bota.</p>
             <p>Bota prowadzi <strong>Wojciech Szaliński</strong> (Wojtoteka), kontakt: <a href="mailto:kontakt@wojtoteka.ovh">kontakt@wojtoteka.ovh</a>. Korzystanie z bota jest bezpłatne.</p>
             <h2 id="s2">2. Opis usługi</h2>
-            <p>RoyalCasino to bot Discord oferujący wirtualne gry kasynowe (Blackjack, Poker, Ruletka, Slots, Crash, Coinflip, Dice, War, HiLo, Miny, Zdrapka, Koło Fortuny, Keno, Plinko, Limbo, Pojedynek) z fikcyjną walutą. Bot zawiera system questów, głosowania, ekonomii i osiągnięć. Cała waluta i przedmioty są <strong>wirtualne i nie mają żadnej wartości pieniężnej w świecie rzeczywistym</strong>.</p>
+            <p>RoyalCasino to bot Discord oferujący wirtualne gry kasynowe (Blackjack, Poker, Ruletka, Sloty, Crash, Crash Live, Coinflip, Kości, Wojna, Hi-Lo, Miny, Zdrapka, Koło Fortuny, Keno, Plinko, Limbo, Pojedynek) z fikcyjną walutą. Bot zawiera system questów, głosowania, ekonomii z poziomami VIP i cashbackiem, codzienną loterię Royal Jackpot, dropy na serwerach, sklep z motywami profilu, osiągnięcia oraz rankingi - w Discordzie i na stronie <Link href="/RoyalCasinoBot/ranking">wojtoteka.ovh/RoyalCasinoBot/ranking</Link>. Cała waluta, bilety, motywy i inne przedmioty są <strong>wirtualne i nie mają żadnej wartości pieniężnej w świecie rzeczywistym</strong>.</p>
             <div className="notice">
             <p><strong>Ważne:</strong> RoyalCasino jest usługą rozrywkową. Wirtualna waluta nie może być wymieniana na prawdziwe pieniądze, towary ani usługi.</p>
             </div>
@@ -56,7 +56,10 @@ export default function Page() {
             <li>Zastrzegamy sobie prawo do korekty sald w celu naprawy błędów lub exploitów</li>
             <li>Waluty <strong>nie da się kupić</strong> za prawdziwe pieniądze i nie da się jej wypłacić. Bot nie oferuje nagród rzeczowych ani pieniężnych</li>
             <li>Waluta może zostać zresetowana podczas dużych aktualizacji (z wcześniejszym powiadomieniem)</li>
+            <li>Bilety Royal Jackpot, cashback VIP, dropy i motywy profilu są częścią tej samej wirtualnej ekonomii i podlegają tym samym zasadom</li>
             </ul>
+            <h3>Rankingi</h3>
+            <p>Najlepsi gracze trafiają do rankingów w Discordzie i na stronie wojtoteka.ovh, gdzie widać ich nazwę z Discorda, awatar i wyniki. Szczegóły opisuje <Link href="/RoyalCasinoBot/polityka">Polityka prywatności</Link>. Jeśli nie chcesz być widoczny w rankingu na stronie, napisz przez <code>/zgłoszenie</code> - ukryjemy Twoje konto bez wpływu na grę.</p>
             <h2 id="s5">5. Zabronione działania</h2>
             <div className="notice notice-error">
             <p><strong>Następujące działania są surowo zabronione:</strong></p>
@@ -65,6 +68,7 @@ export default function Page() {
             <li>Udostępnianie konta lub posiadanie wielu kont w celu uzyskania przewagi</li>
             <li>Sprzedawanie lub kupowanie wirtualnej waluty, kont i przedmiotów za prawdziwe pieniądze, także poza botem</li>
             <li>Ustawianie wyników pojedynków i przekazywanie waluty między kontami przez celowe przegrane</li>
+            <li>Sztuczne nabijanie aktywności na serwerze (np. pisanie przez kilka kont albo boty), żeby wywołać dropy, oraz odbieranie dropów lub kupowanie biletów jackpota z wielu kont</li>
             <li>Spamowanie komend lub nadużywanie funkcji bota</li>
             <li>Łamanie <a href="https://discord.com/terms" target="_blank" rel="noopener">Regulaminu Discorda</a> lub Wytycznych Społeczności</li>
             </ul>
@@ -78,7 +82,9 @@ export default function Page() {
             <h2 id="s7">7. Wypowiedzenie</h2>
             <p>Zastrzegamy sobie prawo do:</p>
             <ul>
-            <li>Zbanowania użytkowników łamiących niniejszy Regulamin</li>
+            <li>Zbanowania użytkowników łamiących niniejszy Regulamin, na czas określony albo na stałe</li>
+            <li>Łagodniejszych środków na czas wyjaśnienia sprawy: zamrożenia konta (bez możliwości gry), limitu wysokości zakładów albo korekty salda</li>
+            <li>Wyłączenia dropów na serwerze, na którym dochodzi do nadużyć</li>
             <li>Zawieszenia lub wyłączenia bota w dowolnym momencie bez uprzedzenia</li>
             <li>Modyfikacji funkcji, wartości walut lub mechanik gier</li>
             </ul>

@@ -1,0 +1,270 @@
+/* Ranking na żywo: sekcja na /RoyalCasinoBot i podstrona /RoyalCasinoBot/ranking. */
+
+.live {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr);
+    align-items: start;
+    gap: 40px clamp(32px, 6vw, 96px);
+    padding-block: clamp(40px, 6vw, 88px);
+}
+
+.liveHead {
+    display: grid;
+    gap: 18px;
+}
+
+.liveHead .more {
+    justify-self: start;
+}
+
+.totals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-top: 1px solid var(--line);
+}
+
+.totals div {
+    display: grid;
+    gap: 4px;
+    padding: 16px 16px 16px 0;
+    border-bottom: 1px solid var(--line);
+}
+
+.totals div:nth-child(even) {
+    padding-left: 16px;
+    border-left: 1px solid var(--line);
+}
+
+.totals dt {
+    font-size: 0.6875rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ash);
+}
+
+.totals dd {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: clamp(1.4rem, 2.4vw, 2rem);
+    line-height: 1;
+    white-space: nowrap;
+}
+
+/* ---------- Lista graczy ---------- */
+
+.board {
+    display: grid;
+    border-top: 1px solid var(--line);
+    counter-reset: none;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 3ch 40px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 14px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+    transition: background-color 0.2s var(--ease);
+}
+
+.row:hover {
+    background: var(--graphite);
+}
+
+.rank {
+    font-family: var(--font-display);
+    font-weight: 900;
+    font-size: 1.125rem;
+    color: var(--ash);
+    text-align: right;
+}
+
+.row:nth-child(-n + 3) .rank {
+    color: var(--volt);
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    background: var(--graphite);
+}
+
+.who {
+    display: grid;
+    min-width: 0;
+}
+
+.name {
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sub {
+    font-size: 0.8125rem;
+    color: var(--ash);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.value {
+    font-family: var(--font-display);
+    font-stretch: 115%;
+    font-weight: 900;
+    font-size: clamp(1rem, 1.6vw, 1.375rem);
+    white-space: nowrap;
+    text-align: right;
+}
+
+.row:first-child .value {
+    color: var(--volt);
+}
+
+.serverIcon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    background: var(--graphite);
+    font-weight: 900;
+    color: var(--ash);
+}
+
+.empty {
+    padding: 24px 0;
+    color: var(--ash);
+    border-bottom: 1px solid var(--line);
+}
+
+/* ---------- Podstrona rankingu ---------- */
+
+.page {
+    padding-block: clamp(32px, 5vw, 64px) clamp(80px, 10vw, 140px);
+    display: grid;
+    gap: clamp(48px, 7vw, 96px);
+}
+
+.title {
+    font-size: clamp(3rem, 9vw, 9rem);
+    line-height: 0.86;
+    text-transform: uppercase;
+}
+
+.intro {
+    display: grid;
+    gap: 20px;
+    max-width: 70ch;
+}
+
+.intro p {
+    color: var(--ash);
+}
+
+.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.tab {
+    padding: 8px 14px;
+    border: 1px solid var(--line-strong);
+    font-size: 0.875rem;
+    text-decoration: none;
+    color: var(--chalk);
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.tab:hover {
+    border-color: var(--volt);
+}
+
+.tab[aria-current='page'] {
+    background: var(--volt);
+    border-color: var(--volt);
+    color: var(--ink);
+    font-weight: 700;
+}
+
+.split {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 40px clamp(32px, 5vw, 72px);
+    align-items: start;
+}
+
+.blockTitle {
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+}
+
+.jackpot {
+    display: grid;
+    gap: 10px;
+    padding: 24px;
+    background: var(--graphite);
+}
+
+.jackpotPot {
+    font-family: var(--font-display);
+    font-stretch: 125%;
+    font-weight: 900;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    color: var(--volt);
+}
+
+.note {
+    font-size: 0.8125rem;
+    color: var(--ash);
+}
+
+.lead {
+    color: var(--ash);
+    margin: -8px 0 16px;
+}
+
+/* Na podstronie liczby stoją w jednym rzędzie, ile się zmieści. */
+.totalsWide {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.totalsWide div:nth-child(even) {
+    padding-left: 0;
+    border-left: 0;
+}
+
+.totalsWide div + div {
+    padding-left: 16px;
+    border-left: 1px solid var(--line);
+}
+
+@media (max-width: 900px) {
+    .live,
+    .split {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 520px) {
+    .row {
+        grid-template-columns: 2.5ch 32px minmax(0, 1fr) auto;
+        gap: 10px;
+    }
+    .avatar,
+    .serverIcon {
+        width: 32px;
+        height: 32px;
+    }
+    .totals dd {
+        font-size: 1.25rem;
+    }
+}

@@ -17,6 +17,7 @@ import { getTrackedPaths } from '@/server/tracked-paths';
 import { limits } from '@/server/middleware';
 import { publicRouter } from '@/server/routes/public';
 import { adminRouter } from '@/server/routes/admin';
+import { royalRouter } from '@/server/routes/royal';
 import { panelRouter } from '@/server/routes/panel';
 import { createResourceRouter } from '@/server/routes/resources';
 import { statusApiRouter } from '@/server/routes/status-api';
@@ -130,11 +131,23 @@ const LEGACY_CSP = [
 
 // Te adresy leżą w folderach starych stron, ale renderuje je Next.js
 // z własną polityką z helmeta.
-const NEXT_PAGE_PATH = /^\/(RoyalCasinoBot(\/(polityka|regulamin))?|inne\/litho)\/?$/;
+const NEXT_PAGE_PATH = /^\/(RoyalCasinoBot(\/(polityka|regulamin|ranking))?|inne\/litho)\/?$/;
 
 app.use((req, res, nextFn) => {
     if (GAME_PATH.test(req.path)) res.setHeader('Content-Security-Policy', GAME_CSP);
     else if (LEGACY_STATIC_PATH.test(req.path) && !NEXT_PAGE_PATH.test(req.path)) res.setHeader('Content-Security-Policy', LEGACY_CSP);
+    nextFn();
+});
+
+// ---------- Fałszywe Server Actions ----------
+// Strona nie ma żadnej Server Action ('use server'), więc żądanie z nagłówkiem
+// Next-Action to skaner (zwykle szuka podatności w React Server Components).
+// Bez tego Next.js przy każdym wypisuje do logu „Server Reference ID did not match”.
+app.use((req, res, nextFn) => {
+    if (req.headers['next-action'] !== undefined) {
+        res.status(404).type('text/plain').send('Not found');
+        return;
+    }
     nextFn();
 });
 
@@ -282,6 +295,8 @@ app.use((err: unknown, req: Request, res: Response, nextFn: NextFunction) => {
     nextFn(err);
 });
 
+// Przed /api/admin: panel bota ma własny, luźniejszy limit żądań.
+app.use('/api/admin/royal', royalRouter);
 app.use('/api/admin', adminRouter);
 app.use('/api/panel', panelRouter);
 app.use('/api/v1/status', statusApiRouter);

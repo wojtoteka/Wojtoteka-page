@@ -57,7 +57,7 @@ export const PROJECTS: Project[] = [
     {
         name: 'RoyalCasino Bot',
         repo: 'discord-casino-bot',
-        about: 'Bot kasynowy na Discorda z 19 grami i wirtualną ekonomią.',
+        about: 'Bot kasynowy na Discorda z 17 grami, wirtualną ekonomią i rankingiem na żywo.',
         tech: ['TypeScript'],
         page: { href: '/RoyalCasinoBot', label: 'Strona bota' }
     },

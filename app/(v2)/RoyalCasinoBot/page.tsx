@@ -8,12 +8,16 @@ import { Scramble } from '@/components/v2/Scramble';
 import { SplitText } from '@/components/v2/SplitText';
 import { TypeCycle } from '@/components/v2/TypeCycle';
 import { WordReveal } from '@/components/v2/WordReveal';
+import { getBoard, getPublicStats } from '@/lib/royal/public';
+import { money } from '@/lib/royal/meta';
 import { GameSlots } from './GameSlots';
+import { PlayerBoard } from './RankingParts';
 import styles from './royal.module.css';
+import live from './ranking.module.css';
 
 export const metadata: Metadata = pageMeta({
     title: 'RoyalCasino Bot',
-    description: 'Bot na Discorda z 16 grami kasynowymi na wirtualną walutę: Blackjack, Poker, Ruletka, Slots, Crash i inne. Ekonomia, osiągnięcia, dzienne questy i rankingi.',
+    description: 'Bot na Discorda z 17 grami kasynowymi na wirtualną walutę: Blackjack, Poker, Ruletka, Sloty, Crash Live i inne. Ekonomia z VIP-em, codzienny jackpot, osiągnięcia, questy i ranking na żywo.',
     path: '/RoyalCasinoBot',
     image: 'royalcasinobot',
 });
@@ -26,11 +30,11 @@ const ABOUT =
     'RoyalCasino to kasyno na Twoim serwerze Discord. Grasz na wirtualną walutę, zbierasz osiągnięcia i walczysz o miejsce w rankingu.';
 
 const FACTS = [
-    { value: '16', label: 'Gier kasynowych' },
+    { value: '17', label: 'Gier kasynowych' },
     { value: '$5,000', label: 'Na start' },
     { value: '$1,000', label: 'Za głos co 12h' },
     { value: '14', label: 'Osiągnięć' },
-    { value: '3', label: 'Questy dziennie' }
+    { value: '6', label: 'Poziomów VIP' }
 ];
 
 const GAMES = [
@@ -39,6 +43,7 @@ const GAMES = [
     { name: 'Ruletka', command: '/ruletka', text: 'Europejska ruletka z wieloma opcjami zakładów: kolor, liczba, parzyste, tuziny, kolumny i więcej.', meta: ['Min: $100', 'Wypłata: do 35x'] },
     { name: 'Slots', command: '/slots', text: 'Jednoręki bandyta na kredyty z kombinacjami symboli i Jackpotem. Trafiaj wisienki i wygrywaj wielkie nagrody.', meta: ['Kredyty: 1-20', 'Max: 100x', 'Jackpot'] },
     { name: 'Crash', command: '/crash', text: 'Gra mnożnikowa. Obserwuj rosnący mnożnik i wypłać w dobrym momencie, zanim wykres spadnie.', meta: ['Min: $100', 'Rosnący mnożnik'] },
+    { name: 'Crash Live', command: '/crash-live', text: 'Jedna runda Crash dla całego kanału. 15 sekund na zakłady, potem każdy sam decyduje, kiedy wypłacić. Gdy bot się zrestartuje, stawki wracają do graczy.', meta: ['Min: $100', 'Do 25 graczy', 'Cały kanał'] },
     { name: 'Coinflip', command: '/coinflip', text: 'Prosta gra: wybierz orła lub reszkę i czekaj na wynik rzutu monetą.', meta: ['Min: $50', 'Wygrana: 2x'] },
     { name: 'Dice', command: '/dice', text: 'Zgadnij wynik rzutu kostką (1-6). Trafisz? Wygrywasz 5x stawki.', meta: ['Min: $50', 'Wygrana: 5x'] },
     { name: 'War', command: '/war', text: 'Wojna karciana: wyższa karta wygrywa. Przy remisie wchodzi runda wojny z wypłatą 3x.', meta: ['Min: $100', 'Wojna: 3x'] },
@@ -61,15 +66,20 @@ const BAND_B = GAMES.slice(8);
 
 const FEATURES = [
     { title: 'Ekonomia', text: 'Start z $5,000. Dzienny bonus $500 plus $100 za każdy dzień serii, najwięcej przy 7 dniach. Kredyty do Slotów kupujesz po $100 i sprzedajesz po $80.' },
-    { title: 'Rankingi', text: 'Top graczy według pieniędzy, poziomu, liczby gier, wygranych i serii. Sprawdzisz je przez /top i /ranking.' },
+    { title: 'VIP', text: '6 poziomów za łącznie postawione kwoty, od Brązu do Royal. Cashback od 0,1% do 0,6% stawek i daily nawet o 75% wyższe. Postęp i cashback w /vip.' },
+    { title: 'Royal Jackpot', text: 'Codzienna loteria o 21:00 czasu warszawskiego. Bilet kosztuje $1,000, a 90% trafia do puli. Gdy nikt nie kupi biletu, pula przechodzi na kolejny dzień. Bilety kupisz przez /jackpot.' },
+    { title: 'Crash Live', text: 'Jedna runda Crash na cały kanał: wszyscy patrzą na ten sam wykres, a każdy wypłaca, kiedy chce.' },
+    { title: 'Dropy', text: 'Gotówka „na stole” na kanale wybranym przez administratora serwera. Pojawia się tylko przy prawdziwej rozmowie kilku osób i ma dzienne limity, więc nie da się jej farmić.' },
+    { title: 'Rankingi', text: 'Ranking globalny, ranking serwera (zysk z 30 dni) i serwer kontra serwer. Sprawdzisz je przez /top i /ranking, a najlepszych graczy także na tej stronie.' },
+    { title: 'Sklep motywów', text: '6 motywów karty profilu w /sklep, z podglądem na własnym profilu przed zakupem.' },
     { title: 'Osiągnięcia', text: '14 osiągnięć do odblokowania, od Pierwszej Gry po Milionera i High Rollera.' },
-    { title: 'Poziomy i XP', text: '+10 XP za każdą grę, +5 XP za wygraną. Awansujesz przez poziomy i odblokowujesz odznaki.' },
+    { title: 'Poziomy i XP', text: '+10 XP za każdą grę, +5 XP za wygraną. Awansujesz przez poziomy i odblokowujesz nagrody.' },
     { title: 'Polecenia', text: 'Zaproś znajomego przez /polecenie. Obie strony dostają +$2,000.' },
-    { title: 'Powiadomienia na DM', text: 'Bot sam pisze przy osiągnięciach, awansach i dużych wygranych.' },
+    { title: 'Powiadomienia na DM', text: 'Bot sam pisze przy osiągnięciach, awansach i dużych wygranych. Możesz też włączyć przypomnienie, gdy znów da się zagłosować na top.gg.' },
     { title: 'Dzienne questy', text: '3 losowe zadania dziennie z nagrodą w gotówce i XP. Reset codziennie o 00:00 czasu warszawskiego.' },
     { title: 'Głosowanie', text: 'Głosuj co 12h na top.gg i odbieraj $1,000 nagrody przez /vote.' },
     { title: 'Polski i angielski', text: 'Każdy gracz sam wybiera język bota w /ustawienia. Tam też wyłączysz przyjmowanie pojedynków.' },
-    { title: 'Ustawienia serwera', text: 'Administrator wskazuje kanał kasyna i włącza albo wyłącza pojedynki przez /ustawienia-serwera.' },
+    { title: 'Ustawienia serwera', text: 'Administrator wskazuje kanał kasyna, język serwera, kanał dropów i kanał ogłoszeń wielkich wygranych oraz włącza albo wyłącza pojedynki przez /ustawienia-serwera.' },
     { title: 'Zgłoszenia', text: 'Błąd albo nadużycie innego gracza wyślesz prosto do właściciela bota przez /zgłoszenie.' }
 ];
 
@@ -85,14 +95,15 @@ const QUESTS = [
 
 const COMMANDS = [
     { group: 'Gry', list: GAMES.map(game => game.command) },
-    { group: 'Ekonomia', list: ['/balance', '/profil', '/daily', '/kup-kredyty', '/sprzedaj-kredyty'] },
+    { group: 'Ekonomia', list: ['/balance', '/profil', '/daily', '/vip', '/jackpot', '/sklep', '/kup-kredyty', '/sprzedaj-kredyty'] },
     { group: 'Rankingi i społeczność', list: ['/top', '/ranking', '/achievementy', '/questy', '/polecenie'] },
-    { group: 'Inne', list: ['/pomoc', '/vote', '/zapros', '/ustawienia', '/ustawienia-serwera', '/zgłoszenie'] }
+    { group: 'Inne', list: ['/kasyno', '/pomoc', '/vote', '/zapros', '/ustawienia', '/ustawienia-serwera', '/zgłoszenie'] }
 ];
 
 const DOCS = [
     { label: 'Regulamin', href: '/RoyalCasinoBot/regulamin' },
     { label: 'Polityka prywatności', href: '/RoyalCasinoBot/polityka' },
+    { label: 'Pełny ranking graczy', href: '/RoyalCasinoBot/ranking' },
     { label: 'Strona bota na top.gg', href: TOPGG },
     { label: 'Kontakt', href: '/kontakt' }
 ];
@@ -103,7 +114,16 @@ function NewTab() {
     return <span className="sr-only"> (otwiera się w nowej karcie)</span>;
 }
 
-export default function RoyalCasinoPage() {
+// Ranking czyta bazę bota przy wejściu (z minutowym cache w lib/royal/public.ts).
+export const dynamic = 'force-dynamic';
+
+const count = new Intl.NumberFormat('pl-PL');
+
+export default async function RoyalCasinoPage() {
+    const [stats, top] = await Promise.all([getPublicStats(), getBoard('saldo', 10)]);
+    // Sekcje za rankingiem przesuwają numer o jeden, gdy ranking jest widoczny.
+    const label = (n: number) => `[${pad(stats && top ? n + 1 : n)}]`;
+
     return (
         <>
             {/* ---------- Napis ---------- */}
@@ -130,7 +150,7 @@ export default function RoyalCasinoPage() {
                             <TypeCycle words={COMMAND_WORDS} label="Każdą grę uruchamiasz komendą, na przykład /blackjack." />
                             <span className={styles.caret} aria-hidden="true" />
                         </p>
-                        <p className={styles.what}>16 gier kasynowych na wirtualną walutę. Bot działa po polsku i po angielsku.</p>
+                        <p className={styles.what}>17 gier kasynowych na wirtualną walutę. Bot działa po polsku i po angielsku.</p>
                         <div className={styles.cta}>
                             <a href={INVITE} className="btn btn-primary" target="_blank" rel="noopener">
                                 <Icon name="bot" size={20} />
@@ -202,7 +222,7 @@ export default function RoyalCasinoPage() {
                         <b>[03]</b> Stół z grami
                     </p>
                     <h2 id="gry-tytul" className={styles.h2}>
-                        16 <span className="v2-outline">gier</span>
+                        17 <span className="v2-outline">gier</span>
                     </h2>
                     <p className={styles.headNote}>Każdą grę uruchamiasz komendą o tej samej nazwie.</p>
                 </div>
@@ -280,10 +300,49 @@ export default function RoyalCasinoPage() {
                 </table>
             </section>
 
+            {/* ---------- Ranking na żywo ---------- */}
+            {stats && top && (
+                <section className={`wrap ${live.live}`} aria-labelledby="ranking-tytul">
+                    <div className={live.liveHead} data-reveal>
+                        <p className="v2-label">
+                            <b>[06]</b> Na żywo
+                        </p>
+                        <h2 id="ranking-tytul" className={styles.h2}>
+                            Top <span className="v2-outline">10</span>
+                        </h2>
+                        <p className={styles.headNote}>Najbogatsi gracze RoyalCasino ze wszystkich serwerów. Dane odświeżają się co minutę.</p>
+                        <dl className={live.totals}>
+                            <div>
+                                <dt>Graczy</dt>
+                                <dd>{count.format(stats.totals.players)}</dd>
+                            </div>
+                            <div>
+                                <dt>Rozegranych gier</dt>
+                                <dd>{count.format(stats.totals.games)}</dd>
+                            </div>
+                            <div>
+                                <dt>Gier w 24h</dt>
+                                <dd>{count.format(stats.totals.games24h)}</dd>
+                            </div>
+                            <div>
+                                <dt>{stats.jackpot ? 'Pula jackpota' : 'Serwerów'}</dt>
+                                <dd>{stats.jackpot ? money(stats.jackpot.pot) : count.format(stats.totals.servers)}</dd>
+                            </div>
+                        </dl>
+                        <Link href="/RoyalCasinoBot/ranking" className={`btn btn-ghost btn-sm ${live.more}`}>
+                            Pełny ranking <span className="v2-arrow" aria-hidden="true">→</span>
+                        </Link>
+                    </div>
+                    <div data-reveal>
+                        <PlayerBoard rows={top} board="saldo" label="Top 10 graczy według salda" />
+                    </div>
+                </section>
+            )}
+
             {/* ---------- Komendy ---------- */}
             <section className={`wrap ${styles.commands}`} aria-labelledby="komendy-tytul">
                 <p className="v2-label">
-                    <b>[06]</b> Ściąga
+                    <b>{label(6)}</b> Ściąga
                 </p>
                 <h2 id="komendy-tytul" className={styles.h2}>
                     Komendy
@@ -310,7 +369,7 @@ export default function RoyalCasinoPage() {
             {/* ---------- Dokumenty ---------- */}
             <section className={`wrap ${styles.docs}`} aria-labelledby="dokumenty-tytul">
                 <p className="v2-label" id="dokumenty-tytul">
-                    <b>[07]</b> Dokumenty i pomoc
+                    <b>{label(7)}</b> Dokumenty i pomoc
                 </p>
                 <ul role="list" className={styles.docList} data-reveal>
                     {DOCS.map(doc => (
@@ -336,7 +395,7 @@ export default function RoyalCasinoPage() {
             <section className={styles.invite} aria-label="Dodaj bota">
                 <div className="wrap">
                     <p className="v2-label">
-                        <b>[08]</b> Na Twój serwer
+                        <b>{label(8)}</b> Na Twój serwer
                     </p>
                 </div>
                 <a href={INVITE} className={styles.inviteLink} target="_blank" rel="noopener" aria-label="Dodaj RoyalCasino do Discorda (otwiera się w nowej karcie)">

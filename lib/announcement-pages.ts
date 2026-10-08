@@ -12,5 +12,6 @@ export const ANNOUNCEMENT_PAGES: { value: string; label: string }[] = [
     { value: 'url', label: 'Skracacz linków' },
     { value: 'RoyalCasinoBot', label: 'RoyalCasino Bot' },
     { value: 'RoyalCasinoBot/polityka', label: 'RoyalCasino, polityka' },
-    { value: 'RoyalCasinoBot/regulamin', label: 'RoyalCasino, regulamin' }
+    { value: 'RoyalCasinoBot/regulamin', label: 'RoyalCasino, regulamin' },
+    { value: 'RoyalCasinoBot/ranking', label: 'RoyalCasino, ranking' }
 ];

@@ -45,7 +45,9 @@ export const limits = {
         message: { error: 'rate_limited', message: 'Zbyt wiele żądań do API Status. Limit to 60 na minutę z jednego adresu IP.' }
     }),
     glebinaToken: limiter(15, 40, 'Zbyt wiele żądań. Spróbuj ponownie za chwilę.'),
-    glebinaScore: limiter(15, 10, 'Zbyt wiele prób zapisu wyniku. Spróbuj ponownie za 15 minut.')
+    glebinaScore: limiter(15, 10, 'Zbyt wiele prób zapisu wyniku. Spróbuj ponownie za 15 minut.'),
+    // Panel bota RoyalCasino (za logowaniem admina): przeglądanie bazy to dużo małych zapytań.
+    royalAdmin: limiter(15, 1500, 'Zbyt wiele żądań do panelu RoyalCasino. Spróbuj ponownie za kilka minut.')
 };
 
 // ---------- Pochodzenie żądania ----------

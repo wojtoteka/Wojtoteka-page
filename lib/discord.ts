@@ -111,6 +111,22 @@ function activityImage(activity: LanyardActivity): string | null {
     return `/discord/art/app/${activity.application_id}/${img}`;
 }
 
+// Gdy Lanyard ma gorszy moment, każde wejście na stronę i każde odświeżenie
+// karty kończy się tym samym błędem. Ten sam komunikat logujemy raz na 10 minut.
+const LOG_EVERY_MS = 10 * 60_000;
+let lastLanyardLog = { message: '', at: 0, skipped: 0 };
+
+function logLanyardError(message: string): void {
+    const now = Date.now();
+    if (message === lastLanyardLog.message && now - lastLanyardLog.at < LOG_EVERY_MS) {
+        lastLanyardLog.skipped++;
+        return;
+    }
+    const repeats = lastLanyardLog.skipped ? ` (wcześniejszy błąd powtórzył się jeszcze ${lastLanyardLog.skipped}×)` : '';
+    console.error(`[Discord] Lanyard: ${message}${repeats}`);
+    lastLanyardLog = { message, at: now, skipped: 0 };
+}
+
 export async function getDiscordProfile(): Promise<DiscordProfile | null> {
     let data: LanyardData;
     try {
@@ -122,7 +138,7 @@ export async function getDiscordProfile(): Promise<DiscordProfile | null> {
         if (!json.success) throw new Error('Lanyard: success = false');
         data = json.data;
     } catch (error) {
-        console.error('[Discord] Lanyard:', describeError(error));
+        logLanyardError(describeError(error));
         return null;
     }
 

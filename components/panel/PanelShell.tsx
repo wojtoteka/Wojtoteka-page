@@ -15,6 +15,8 @@ export interface PanelNavItem {
     icon: IconName;
     /** Klucz licznika w odpowiedzi summaryUrl. */
     countKey?: string;
+    /** Podświetlaj też na podstronach (np. /admin/royal/gracze). */
+    matchPrefix?: boolean;
 }
 
 /** Wysłanie tego zdarzenia odświeża liczniki w menu (np. po usunięciu wpisu). */
@@ -88,7 +90,7 @@ export function PanelShell({
                     <nav aria-label={role}>
                         <ul role="list" className={styles.nav}>
                             {nav.map(item => {
-                                const active = pathname === item.href;
+                                const active = pathname === item.href || (!!item.matchPrefix && pathname.startsWith(item.href + '/'));
                                 const count = item.countKey ? counts[item.countKey] : undefined;
                                 return (
                                     <li key={item.href}>

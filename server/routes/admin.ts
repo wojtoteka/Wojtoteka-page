@@ -22,6 +22,7 @@ import { getTrackedPaths } from '@/server/tracked-paths';
 import { announcementInput } from '@/lib/announcement-input';
 import { announcementDeleted, syncAnnouncements } from '@/lib/status-api';
 import { getServers, isConfigured as hetrixConfigured, sortMonitors } from '@/lib/hetrix';
+import { rSelectOne, royalConfigured } from '@/lib/royal/db';
 
 export const adminRouter = Router();
 
@@ -56,7 +57,11 @@ adminRouter.get('/summary', async (_req, res) => {
             announcements: await count('SELECT COUNT(*) AS c FROM announcements WHERE is_active = 1'),
             urls: await count('SELECT COUNT(*) AS c FROM short_urls'),
             files: await count('SELECT COUNT(*) AS c FROM shared_files'),
-            bioLinks: await count('SELECT COUNT(*) AS c FROM bio_links')
+            bioLinks: await count('SELECT COUNT(*) AS c FROM bio_links'),
+            // Otwarte zgłoszenia graczy RoyalCasino; brak bazy bota nie psuje reszty liczników.
+            ...(royalConfigured()
+                ? { royalReports: await rSelectOne<{ c: number }>("SELECT COUNT(*) AS c FROM reports WHERE status = 'open'").then(r => Number(r?.c) || 0, () => undefined) }
+                : {})
         });
     } catch (error) {
         fail(res, error, 'fetching summary', 'Nie udało się pobrać liczników.');

@@ -17,6 +17,13 @@ blokady IP (formularz albo cała strona, na czas lub na stałe), ogłoszenia na 
 podstronach, krótkie linki, pliki, linki na stronie głównej, wysyłka maili, tryb konserwacji
 i statystyki odwiedzin.
 
+**Bot RoyalCasino (`/admin/royal`, `/RoyalCasinoBot/ranking`).** Strona łączy się z bazą bota
+(ten sam serwer MariaDB, osobna baza, zmienne `DB_ROYAL_*` w `.env`). Publicznie: ranking graczy
+z nickami i awatarami, serwer kontra serwer, jackpot i wygrane tygodnia. W panelu: pulpit z eventami
+i konserwacją, karta gracza (saldo, blokady, zamrożenie, limity, notatki, obserwacja, usuwanie konta),
+logi gier, podejrzani, rankingi, serwery, zgłoszenia, wypłaty, jackpot, log admina, narzędzia i akcje masowe. Zmiany salda idą pod tą samą blokadą `GET_LOCK` co w bocie, a każda akcja trafia
+do logu admina bota (`admin_audit`). Kod: [`lib/royal/`](lib/royal), [`server/routes/royal.ts`](server/routes/royal.ts).
+
 **Panel skrzynki (`/panel`).** Właściciel klucza API czyta swoje wiadomości, blokuje adresy
 i zmienia hasło. Reset hasła kodem z maila.
 

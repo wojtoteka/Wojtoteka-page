@@ -1,4 +1,5 @@
 import { getDiscordProfile, imageSource } from '@/lib/discord';
+import { royalImageSource } from '@/lib/royal/images';
 
 // /discord/status: aktualny profil z Lanyarda, zawsze świeży (bez cache).
 // /discord/<obrazek>: awatar, baner, dekoracja, odznaki i okładki pobierane
@@ -19,7 +20,8 @@ export async function GET(_request: Request, { params }: { params: Promise<{ pat
         );
     }
 
-    const found = imageSource(path);
+    // /discord/royal/...: awatary graczy i ikony serwerów bota RoyalCasino.
+    const found = path[0] === 'royal' ? await royalImageSource(path.slice(1)) : imageSource(path);
     if (!found) return new Response('Nie ma takiego obrazka.', { status: 404 });
 
     try {

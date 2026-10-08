@@ -21,6 +21,7 @@ const NAV: PanelNavItem[] = [
     { href: '/admin/linki', label: 'Krótkie linki', icon: 'link', countKey: 'urls' },
     { href: '/admin/pliki', label: 'Pliki', icon: 'file', countKey: 'files' },
     { href: '/admin/strona-glowna', label: 'Strona główna', icon: 'home', countKey: 'bioLinks' },
+    { href: '/admin/royal', label: 'RoyalCasino Bot', icon: 'dice', countKey: 'royalReports', matchPrefix: true },
     { href: '/admin/email', label: 'Wyślij email', icon: 'send' },
     { href: '/admin/ustawienia', label: 'Ustawienia', icon: 'settings' }
 ];
