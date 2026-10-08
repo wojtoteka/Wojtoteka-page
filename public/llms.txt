@@ -11,7 +11,6 @@ Strona działa pod adresem https://wojtoteka.ovh. Autor na co dzień zajmuje si�
 - [Kontakt](https://wojtoteka.ovh/kontakt): formularz i adres kontakt@wojtoteka.ovh
 - [RoyalCasino Bot](https://wojtoteka.ovh/RoyalCasinoBot): bot kasynowy na Discorda z grami na wirtualną walutę
 - [Skracacz linków](https://wojtoteka.ovh/url): krótkie linki na wojtoteka.ovh z ustawianym czasem wygaśnięcia
-- [Litho Studio](https://wojtoteka.ovh/inne/litho): wizualny edytor stron, który zmienia prawdziwe pliki na dysku
 
 ## Gry
 

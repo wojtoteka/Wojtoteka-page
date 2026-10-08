@@ -4,7 +4,6 @@ import { Router, type Request, type Response } from 'express';
 import { execute, selectOne } from '@/lib/db';
 import { DEMO_CODE, DEMO_TARGET, validateShortUrl } from '@/lib/shortener';
 import { UPLOADS_DIR, inlinePreviewMime, isStoredName, sanitizeDownloadFileName } from '@/lib/files';
-import { LITHO_DIR, filterLithoFiles, findLithoFile, scanLitho } from '@/lib/litho';
 import { limits } from '@/server/middleware';
 
 type Renderer = (req: Request, res: Response) => Promise<void>;
@@ -13,7 +12,7 @@ const PUBLIC_DIR = path.join(process.cwd(), 'public');
 
 /**
  * Trasy poza /api, które obsługuje Express, a nie Next.js:
- * krótkie linki, pobieranie plików, instalatory Litho i statyczne podstrony
+ * krótkie linki, pobieranie plików i statyczne podstrony
  * w public/ (RoyalCasinoBot, eksperymenty w /inne).
  */
 export function createResourceRouter(render: { notFound: Renderer; serverError: Renderer }): Router {
@@ -99,25 +98,6 @@ export function createResourceRouter(render: { notFound: Renderer; serverError: 
         }
     });
 
-    // ---------- Litho Studio ----------
-    router.get('/litho/download/latest/:platform', limits.publicResource, (req, res) => {
-        const platform = String(req.params.platform).toLowerCase();
-        if (platform !== 'windows' && platform !== 'linux') return render.notFound(req, res);
-        const files = filterLithoFiles(scanLitho()[platform].files, req.query as Record<string, unknown>);
-        if (files.length === 0) return render.notFound(req, res);
-        res.redirect(302, files[0].url);
-    });
-
-    // Nazwa musi zgadzać się z wynikiem skanu katalogu, więc nie da się
-    // tędy wyjść poza public/inne/litho/file/.
-    router.get('/litho/download/:file', limits.publicResource, (req, res) => {
-        const entry = findLithoFile(String(req.params.file));
-        if (!entry) return render.notFound(req, res);
-        res.download(path.join(LITHO_DIR, entry.file), entry.file);
-    });
-
-    router.get('/litho', (_req, res) => res.redirect(301, '/inne/litho'));
-
     // ---------- Stare adresy .html ----------
     const moved: Record<string, string> = {
         '/index.html': '/',
@@ -137,8 +117,7 @@ export function createResourceRouter(render: { notFound: Renderer; serverError: 
         // Podstrony przeniesione z public/ do Next.js
         '/RoyalCasinoBot/index.html': '/RoyalCasinoBot',
         '/RoyalCasinoBot/polityka.html': '/RoyalCasinoBot/polityka',
-        '/RoyalCasinoBot/regulamin.html': '/RoyalCasinoBot/regulamin',
-        '/inne/litho/index.html': '/inne/litho'
+        '/RoyalCasinoBot/regulamin.html': '/RoyalCasinoBot/regulamin'
     };
     router.get(Object.keys(moved), (req, res) => res.redirect(301, moved[req.path]));
 

@@ -20,7 +20,6 @@ uploads/
 *.AppImage
 *.mp3
 *.mp4
-public/inne/litho/file/
 
 .vscode/
 .DS_Store

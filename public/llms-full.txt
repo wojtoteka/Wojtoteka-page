@@ -12,7 +12,7 @@ Czym się zajmuje, w skrócie:
 - strony internetowe: front-end, serwer i baza danych (Next.js, Node.js, MySQL, MariaDB, Nginx, Docker),
 - gry w przeglądarce i na Androida,
 - bot RoyalCasino na Discorda,
-- aplikacje i narzędzia, np. notatnik Kajet na Androida i edytor stron Litho Studio,
+- aplikacje i narzędzia, np. notatnik Kajet na Androida,
 - własna infrastruktura strony: skracacz linków, API formularza kontaktowego, panel skrzynki, strona statusu serwerów.
 
 Strona działa od 2024 roku. Maskotką jest animowana żółta kaczka. Marka pojawia się jako „Wojtoteka” (nazwa strony) i „WOJTOTEKA” (napis na stronie głównej).
@@ -32,11 +32,6 @@ Czego strona nie podaje: wieku, miejsca zamieszkania, pracodawcy ani wykształce
 HTML, CSS, JavaScript, TypeScript, Next.js, Node.js, MySQL, MariaDB, Kotlin, Gradle, Nginx, Docker, Python. Poza tym w projektach pojawiają się Electron, Jetpack Compose oraz Godot 4.3 z GDScript.
 
 ## Wybrane projekty
-
-### Litho Studio
-Program do budowania stron internetowych myszką: elementy układa się, przeciągając je po ekranie. Zmiany trafiają od razu do zwykłych plików na dysku, bez eksportu, więc można otworzyć gotową, ręcznie pisaną stronę i edytować ją dalej. Ma auto-instalator narzędzi AI. Wersje na Windows i Linux. Technologie: TypeScript, Electron.
-Pobieranie i opis: https://wojtoteka.ovh/inne/litho
-Kod: https://github.com/Wojtoteka/litho-studio
 
 ### Kajet
 Notatnik na Androida do pisma odręcznego i notatek w Markdownie. Technologie: Kotlin, Compose.

@@ -131,7 +131,7 @@ const LEGACY_CSP = [
 
 // Te adresy leżą w folderach starych stron, ale renderuje je Next.js
 // z własną polityką z helmeta.
-const NEXT_PAGE_PATH = /^\/(RoyalCasinoBot(\/(polityka|regulamin|ranking))?|inne\/litho)\/?$/;
+const NEXT_PAGE_PATH = /^\/(RoyalCasinoBot(\/(polityka|regulamin|ranking))?)\/?$/;
 
 app.use((req, res, nextFn) => {
     if (GAME_PATH.test(req.path)) res.setHeader('Content-Security-Policy', GAME_CSP);
@@ -306,7 +306,7 @@ app.use('/api', (req, res, nextFn) => {
     res.status(404).json({ message: 'Nie ma takiego endpointu.' });
 });
 
-// ---------- Krótkie linki, pliki, Litho, statyczne podstrony ----------
+// ---------- Krótkie linki, pliki, statyczne podstrony ----------
 app.use(createResourceRouter({ notFound: renderNotFound, serverError: renderUnavailable }));
 
 // ---------- Wszystko inne renderuje Next.js ----------

@@ -9,7 +9,6 @@ import { getActiveBioLinks, getAnnouncementsFor, getSettings } from '@/lib/site'
 import { EMAIL_REGEX, CSRF_COOKIE, hmac, newCsrfSeed, parseCookieHeader, safeEqual } from '@/lib/security';
 import { expiryFromHours, generateUniqueCode, validateShortUrl } from '@/lib/shortener';
 import { GLEBINA, getTop5, signOwner, signToken, validateNick, verifyOwnerCookie, verifyToken } from '@/lib/glebina';
-import { filterLithoFiles, scanLitho } from '@/lib/litho';
 import { secureCookies } from '@/lib/auth/constants';
 import { describeError } from '@/lib/errors';
 import { csrfSeed, issueCsrfToken, limits, str, validateOrigin, verifyCsrf } from '@/server/middleware';
@@ -469,45 +468,4 @@ publicRouter.post('/glebina/score', limits.glebinaScore, validateOrigin, async (
         console.error('Error saving glebina score:', error);
         res.status(500).json({ ok: false, message: 'Błąd serwera' });
     }
-});
-
-// ---------- Litho Studio: API aktualizacji ----------
-
-publicRouter.use('/litho', (_req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Cache-Control', 'public, max-age=30');
-    next();
-});
-
-publicRouter.get('/litho/releases', limits.publicResource, (_req, res) => {
-    res.json(scanLitho());
-});
-
-publicRouter.get('/litho/latest/:platform', limits.publicResource, (req, res) => {
-    const platform = String(req.params.platform).toLowerCase();
-    if (platform !== 'windows' && platform !== 'linux') {
-        res.status(404).json({ error: 'Nieznana platforma. Dostępne: windows, linux' });
-        return;
-    }
-    const data = scanLitho();
-    const files = filterLithoFiles(data[platform].files, req.query as Record<string, unknown>);
-    if (files.length === 0) {
-        res.status(404).json({ error: 'Brak plików dla tej platformy' });
-        return;
-    }
-    const latest = files[0];
-    const versionKey = platform === 'windows' ? 'verW' : 'verL';
-    res.json({
-        platform,
-        version: latest.version,
-        [versionKey]: platform === 'windows' ? data.windows.verW : data.linux.verL,
-        file: latest.file,
-        ext: latest.ext,
-        variant: latest.variant,
-        size: latest.size,
-        sizeText: latest.sizeText,
-        created: latest.created,
-        url: latest.url,
-        files
-    });
 });

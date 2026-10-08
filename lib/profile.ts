@@ -41,11 +41,10 @@ export interface Project {
 /** Wybrane projekty przypięte na profilu GitHub, z opisami z repozytoriów. */
 export const PROJECTS: Project[] = [
     {
-        name: 'Litho Studio',
-        repo: 'litho-studio',
-        about: 'Wizualny edytor stron, który zmienia prawdziwe pliki na dysku, bez eksportu.',
-        tech: ['TypeScript', 'Electron'],
-        page: { href: '/inne/litho', label: 'Strona projektu' }
+        name: 'Fishing Party',
+        repo: 'FishingParty_apk',
+        about: 'Gra o łowieniu ryb na Androida.',
+        tech: ['Android']
     },
     {
         name: 'Kajet',
