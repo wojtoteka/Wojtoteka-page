@@ -56,6 +56,7 @@ const COLUMNS = [
             { href: '/polityka-prywatnosci', label: 'Polityka prywatności' },
             { href: '/polityka-nightdrive', label: 'Night Drive' },
             { href: '/polityka-fishingparty', label: 'Fishing Party' },
+            { href: '/regulamin-fishingparty', label: 'Regulamin Fishing Party' },
             { href: '/RoyalCasinoBot/polityka', label: 'RoyalCasino Bot' }
         ]
     }

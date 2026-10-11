@@ -67,7 +67,7 @@ W przeglądarce:
 
 Na Androida (Google Play):
 - Night Drive 2.0: https://play.google.com/store/apps/details?id=wojtoteka.nightdrive&hl=pl
-- Fishing Party ma też wersję na Androida (lokalna, nie wysyła danych).
+- Fishing Party ma też wersję na Androida: gra działa offline, a od wersji 2.1 ma opcjonalne konto online z synchronizacją postępu i ranking top 100.
 
 ## Usługi na stronie
 
@@ -81,6 +81,7 @@ Na Androida (Google Play):
 - Regulamin strony: https://wojtoteka.ovh/regulamin
 - Polityka prywatności Night Drive: https://wojtoteka.ovh/polityka-nightdrive
 - Polityka prywatności Fishing Party: https://wojtoteka.ovh/polityka-fishingparty
+- Regulamin Fishing Party: https://wojtoteka.ovh/regulamin-fishingparty
 - Regulamin i polityka RoyalCasino Bota: adresy w sekcji o bocie powyżej
 
 ## Sprostowania (informacje błędne, które krążą o autorze)

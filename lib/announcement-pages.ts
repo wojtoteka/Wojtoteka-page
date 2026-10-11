@@ -9,6 +9,7 @@ export const ANNOUNCEMENT_PAGES: { value: string; label: string }[] = [
     { value: 'polityka-prywatnosci', label: 'Polityka prywatności' },
     { value: 'polityka-nightdrive', label: 'Polityka Night Drive' },
     { value: 'polityka-fishingparty', label: 'Polityka Fishing Party' },
+    { value: 'regulamin-fishingparty', label: 'Regulamin Fishing Party' },
     { value: 'url', label: 'Skracacz linków' },
     { value: 'RoyalCasinoBot', label: 'RoyalCasino Bot' },
     { value: 'RoyalCasinoBot/polityka', label: 'RoyalCasino, polityka' },

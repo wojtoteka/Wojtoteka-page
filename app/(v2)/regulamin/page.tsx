@@ -32,7 +32,7 @@ export default function Page() {
             toc={TOC}
             note={
                 <p>
-                    Zobacz też: <Link href="/polityka-prywatnosci">Polityka prywatności</Link>. Bot RoyalCasino ma osobny <Link href="/RoyalCasinoBot/regulamin">regulamin</Link>.
+                    Zobacz też: <Link href="/polityka-prywatnosci">Polityka prywatności</Link>. Bot RoyalCasino ma osobny <Link href="/RoyalCasinoBot/regulamin">regulamin</Link>, a gra Fishing Party – <Link href="/regulamin-fishingparty">Regulamin Fishing Party</Link>.
                 </p>
             }
         >
