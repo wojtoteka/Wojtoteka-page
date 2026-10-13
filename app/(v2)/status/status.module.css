@@ -184,12 +184,47 @@
     gap: 32px;
 }
 
+/* Karty w jednym rzędzie dzielą wiersze (subgrid), więc nazwa, dostępność, RAM i pasek dni
+   stoją na tej samej wysokości, nawet gdy tylko jedna karta ma oznaczenie ogłoszenia. */
+.monitor {
+    grid-row: span 6;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+}
+
+.monitor > * + * {
+    margin-top: 26px;
+}
+
+.monitorTop {
+    grid-row: 1;
+}
+
+.nameBox {
+    grid-row: 2;
+}
+
+.flag {
+    grid-row: 3;
+}
+
+.uptime {
+    grid-row: 4;
+}
+
+.load {
+    grid-row: 5;
+}
+
+.history {
+    grid-row: 6;
+    align-self: end;
+}
+
 .monitor {
     --frame: var(--tone);
     --gap: 0px;
     display: grid;
-    align-content: start;
-    gap: 26px;
     padding: clamp(22px, 2.4vw, 32px);
     background: var(--graphite);
     border: 1px solid var(--line);

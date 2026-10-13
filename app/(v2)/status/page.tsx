@@ -35,15 +35,14 @@ const percentFmt = new Intl.NumberFormat('pl-PL', { style: 'percent', maximumFra
 
 const STATE_LABEL: Record<StatusMonitor['state'], string> = {
     up: 'Działa',
-    down: 'Offline',
+    down: 'Nie działa',
     maintenance: 'Prace techniczne',
-    paused: 'Wstrzymany'
+    paused: 'Monitoring wstrzymany'
 };
 
 const time = (unix: number) => timeFmt.format(unix * 1000);
 const when = (unix: number) => whenFmt.format(unix * 1000);
 const percent = (value: number) => percentFmt.format(value / 100);
-const pad = (n: number) => String(n).padStart(2, '0');
 
 /** "46 s", "2 min 46 s", "1 godz. 5 min", "2 dni 3 godz." */
 function duration(seconds: number): string {
@@ -121,7 +120,7 @@ function Load({ load }: { load: StatusLoad }) {
         <div className={styles.load} data-high={load.percent >= 85 || undefined}>
             <p className={styles.loadLabel}>
                 <Icon name="memory" size={18} />
-                Obciążenie
+                Zajęta pamięć RAM
             </p>
             <p className={styles.loadValue}>
                 {used}%
@@ -136,7 +135,7 @@ function Load({ load }: { load: StatusLoad }) {
 
 type Notice = Announcement & { serverList: string[] };
 
-const NOTICE_LABEL = { info: 'Informacja', warning: 'Ostrzeżenie', important: 'Ważne' } as const;
+const NOTICE_LABEL = { info: 'Informacja', warning: 'Ostrzeżenie', important: 'Ważne ogłoszenie' } as const;
 const NOTICE_RANK = { info: 1, warning: 2, important: 3 } as const;
 
 /** Oznaczenie serwera z ogłoszeniem: najważniejsze ogłoszenie, link do jego treści wyżej. */
@@ -145,7 +144,7 @@ function NoticeFlag({ notices }: { notices: Notice[] }) {
     return (
         <a href={`#ogloszenie-${top.id}`} className={styles.flag} data-type={top.type}>
             <Icon name="megaphone" size={16} />
-            {NOTICE_LABEL[top.type]}: {top.title || 'ogłoszenie dla tego serwera'}
+            {top.title ? `${NOTICE_LABEL[top.type]}: ${top.title}` : `${NOTICE_LABEL[top.type]} dla tego serwera`}
             {notices.length > 1 && <span className={styles.flagMore}> (+{notices.length - 1})</span>}
         </a>
     );
@@ -158,14 +157,14 @@ function MonitorCard({ monitor, index, notices }: { monitor: StatusMonitor; inde
     return (
         <li className={`v2-frame ${styles.monitor}`} data-state={monitor.state} data-reveal style={{ '--rd': `${index * 90}ms` } as CSSProperties}>
             <div className={styles.monitorTop}>
-                <span>{pad(index + 1)}</span>
+                <span>Stan serwera</span>
                 <p className={styles.stateLabel}>
                     <span className={styles.dot} aria-hidden="true" />
                     {STATE_LABEL[monitor.state]}
                 </p>
             </div>
 
-            <div>
+            <div className={styles.nameBox}>
                 <h3 className={styles.name}>{monitor.name}</h3>
                 {monitor.region && <p className={styles.region}>{monitor.region}</p>}
             </div>
@@ -174,7 +173,7 @@ function MonitorCard({ monitor, index, notices }: { monitor: StatusMonitor; inde
 
             <p className={styles.uptime}>
                 <span className={styles.uptimeNum}>{monitor.uptime30 !== null ? percent(monitor.uptime30) : 'Brak danych'}</span>
-                {monitor.uptime30 !== null && <span>dostępność z {monitor.days.length || DAYS} dni</span>}
+                {monitor.uptime30 !== null && <span>dostępność w ostatnich {monitor.days.length || DAYS} dniach</span>}
             </p>
 
             {monitor.load && <Load load={monitor.load} />}
@@ -204,12 +203,12 @@ function MonitorCard({ monitor, index, notices }: { monitor: StatusMonitor; inde
     );
 }
 
-function Incidents({ snapshot, label }: { snapshot: StatusSnapshot; label: string }) {
+function Incidents({ snapshot }: { snapshot: StatusSnapshot }) {
     return (
         <section className={styles.incidents} aria-labelledby="przerwy">
             <div className={styles.sectionHead} data-reveal>
                 <p className="v2-label">
-                    <b>{label}</b> Historia
+                    <b>Historia</b> Przerwy w działaniu serwerów
                 </p>
                 <h2 id="przerwy" className={styles.h2}>
                     Ostatnie <span className="v2-outline">przerwy</span>
@@ -244,7 +243,7 @@ function Head({ title, line, tone, note }: { title: string; line: string; tone?:
     return (
         <header className={styles.head} data-tone={tone}>
             <p className="v2-label">
-                <b>[STATUS]</b>
+                <b>Status</b>
                 <Scramble text={note} delay={200} />
             </p>
             <h1 className={styles.title} aria-label={title}>
@@ -314,7 +313,7 @@ export default async function StatusPage() {
                 title={summary?.title ?? 'Status usług'}
                 line={`${summary ? summary.line : 'Nie ma jeszcze żadnych serwerów do pokazania.'} Strona odświeża się sama co minutę.`}
                 tone={summary?.tone}
-                note={`Dane z ${time(snapshot.fetchedAt / 1000)}`}
+                note={`Aktualizacja: ${time(snapshot.fetchedAt / 1000)}`}
             />
 
             {notices}
@@ -335,15 +334,15 @@ export default async function StatusPage() {
                     <dl className={styles.stats} data-reveal>
                         <div>
                             <dt>Serwery</dt>
-                            <dd>{pad(monitors.length)}</dd>
+                            <dd>{monitors.length}</dd>
                         </div>
                         <div>
                             <dt>Średnia dostępność</dt>
                             <dd>{average !== null ? percent(average) : 'Brak'}</dd>
                         </div>
                         <div>
-                            <dt>Przerwy w {DAYS} dni</dt>
-                            <dd>{pad(recent)}</dd>
+                            <dt>Przerwy (ostatnie {DAYS} dni)</dt>
+                            <dd>{recent}</dd>
                         </div>
                         <div>
                             <dt>Ostatni pomiar</dt>
@@ -354,7 +353,7 @@ export default async function StatusPage() {
                     <section className={styles.servers} aria-labelledby="serwery">
                         <div className={styles.sectionHead} data-reveal>
                             <p className="v2-label">
-                                <b>[01]</b> Serwery
+                                <b>Serwery</b> Dostępność dzień po dniu
                             </p>
                             <h2 id="serwery" className={styles.h2}>
                                 Ostatnie <span className="v2-outline">{DAYS} dni</span>
@@ -366,17 +365,18 @@ export default async function StatusPage() {
                             ))}
                         </ul>
                         <p className={styles.legend}>
-                            <span className={styles.legendItem}><span className={styles.dayUp} aria-hidden="true" />Bez przerw</span>
-                            <span className={styles.legendItem}><span className={styles.dayDown} aria-hidden="true" />Była przerwa</span>
+                            <span>Każdy pasek to jeden dzień:</span>
+                            <span className={styles.legendItem}><span className={styles.dayUp} aria-hidden="true" />Dzień bez przerw</span>
+                            <span className={styles.legendItem}><span className={styles.dayDown} aria-hidden="true" />Dzień z przerwą</span>
                             {monitors.some(m => m.days.length > 0 && m.days.length < DAYS) && (
-                                <span className={styles.legendItem}><span className={styles.dayNone} aria-hidden="true" />Brak danych z tego dnia</span>
+                                <span className={styles.legendItem}><span className={styles.dayNone} aria-hidden="true" />Brak danych</span>
                             )}
                         </p>
                     </section>
                 </>
             )}
 
-            <Incidents snapshot={snapshot} label={monitors.length > 0 ? '[02]' : '[01]'} />
+            <Incidents snapshot={snapshot} />
 
             <p className={styles.apiLink}>
                 Chcesz powiadomień o tych serwerach na Discordzie albo w swojej aplikacji? <Link href="/api/status">API Status</Link>
