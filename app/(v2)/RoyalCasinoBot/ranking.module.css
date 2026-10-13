@@ -155,6 +155,13 @@
     text-transform: uppercase;
 }
 
+/* Kropka nad Ż sięga w górę i przy ciasnym line-height zlewała się z literami
+   wyżej, więc druga linijka dostaje własny zapas. */
+.title :global(.v2-outline) {
+    display: block;
+    padding-top: 0.14em;
+}
+
 .intro {
     display: grid;
     gap: 20px;
