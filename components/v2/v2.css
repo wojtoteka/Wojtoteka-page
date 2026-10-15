@@ -275,8 +275,20 @@ html:has(.v2)::-webkit-scrollbar-corner {
     }
 }
 
+/* Ł i ł z Archivo mają kreskę jako osobny, nachodzący kontur, więc obrys
+   pokazywał "ukośnik" w środku litery. Ten plik to tylko te dwa znaki
+   (900, szerokość 125%) ze scalonymi konturami. */
+@font-face {
+    font-family: 'Archivo Ł';
+    src: url('/fonts/archivo-l-stroke.woff2') format('woff2');
+    font-weight: 900;
+    unicode-range: U+0141-0142;
+    font-display: swap;
+}
+
 /* Kontur zamiast wypełnienia (druga linia wielkich napisów). */
 .v2-outline {
+    font-family: 'Archivo Ł', var(--font-display);
     color: transparent;
     -webkit-text-stroke: max(2px, 0.016em) var(--chalk);
 }
