@@ -50,7 +50,7 @@ class EmailNotifier {
     }
 
     private get from(): string {
-        return process.env.SMTP_USER || '';
+        return process.env.SMTP_FROM || process.env.SMTP_USER || '';
     }
 
     escapeHtml(value: unknown): string {
