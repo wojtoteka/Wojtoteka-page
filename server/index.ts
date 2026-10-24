@@ -1,4 +1,5 @@
 import './env';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { parse } from 'node:url';
@@ -67,20 +68,35 @@ app.use((req, res, nextFn) => {
 // ---------- Nagłówki bezpieczeństwa ----------
 const hcaptcha = ['https://hcaptcha.com', 'https://*.hcaptcha.com'];
 
+// Jednorazowy nonce na każde żądanie. Skrypty inline Next.js (dane strony)
+// dostają go automatycznie, więc script-src obywa się bez 'unsafe-inline'.
+app.use((_req, res, nextFn) => {
+    res.locals.cspNonce = crypto.randomBytes(16).toString('base64');
+    nextFn();
+});
+
+const nonce = (_req: unknown, res: unknown) => `'nonce-${(res as Response).locals.cspNonce}'`;
+
 app.use(
     helmet({
         contentSecurityPolicy: {
             directives: {
-                defaultSrc: ["'self'"],
-                // Next.js wstrzykuje skrypty inline z danymi strony, stąd 'unsafe-inline'.
+                // Wszystko, czego nie wymieniono niżej, jest zablokowane.
+                defaultSrc: ["'none'"],
                 // 'unsafe-eval' i websocket tylko w trybie deweloperskim (HMR).
-                scriptSrc: ["'self'", "'unsafe-inline'", 'https://js.hcaptcha.com', ...hcaptcha, ...(dev ? ["'unsafe-eval'"] : [])],
+                scriptSrc: ["'self'", nonce, 'https://js.hcaptcha.com', ...hcaptcha, ...(dev ? ["'unsafe-eval'"] : [])],
                 scriptSrcAttr: ["'none'"],
-                styleSrc: ["'self'", "'unsafe-inline'", ...hcaptcha],
+                // Na produkcji style idą z plików CSS, bez znaczników <style>. W trybie
+                // deweloperskim Next.js wstrzykuje je inline, stąd tam 'unsafe-inline'.
+                styleSrc: ["'self'", dev ? "'unsafe-inline'" : nonce, ...hcaptcha],
+                // Atrybuty style="" (React, hCaptcha) nie mogą mieć nonce.
+                styleSrcAttr: ["'unsafe-inline'"],
                 frameSrc: hcaptcha,
                 connectSrc: ["'self'", ...hcaptcha, ...(dev ? ['ws:', 'wss:'] : [])],
                 imgSrc: ["'self'", 'data:', 'blob:'],
                 fontSrc: ["'self'"],
+                manifestSrc: ["'self'"],
+                workerSrc: ["'self'"],
                 objectSrc: ["'none'"],
                 mediaSrc: ["'self'"],
                 baseUri: ["'self'"],
@@ -94,6 +110,13 @@ app.use(
         referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
     })
 );
+
+// Next.js szuka nonce w nagłówku CSP żądania. Zawsze nadpisywany, więc
+// klient nie może podsunąć własnego nonce.
+app.use((req, res, nextFn) => {
+    req.headers['content-security-policy'] = String(res.getHeader('Content-Security-Policy') ?? '');
+    nextFn();
+});
 
 // Gry microStudio potrzebują luźniejszej CSP: silnik inicjalizował audio przez
 // eval(), a stare kopie plików długo żyją w cache Cloudflare i przeglądarek.

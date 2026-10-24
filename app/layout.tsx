@@ -35,6 +35,10 @@ export const metadata: Metadata = {
     twitter: { card: 'summary_large_image', images: ['/img/og/home.png'] }
 };
 
+// CSP ma nonce inny przy każdym żądaniu (server/index.ts), więc strony renderujemy
+// na bieżąco: HTML zbudowany wcześniej miałby skrypty bez nonce i przeglądarka by je zablokowała.
+export const dynamic = 'force-dynamic';
+
 export const viewport: Viewport = {
     themeColor: '#0b0a09',
     colorScheme: 'dark'
