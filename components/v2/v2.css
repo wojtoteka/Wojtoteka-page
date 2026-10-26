@@ -269,9 +269,11 @@ html:has(.v2)::-webkit-scrollbar-corner {
     animation-delay: calc(var(--d, 120ms) + var(--i) * 55ms);
 }
 
+/* Start ze 125%, nie 112%: na szerokim ekranie obrócone o 4° litery wystawały
+   rogami nad dolną krawędź linii i przed wjazdem było widać pod napisem kreski. */
 @keyframes v2-rise {
     from {
-        transform: translateY(112%) rotate(4deg);
+        transform: translateY(125%) rotate(4deg);
     }
 }
 

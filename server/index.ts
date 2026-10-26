@@ -297,9 +297,21 @@ app.use((req, _res, nextFn) => {
 app.use(express.static('public', { index: 'index.html', redirect: false }));
 
 // ---------- Auth.js (obsługuje Next.js, body nie może być wcześniej sparsowane) ----------
+// Logowanie to tylko POST na /callback/admin albo /callback/panel (dostawcy z auth.ts).
+// Inny /callback (bez dostawcy, z obcym dostawcą, GET) to skaner, a Auth.js
+// wypisywał przy każdym „InvalidProvider” z pełnym stosem wywołań.
+const AUTH_CALLBACK = /^\/callback\/(admin|panel)\/?$/;
+
 app.use(
     '/api/auth',
-    (req, res, nextFn) => (req.method === 'POST' && req.path.startsWith('/callback') ? limits.authCallback(req, res, nextFn) : nextFn()),
+    (req, res, nextFn) => {
+        if (!req.path.startsWith('/callback')) return nextFn();
+        if (req.method !== 'POST' || !AUTH_CALLBACK.test(req.path)) {
+            res.status(404).type('text/plain').send('Not found');
+            return;
+        }
+        limits.authCallback(req, res, nextFn);
+    },
     (req, res) => {
         req.url = req.originalUrl;
         return handle(req, res);
