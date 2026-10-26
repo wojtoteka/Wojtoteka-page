@@ -15,9 +15,28 @@ export interface Game {
     frame: string;
     /** Przechylenie grafiki w stopniach: każda leży trochę inaczej. */
     tilt: number;
+    /** Kilka zdań o grze, pokazywane na /gry zamiast samej platformy. */
+    about?: string;
+    /** Nowa gra: stoi na początku listy i ma znaczek "Nowość". */
+    isNew?: boolean;
 }
 
+export const FISHING_PARTY_PLAY = 'https://play.google.com/store/apps/details?id=wojtoteka.ovh.fishingparty&hl=pl';
+
 export const GAMES: Game[] = [
+    {
+        slug: 'fishing-party-2',
+        title: 'Fishing Party 2.0',
+        href: FISHING_PARTY_PLAY,
+        platform: 'android',
+        shot: { src: '/img/gry/ekrany/fishing-party-2.webp', width: 1024, height: 500 },
+        logo: { src: '/img/gry/loga/fishing-party-2.webp', alt: 'Logo Fishing Party 2.0: rybak w łódce, a obok paszcza rekina, pixel art', pixel: true },
+        bg: '#073a68',
+        frame: '#ffc12e',
+        tilt: 2,
+        about: 'Łów ryby, uciekaj przed bestiami i buduj własne poziomy. 1000 poziomów w 40 światach, ranking online, za darmo i bez reklam.',
+        isNew: true
+    },
     {
         slug: 'night-drive',
         title: 'Night Drive',

@@ -327,6 +327,146 @@
     }
 }
 
+/* ---------- Nowa gra: Fishing Party 2.0 ---------- */
+
+/* Plansza w kolorach gry: morski granat i żółty z napisu PARTY. */
+.promo {
+    --frame: #ffc12e;
+    --promo-bg: #073a68;
+    position: relative;
+    overflow-x: clip;
+    padding-block: clamp(64px, 8vw, 120px);
+    background:
+        radial-gradient(120% 80% at 85% 0%, color-mix(in oklab, #1d8fe0 45%, transparent), transparent 60%),
+        var(--promo-bg);
+    border-block: 1px solid color-mix(in oklab, var(--frame) 40%, transparent);
+}
+
+.promoInner {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: clamp(28px, 4vw, 56px) 24px;
+}
+
+.promoHead {
+    grid-column: 1 / -1;
+    display: grid;
+    gap: 18px;
+}
+
+.promo :global(.v2-label) {
+    color: color-mix(in oklab, var(--chalk) 75%, var(--promo-bg));
+}
+
+.promo :global(.v2-label) b {
+    color: var(--frame);
+}
+
+.promo :global(.v2-outline) {
+    -webkit-text-stroke-color: var(--frame);
+}
+
+.promoBanner {
+    grid-column: 1 / span 7;
+    align-self: start;
+    --gap: 12px;
+    --len: 24px;
+    transform: rotate(-1.5deg);
+}
+
+.promoBanner img {
+    width: 100%;
+    height: auto;
+    box-shadow: 0 24px 60px -24px rgb(0 0 0 / 0.6);
+}
+
+.promoCopy {
+    grid-column: 8 / -1;
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    gap: 22px;
+}
+
+.promoLead {
+    max-width: 40ch;
+    font-size: 1.0625rem;
+}
+
+.promoList {
+    display: grid;
+    gap: 10px;
+    color: color-mix(in oklab, var(--chalk) 85%, var(--promo-bg));
+}
+
+.promoList li {
+    display: grid;
+    grid-template-columns: 16px minmax(0, 1fr);
+    gap: 10px;
+}
+
+.promoList li::before {
+    content: '>';
+    color: var(--frame);
+}
+
+.promoActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+}
+
+/* Trzy telefony obok siebie, każdy trochę inaczej przechylony i na innej wysokości. */
+.promoShots {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(20px, 4vw, 64px);
+    max-width: 900px;
+    margin: clamp(16px, 3vw, 40px) auto 0;
+}
+
+.promoShot {
+    --gap: 8px;
+    --len: 16px;
+    transform: rotate(calc((var(--i) - 1) * 3deg)) translateY(calc((1 - var(--i)) * (var(--i) - 1) * -24px));
+}
+
+.promoShot img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 2;
+    object-fit: cover;
+}
+
+@media (max-width: 900px) {
+    .promoBanner,
+    .promoCopy {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .promoShots {
+        gap: 12px;
+    }
+
+    .promoShot {
+        --gap: 5px;
+        --len: 10px;
+    }
+}
+
+/* Znaczek nowej gry na półce. */
+.cartNew {
+    margin-right: 10px;
+    padding: 1px 6px;
+    background: var(--frame);
+    color: var(--ink);
+    font-weight: 700;
+}
+
 /* ---------- Technologie: dwa pasy jadące w przeciwne strony ---------- */
 
 .stack {

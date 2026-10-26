@@ -172,6 +172,14 @@
     color: var(--frame);
 }
 
+/* Znaczek nowej gry, w kolorze ramki planszy. */
+.badge {
+    padding: 2px 8px;
+    background: var(--frame);
+    color: var(--stage-bg);
+    font-weight: 700;
+}
+
 .barLine {
     flex: 1;
     height: 1px;
@@ -257,6 +265,12 @@
 
 .stageTitle[data-long] {
     font-size: min(4.75rem, 4.8cqi);
+}
+
+.about {
+    max-width: 38ch;
+    font-size: 1.0625rem;
+    color: var(--chalk);
 }
 
 .platform {

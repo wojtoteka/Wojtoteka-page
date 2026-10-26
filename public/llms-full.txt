@@ -66,8 +66,8 @@ W przeglądarce:
 - Błystka i Morze Atramentu: https://wojtoteka.ovh/blystka/
 
 Na Androida (Google Play):
+- Fishing Party 2.0 (nowość): https://play.google.com/store/apps/details?id=wojtoteka.ovh.fishingparty&hl=pl (pixel art, łowienie ryb i ucieczka przed bestiami, 1000 poziomów w 40 światach, kreator poziomów, poziom dnia i tygodnia, ranking top 100; za darmo, bez reklam i mikropłatności, kampania działa offline, konto online jest opcjonalne)
 - Night Drive 2.0: https://play.google.com/store/apps/details?id=wojtoteka.nightdrive&hl=pl
-- Fishing Party ma też wersję na Androida: gra działa offline, a od wersji 2.1 ma opcjonalne konto online z synchronizacją postępu i ranking top 100.
 
 ## Usługi na stronie
 

@@ -10,7 +10,7 @@ import { Scramble } from '@/components/v2/Scramble';
 import { Shelf } from '@/components/v2/Shelf';
 import { SplitText } from '@/components/v2/SplitText';
 import { WordReveal } from '@/components/v2/WordReveal';
-import { GAMES } from '@/lib/games';
+import { FISHING_PARTY_PLAY, GAMES } from '@/lib/games';
 import { PROJECTS, PROFILES, STACK, repoUrl } from '@/lib/profile';
 import { DEFAULT_TAGLINE, getActiveBioLinks, getSettings } from '@/lib/site';
 import styles from './home.module.css';
@@ -33,6 +33,20 @@ const STACK_A = STACK.slice(0, 7);
 const STACK_B = STACK.slice(7);
 
 const pad = (n: number) => String(n).padStart(2, '0');
+
+// Nowa gra na Androida: co w niej jest i trzy zrzuty z telefonu.
+const FISHING_FEATURES = [
+    '1000 poziomów w 40 światach i bestia na końcu każdego',
+    'Kreator poziomów: zbuduj planszę i wyślij ją znajomym',
+    'Poziom dnia, poziom tygodnia i ranking top 100',
+    'Za darmo, bez reklam i bez mikropłatności'
+];
+
+const FISHING_SHOTS = [
+    { src: '/img/gry/fishing-party-2/rozgrywka.webp', alt: 'Fishing Party 2.0: łódka płynie kanałem, brama właśnie się otworzyła' },
+    { src: '/img/gry/fishing-party-2/kreator.webp', alt: 'Fishing Party 2.0: kreator poziomów z brzegami, skałami i rybami' },
+    { src: '/img/gry/fishing-party-2/bestie.webp', alt: 'Fishing Party 2.0: starcie z bestią na końcu świata' }
+];
 
 // Dane dla wyszukiwarek: kim jestem i jaka to strona (schema.org, JSON-LD).
 const JSON_LD = JSON.stringify({
@@ -139,11 +153,64 @@ export default async function HomePage() {
                 </p>
             </section>
 
+            {/* ---------- Nowa gra: Fishing Party 2.0 ---------- */}
+            <section id="fishing-party" className={styles.promo} aria-labelledby="promo-title">
+                <div className={`wrap ${styles.promoInner}`}>
+                    <div className={styles.promoHead} data-reveal>
+                        <p className="v2-label">
+                            <b>[03]</b> Nowość na Androida
+                        </p>
+                        <h2 id="promo-title" className={styles.h2}>
+                            Fishing <span className="v2-outline">Party 2.0</span>
+                        </h2>
+                    </div>
+
+                    <figure className={`v2-frame ${styles.promoBanner}`} data-reveal>
+                        <img
+                            src="/img/gry/fishing-party-2/baner.webp"
+                            alt="Fishing Party: rybak w czerwonej łódce, ryby, rekin i ośmiornica. Hasło: łów ryby, twórz poziomy"
+                            width={1024}
+                            height={500}
+                            loading="lazy"
+                            className="pixelated"
+                        />
+                    </figure>
+
+                    <div className={styles.promoCopy} data-reveal>
+                        <p className={styles.promoLead}>
+                            Pixelartowa gra o łowieniu ryb sterowana jednym palcem. Wskakujesz do łódki, łowisz ryby, żeby otworzyć bramę, i uciekasz przed piraniami, ośmiornicami i rekinami.
+                        </p>
+                        <ul role="list" className={styles.promoList}>
+                            {FISHING_FEATURES.map(item => (
+                                <li key={item}>{item}</li>
+                            ))}
+                        </ul>
+                        <div className={styles.promoActions}>
+                            <a href={FISHING_PARTY_PLAY} className="btn btn-primary" target="_blank" rel="noopener">
+                                Pobierz z Google Play <span className="v2-arrow" aria-hidden="true">↗</span>
+                                <span className="sr-only"> (otwiera się w nowej karcie)</span>
+                            </a>
+                            <Link href="/gry#fishing-party-2" className="btn btn-ghost">
+                                Wszystkie gry <span className="v2-arrow" aria-hidden="true">→</span>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <ul role="list" className={styles.promoShots}>
+                        {FISHING_SHOTS.map((shot, i) => (
+                            <li key={shot.src} className={`v2-frame ${styles.promoShot}`} style={{ '--i': i } as CSSProperties} data-reveal>
+                                <img src={shot.src} alt={shot.alt} width={405} height={810} loading="lazy" />
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            </section>
+
             {/* ---------- Technologie ---------- */}
             <section className={styles.stack} aria-labelledby="stack-title">
                 <div className="wrap">
                     <p className="v2-label" id="stack-title">
-                        <b>[03]</b> Rzeczy, których używam
+                        <b>[04]</b> Rzeczy, których używam
                     </p>
                 </div>
                 <ul role="list" className="sr-only">
@@ -178,7 +245,7 @@ export default async function HomePage() {
                 <section id="linki" className={`wrap ${styles.links}`} aria-labelledby="links-title">
                     <div className={styles.linksHead} data-reveal>
                         <p className="v2-label">
-                            <b>[04]</b> Linki
+                            <b>[05]</b> Linki
                         </p>
                         <h2 id="links-title" className={styles.h2}>
                             Wszystko <span className="v2-outline">w jednym</span> miejscu
@@ -194,7 +261,7 @@ export default async function HomePage() {
             <section className={`wrap ${styles.projects}`} aria-labelledby="projects-title">
                 <div className={styles.projectsHead} data-reveal>
                     <p className="v2-label">
-                        <b>[05]</b> Wybrane projekty
+                        <b>[06]</b> Wybrane projekty
                     </p>
                     <h2 id="projects-title" className={styles.h2}>
                         Kod <span className="v2-outline">na GitHubie</span>
@@ -242,10 +309,10 @@ export default async function HomePage() {
             </section>
 
             {/* ---------- Rok na GitHubie ---------- */}
-            <GithubActivity label="[06]" />
+            <GithubActivity label="[07]" />
 
             {/* ---------- Discord na żywo ---------- */}
-            <DiscordSection label="[07]" />
+            <DiscordSection label="[08]" />
 
             {/* ---------- Półka z grami ---------- */}
             <section className={styles.shelf} aria-labelledby="shelf-title">
@@ -253,7 +320,7 @@ export default async function HomePage() {
                     head={
                         <div className={`wrap ${styles.shelfHead}`}>
                             <p className="v2-label">
-                                <b>[08]</b> Na półce
+                                <b>[09]</b> Na półce
                             </p>
                             <h2 id="shelf-title" className={styles.h2}>
                                 Gry
@@ -276,7 +343,10 @@ export default async function HomePage() {
                                 <span>
                                     {pad(i + 1)} / {pad(GAMES.length)}
                                 </span>
-                                <span>{game.platform === 'web' ? 'Przeglądarka' : 'Android'}</span>
+                                <span>
+                                    {game.isNew && <b className={styles.cartNew}>Nowość</b>}
+                                    {game.platform === 'web' ? 'Przeglądarka' : 'Android'}
+                                </span>
                             </span>
                             <span className={`v2-frame ${styles.cover}`}>
                                 <img src={game.shot.src} alt="" width={game.shot.width} height={game.shot.height} loading="lazy" />
@@ -291,7 +361,7 @@ export default async function HomePage() {
             <section className={styles.contact} aria-label="Kontakt">
                 <div className="wrap">
                     <p className="v2-label">
-                        <b>[09]</b> Kontakt
+                        <b>[10]</b> Kontakt
                     </p>
                 </div>
                 <Link href="/kontakt" className={styles.contactLink} aria-label="Napisz do mnie: przejdź do formularza kontaktowego">

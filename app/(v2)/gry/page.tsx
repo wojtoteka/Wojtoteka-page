@@ -10,7 +10,7 @@ import styles from './gry.module.css';
 
 export const metadata: Metadata = pageMeta({
     title: 'Gry',
-    description: 'Gry Wojtoteka: Night Drive, Przerębel, GloomCraft, Fishing Party, Ostatni Oddech i inne. Większość uruchomisz za darmo w przeglądarce.',
+    description: 'Gry Wojtoteka: nowe Fishing Party 2.0 na Androida, Night Drive, Przerębel, GloomCraft, Fishing Party, Ostatni Oddech i inne. Większość uruchomisz za darmo w przeglądarce.',
     path: '/gry',
     image: 'gry',
 });
@@ -46,6 +46,7 @@ function Stage({ game, index }: { game: Game; index: number }) {
                         {pad(index + 1)} / {pad(GAMES.length)}
                     </span>
                     <span>{web ? 'Przeglądarka' : 'Android'}</span>
+                    {game.isNew && <span className={styles.badge}>Nowość</span>}
                     <span className={styles.barLine} aria-hidden="true" />
                     <span>{web ? 'Bez instalacji' : 'Google Play'}</span>
                 </p>
@@ -72,6 +73,7 @@ function Stage({ game, index }: { game: Game; index: number }) {
                     <h2 id={titleId} className={styles.stageTitle} data-long={game.title.length > 14 || undefined}>
                         {game.title}
                     </h2>
+                    {game.about && <p className={styles.about}>{game.about}</p>}
                     {web ? (
                         <>
                             <p className={styles.platform}>Działa w przeglądarce, bez instalacji i bez konta.</p>
