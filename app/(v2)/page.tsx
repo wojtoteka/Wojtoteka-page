@@ -154,6 +154,8 @@ export default async function HomePage() {
             </section>
 
             {/* ---------- Nowa gra: Fishing Party 2.0 ---------- */}
+            {/* WYŁĄCZONE: Google jeszcze nie zweryfikowało aplikacji, link do Google Play nie działa.
+                Aby przywrócić, usuń tę linię komentarza i linię z zamknięciem komentarza poniżej.
             <section id="fishing-party" className={styles.promo} aria-labelledby="promo-title">
                 <div className={`wrap ${styles.promoInner}`}>
                     <div className={styles.promoHead} data-reveal>
@@ -205,6 +207,7 @@ export default async function HomePage() {
                     </ul>
                 </div>
             </section>
+            KONIEC WYŁĄCZONEJ SEKCJI Fishing Party 2.0 */}
 
             {/* ---------- Technologie ---------- */}
             <section className={styles.stack} aria-labelledby="stack-title">

@@ -24,6 +24,9 @@ export interface Game {
 export const FISHING_PARTY_PLAY = 'https://play.google.com/store/apps/details?id=wojtoteka.ovh.fishingparty&hl=pl';
 
 export const GAMES: Game[] = [
+    // WYŁĄCZONE: Google jeszcze nie zweryfikowało aplikacji, link do Google Play nie działa.
+    // Aby przywrócić, usuń /* i */ wokół wpisu poniżej.
+    /*
     {
         slug: 'fishing-party-2',
         title: 'Fishing Party 2.0',
@@ -37,6 +40,7 @@ export const GAMES: Game[] = [
         about: 'Łów ryby, uciekaj przed bestiami i buduj własne poziomy. 1000 poziomów w 40 światach, ranking online, za darmo i bez reklam.',
         isNew: true
     },
+    */
     {
         slug: 'night-drive',
         title: 'Night Drive',
