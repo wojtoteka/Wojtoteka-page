@@ -10,8 +10,7 @@ import styles from './gry.module.css';
 
 export const metadata: Metadata = pageMeta({
     title: 'Gry',
-    // Po weryfikacji w Google przywróć: 'Gry Wojtoteka: nowe Fishing Party 2.0 na Androida, Night Drive, ...'
-    description: 'Gry Wojtoteka: Night Drive, Przerębel, GloomCraft, Fishing Party, Ostatni Oddech i inne. Większość uruchomisz za darmo w przeglądarce.',
+    description: 'Gry Wojtoteka: nowe Fishing Party 2.0 na Androida, Night Drive, Przerębel, GloomCraft, Fishing Party, Ostatni Oddech i inne. Większość uruchomisz za darmo w przeglądarce.',
     path: '/gry',
     image: 'gry',
 });
