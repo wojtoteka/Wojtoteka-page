@@ -299,6 +299,8 @@ export default async function StatusPage() {
 
     const monitors = sortMonitors(snapshot.monitors);
     const summary = monitors.length ? verdict(monitors) : null;
+    // Jeden serwer: karta na całą szerokość w poziomym układzie zamiast kafelka rozciągniętego w siatce.
+    const single = monitors.length === 1;
 
     const measured = monitors.filter(m => m.uptime30 !== null);
     const average = measured.length ? measured.reduce((sum, m) => sum + (m.uptime30 ?? 0), 0) / measured.length : null;
@@ -331,13 +333,15 @@ export default async function StatusPage() {
 
             {monitors.length > 0 && (
                 <>
-                    <dl className={styles.stats} data-reveal>
-                        <div>
-                            <dt>Serwery</dt>
-                            <dd>{monitors.length}</dd>
-                        </div>
-                        <div>
-                            <dt>Średnia dostępność</dt>
+                    <dl className={styles.stats} data-single={single || undefined} data-reveal>
+                        {!single && (
+                            <div>
+                                <dt>Serwery</dt>
+                                <dd>{monitors.length}</dd>
+                            </div>
+                        )}
+                        <div className={styles.statUptime}>
+                            <dt>{single ? `Dostępność (${DAYS} dni)` : 'Średnia dostępność'}</dt>
                             <dd>{average !== null ? percent(average) : 'Brak'}</dd>
                         </div>
                         <div>
@@ -359,7 +363,7 @@ export default async function StatusPage() {
                                 Ostatnie <span className="v2-outline">{DAYS} dni</span>
                             </h2>
                         </div>
-                        <ul role="list" className={styles.monitors}>
+                        <ul role="list" className={styles.monitors} data-single={single || undefined}>
                             {monitors.map((monitor, i) => (
                                 <MonitorCard key={monitor.id} monitor={monitor} index={i} notices={noticesFor(monitor.name)} />
                             ))}

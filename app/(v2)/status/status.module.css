@@ -152,7 +152,7 @@
     font-variant-numeric: tabular-nums;
 }
 
-.stats div:nth-child(2) dd {
+.statUptime dd {
     color: var(--volt);
 }
 
@@ -306,6 +306,91 @@
     line-height: 1;
     color: var(--tone);
     font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Jeden serwer ----------
+   Zamiast wysokiego kafelka rozciągniętego na całą szerokość: nazwa po lewej,
+   dostępność i RAM po prawej, pasek dni pod spodem na całą szerokość. */
+
+.stats[data-single] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.monitors[data-single] .monitor {
+    grid-row: auto;
+    grid-template-rows: none;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 400px);
+    grid-template-areas:
+        'top top'
+        'name uptime'
+        'flag load'
+        'history history';
+    column-gap: clamp(32px, 6vw, 96px);
+    row-gap: 18px;
+}
+
+.monitors[data-single] .monitor > * {
+    margin-top: 0;
+}
+
+.monitors[data-single] .monitorTop {
+    grid-area: top;
+}
+
+.monitors[data-single] .nameBox {
+    grid-area: name;
+    align-self: end;
+}
+
+.monitors[data-single] .flag {
+    grid-area: flag;
+    align-self: start;
+}
+
+.monitors[data-single] .uptime {
+    grid-area: uptime;
+    align-self: end;
+    justify-items: end;
+    text-align: right;
+    padding-top: 0;
+    border-top: 0;
+}
+
+.monitors[data-single] .uptimeNum {
+    font-size: clamp(2.25rem, 3.4vw, 3.5rem);
+}
+
+.monitors[data-single] .load {
+    grid-area: load;
+    align-self: start;
+}
+
+.monitors[data-single] .history {
+    grid-area: history;
+    margin-top: 10px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+}
+
+@media (max-width: 760px) {
+    .monitors[data-single] .monitor {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: 'top' 'name' 'flag' 'uptime' 'load' 'history';
+    }
+
+    .monitors[data-single] .uptime {
+        justify-items: start;
+        text-align: left;
+        margin-top: 8px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+    }
+
+    .monitors[data-single] .history {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: 0;
+    }
 }
 
 /* ---------- Obciążenie ---------- */
