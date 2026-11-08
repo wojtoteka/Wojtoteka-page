@@ -17,8 +17,6 @@ export interface Game {
     tilt: number;
     /** Kilka zdań o grze, pokazywane na /gry zamiast samej platformy. */
     about?: string;
-    /** Nowa gra: stoi na początku listy i ma znaczek "Nowość". */
-    isNew?: boolean;
 }
 
 export const FISHING_PARTY_PLAY = 'https://play.google.com/store/apps/details?id=wojtoteka.ovh.fishingparty&hl=pl';
@@ -34,8 +32,7 @@ export const GAMES: Game[] = [
         bg: '#073a68',
         frame: '#ffc12e',
         tilt: 2,
-        about: 'Łów ryby, uciekaj przed bestiami i buduj własne poziomy. 1000 poziomów w 40 światach, ranking online, za darmo i bez reklam.',
-        isNew: true
+        about: 'Łów ryby, uciekaj przed bestiami i buduj własne poziomy. 1000 poziomów w 40 światach, ranking online, za darmo i bez reklam.'
     },
     {
         slug: 'night-drive',
