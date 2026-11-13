@@ -134,8 +134,11 @@ export async function getDiscordProfile(): Promise<DiscordProfile | null> {
             cache: 'no-store',
             signal: AbortSignal.timeout(TIMEOUT)
         });
+        // Przy awarii Lanyard oddaje 5xx z tekstem ("upstream error"), a nie JSON.
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        if (!response.headers.get('content-type')?.includes('application/json')) throw new Error('odpowiedź nie jest JSON-em');
         const json = (await response.json()) as { success: boolean; data: LanyardData };
-        if (!json.success) throw new Error('Lanyard: success = false');
+        if (!json.success) throw new Error('success = false');
         data = json.data;
     } catch (error) {
         logLanyardError(describeError(error));

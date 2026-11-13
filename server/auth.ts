@@ -37,7 +37,7 @@ export function requireRole(role: Role) {
         const token = await readSession(req);
 
         if (!token || token.role !== role) {
-            console.warn(`[SECURITY] Unauthorized ${role} access attempt to ${req.path} - IP: ${req.realIP}`);
+            console.warn(`[SECURITY] Unauthorized ${role} access attempt - ${req.method} ${req.originalUrl.split('?')[0]} - IP: ${req.realIP}`);
             res.status(401).json({ message: 'Zaloguj się ponownie.' });
             return;
         }

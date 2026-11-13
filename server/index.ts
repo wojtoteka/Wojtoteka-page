@@ -2,7 +2,8 @@ import './env';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
-import { parse } from 'node:url';
+import { inspect } from 'node:util';
+import type { UrlWithParsedQuery } from 'node:url';
 import express, { type NextFunction, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import next from 'next';
@@ -180,7 +181,9 @@ app.use((req, res, nextFn) => {
 // więc na czas renderu przypinamy nasz kod odpowiedzi.
 function renderPage(req: Request, res: Response, pathname: string, status: number): Promise<void> {
     Object.defineProperty(res, 'statusCode', { get: () => status, set: () => {}, configurable: true });
-    return handle(req, res, parse(pathname, true));
+    // Gotowy obiekt zamiast url.parse(): ten jest przestarzały (DEP0169), a ścieżka jest stała.
+    const parsedUrl = { pathname, path: pathname, href: pathname, query: {}, search: null, hash: null } as UrlWithParsedQuery;
+    return handle(req, res, parsedUrl);
 }
 
 function renderNotFound(req: Request, res: Response): Promise<void> {
@@ -348,7 +351,8 @@ app.use(createResourceRouter({ notFound: renderNotFound, serverError: renderUnav
 app.use((req, res) => handle(req, res));
 
 app.use((err: unknown, req: Request, res: Response, _nextFn: NextFunction) => {
-    console.error(`Unhandled error - ${req.method} ${req.path}:`, err);
+    // Pusty string albo obiekt bez treści nie zostawia w logu żadnego śladu - inspect pokaże, co przyszło.
+    console.error(`Unhandled error - ${req.method} ${req.originalUrl.split('?')[0]}:`, err instanceof Error ? err : inspect(err));
     if (res.headersSent) return;
     if (req.path.startsWith('/api/')) res.status(500).json({ message: 'Błąd serwera.' });
     else void renderUnavailable(req, res);
