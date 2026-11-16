@@ -1,6 +1,7 @@
 import './env';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
+import http from 'node:http';
 import path from 'node:path';
 import { inspect } from 'node:util';
 import type { UrlWithParsedQuery } from 'node:url';
@@ -24,6 +25,9 @@ import { panelRouter } from '@/server/routes/panel';
 import { createResourceRouter } from '@/server/routes/resources';
 import { statusApiRouter } from '@/server/routes/status-api';
 import { deleteOldEvents, statusTick } from '@/lib/status-api';
+import { installQuietLogs } from '@/server/quiet-logs';
+
+installQuietLogs();
 
 const dev = process.env.NODE_ENV !== 'production';
 // Produkcja wymusza HTTPS. HTTPS_REDIRECT=off pozwala uruchomić build lokalnie po http.
@@ -351,6 +355,13 @@ app.use(createResourceRouter({ notFound: renderNotFound, serverError: renderUnav
 app.use((req, res) => handle(req, res));
 
 app.use((err: unknown, req: Request, res: Response, _nextFn: NextFunction) => {
+    // Błąd klienta (np. URIError 400 przy adresie ze złym „%", typu /0%) to nie
+    // awaria serwera: odpowiadamy jego kodem i nie zaśmiecamy dziennika.
+    const status = (err as { status?: unknown; statusCode?: unknown } | null)?.status ?? (err as { statusCode?: unknown } | null)?.statusCode;
+    if (typeof status === 'number' && status >= 400 && status < 500) {
+        if (!res.headersSent) res.status(status).type('text/plain').send(status === 400 ? 'Bad request' : 'Error');
+        return;
+    }
     // Pusty string albo obiekt bez treści nie zostawia w logu żadnego śladu - inspect pokaże, co przyszło.
     console.error(`Unhandled error - ${req.method} ${req.originalUrl.split('?')[0]}:`, err instanceof Error ? err : inspect(err));
     if (res.headersSent) return;
@@ -358,7 +369,26 @@ app.use((err: unknown, req: Request, res: Response, _nextFn: NextFunction) => {
     else void renderUnavailable(req, res);
 });
 
-// Express 5 przekazuje błąd nasłuchu (np. zajęty port) do callbacka listen.
+// ---------- Nasłuch ----------
+// Przeglądarka i nginx wysyłają zawsze adres zaczynający się od „/”. Inne formy
+// (`*`, `http://host/…`, ze spacją albo „#”) to skanery: Express parsuje je
+// przestarzałym url.parse() (ostrzeżenie DEP0169), a Next.js rzuca „Invalid URL”.
+// Odrzucamy je, zanim dotrą do Expressa.
+const ORIGIN_FORM = /^\/[^\s#\u00a0\ufeff]*$/;
+
+function listen(callback: (error?: Error) => void): void {
+    const server = http.createServer((req, res) => {
+        if (!req.url || !ORIGIN_FORM.test(req.url)) {
+            res.writeHead(400, { 'Content-Type': 'text/plain', Connection: 'close' }).end('Bad request');
+            return;
+        }
+        app(req, res);
+    });
+    server.once('error', error => callback(error));
+    server.listen(PORT, HOST, () => callback());
+}
+
+// Błąd nasłuchu (np. zajęty port) trafia do callbacka listen.
 function listenFailed(error: Error | undefined): boolean {
     if (!error) return false;
     if ((error as NodeJS.ErrnoException).code === 'EADDRINUSE') {
@@ -371,7 +401,7 @@ function listenFailed(error: Error | undefined): boolean {
 
 async function startPreview(): Promise<void> {
     await nextApp.prepare();
-    app.listen(PORT, HOST, error => {
+    listen(error => {
         if (listenFailed(error)) return;
         console.log(`
 [PODGLĄD] http://${HOST === '127.0.0.1' ? 'localhost' : HOST}:${PORT} (bez bazy danych)`);
@@ -399,7 +429,7 @@ async function start(): Promise<void> {
 
         await nextApp.prepare();
 
-        app.listen(PORT, HOST, error => {
+        listen(error => {
             if (listenFailed(error)) return;
             console.log(`\n[SERWER] http://${HOST === '127.0.0.1' ? 'localhost' : HOST}:${PORT} (${dev ? 'dev' : 'produkcja'})`);
             console.log(`[SERWER] Panel admina: /admin, panel skrzynki: /panel, API: /api/v1/contact`);
